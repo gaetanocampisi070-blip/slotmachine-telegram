@@ -1,27 +1,31 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Slot Machine Game</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slot Machine Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Slot Machine Game</h1>
-        <div id="stats">
-            <p>Soldi: <span id="money">100</span> 💰</p>
-            <p>Stamina: <span id="stamina">100</span> ⏳</p>
-            <p>Tempo rimanente per la ricarica: <span id="time">5:00</span></p>
-        </div>
-	
-        <div id="slot">
-            <p>Gira la slot!</p>
-            <button id="spinBtn">Gira</button>
-        </div>
-        <div id="result"></div>
+  <div class="container">
+    <h1>🎰 Slot Machine</h1>
+
+    <div id="stats">
+      <p>Soldi: <span id="money">100</span> 💰</p>
+      <p>Stamina: <span id="stamina">100</span> ⏳</p>
     </div>
 
-    <script src="script.js"></script>
+    <div id="slot">
+      <div class="reel" id="reel1">❓</div>
+      <div class="reel" id="reel2">❓</div>
+      <div class="reel" id="reel3">❓</div>
+    </div>
+
+    <button id="spinBtn">Gira 🎲</button>
+    <div id="result"></div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
+
