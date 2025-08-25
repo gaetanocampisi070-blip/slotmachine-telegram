@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerCoin Multilang</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: linear-gradient(to bottom, #ffefba, #ffffff);
+      text-align: center;
+    }
+    #splash {
+      position: fixed;
+      top: 0; left: 0; right:0; bottom:0;
+      background: #ffcc66;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    #game {
+      display: none;
+      padding: 20px;
+    }
+    #burger {
+      width: 200px;
+      transition: transform 0.1s;
+      cursor: pointer;
+    }
+    #burger:active {
+      transform: scale(0.9);
+    }
+    #stats { margin: 20px; }
+    button {
+      font-size: 18px;
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 8px;
+      background: #ff9933;
+      color: white;
+      cursor: pointer;
+    }
+    #leaderboard { margin-top: 20px; text-align: left; max-width: 300px; margin-left:auto; margin-right:auto;}
+    #lang-selector { position: absolute; top: 10px; right: 10px; }
+    #lang-selector button { font-size: 20px; margin:2px;}
+  </style>
+</head>
+<body>
+  <div id="splash">
+    <h1>🍔 BurgerCoin</h1>
+    <button id="startBtn">Start</button>
+  </div>
+
+  <div id="lang-selector">
+    <button onclick="setLang('en')">🇬🇧</button>
+    <button onclick="setLang('it')">🇮🇹</button>
+    <button onclick="setLang('es')">🇪🇸</button>
+  </div>
+
+  <div id="game">
+    <div id="stats">
+      <h2 id="welcome"></h2>
+      <p><span id="coinsLabel"></span>: <span id="coins">0</span></p>
+    </div>
+    <img id="burger" src="https://i.imgur.com/2DhmtJ4.png" alt="Burger">
+    <div>
+      <button onclick="buyUpgrade()"><span id="shopBtn"></span></button>
+      <button onclick="showLeaderboard()"><span id="leaderboardBtn"></span></button>
+    </div>
+    <div id="leaderboard" style="display:none;">
+      <h3><span id="leaderboardTitle"></span></h3>
+      <ol id="leaderboardList"></ol>
+    </div>
+  </div>
+
+  <script>
+    const translations = {
+      en: { start:"Start", coins:"Coins", shop:"Shop", leaderboard:"Leaderboard", welcome:"Welcome" },
+      it: { start:"Inizia", coins:"Monete", shop:"Negozio", leaderboard:"Classifica", welcome:"Benvenuto" },
+      es: { start:"Comenzar", coins:"Monedas", shop:"Tienda", leaderboard:"Clasificación", welcome:"Bienvenido" }
+    };
+    let currentLang = "en";
+    function detectLang(){
+      let userLang = navigator.language.split("-")[0];
+      if(translations[userLang]) currentLang=userLang; else currentLang="en";
+    }
+    function setLang(lang){
+      currentLang=lang;
+      applyTranslations();
+    }
+    function applyTranslations(){
+      document.getElementById("startBtn").textContent = translations[currentLang].start;
+      document.getElementById("coinsLabel").textContent = translations[currentLang].coins;
+      document.getElementById("shopBtn").textContent = translations[currentLang].shop;
+      document.getElementById("leaderboardBtn").textContent = translations[currentLang].leaderboard;
+      document.getElementById("leaderboardTitle").textContent = translations[currentLang].leaderboard;
+      document.getElementById("welcome").textContent = translations[currentLang].welcome + " " + nickname;
+    }
+
+    let coins=0;
+    let nickname="🍔Guest"+Math.floor(Math.random()*1000);
+    let leaderboardData=[];
+
+    function initFakeLeaderboard(){
+      for(let i=0;i<50;i++){
+        leaderboardData.push({name:"🍔Player"+(i+1), score:Math.floor(Math.random()*1000)});
+      }
+    }
+    function updateLeaderboard(){
+      leaderboardData.sort((a,b)=>b.score-a.score);
+      let list=document.getElementById("leaderboardList");
+      list.innerHTML="";
+      leaderboardData.forEach(p=>{
+        let li=document.createElement("li");
+        li.textContent=p.name+" - "+p.score;
+        list.appendChild(li);
+      });
+    }
+    function showLeaderboard(){
+      document.getElementById("leaderboard").style.display="block";
+      updateLeaderboard();
+    }
+
+    document.getElementById("burger").addEventListener("click", ()=>{
+      coins++;
+      document.getElementById("coins").textContent=coins;
+      let player=leaderboardData.find(p=>p.name===nickname);
+      if(player){ player.score=coins; } else { leaderboardData.push({name:nickname, score:coins}); }
+    });
+
+    function buyUpgrade(){
+      if(coins>=10){ coins-=10; document.getElementById("coins").textContent=coins; alert("Upgrade purchased!");}
+      else alert("Not enough coins!");
+    }
+
+    document.getElementById("startBtn").addEventListener("click", ()=>{
+      document.getElementById("splash").style.display="none";
+      document.getElementById("game").style.display="block";
+      applyTranslations();
+    });
+
+    // init
+    detectLang();
+    initFakeLeaderboard();
+  </script>
+</body>
+</html>
