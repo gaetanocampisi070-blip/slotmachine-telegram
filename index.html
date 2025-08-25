@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -15,41 +14,44 @@
     <div id="page-slot" class="page active">
       <h1>🎰 Slot Machine</h1>
       <div class="stats">
-        <p>💰 Soldi: <span id="money">100</span></p>
-        <p>⚡ Stamina: <span id="stamina">100</span></p>
+        <p>💰 Soldi: <span id="money">0</span></p>
+        <p>⚡ Stamina: <span id="stamina">0</span></p>
       </div>
-
-      <div id="slot">
-        <div class="reel" id="reel1">❓</div>
-        <div class="reel" id="reel2">❓</div>
-        <div class="reel" id="reel3">❓</div>
+      <div class="slot-frame">
+        <div class="reels" id="reels">
+          <div class="win-line"></div>
+          <div class="reel"><div class="strip"></div></div>
+          <div class="reel"><div class="strip"></div></div>
+          <div class="reel"><div class="strip"></div></div>
+        </div>
+        <button id="spinBtn" class="btn-spin">🎲 Gira</button>
+        <p id="result"></p>
       </div>
-
-      <button id="spinBtn">🎲 Gira</button>
-      <p id="result"></p>
     </div>
 
     <!-- BLACKJACK -->
     <div id="page-carte" class="page">
       <h1>🃏 Blackjack</h1>
       <div class="stats">
-        <p>💰 Soldi: <span id="moneyBJ">100</span></p>
-        <p>⚡ Stamina: <span id="staminaBJ">100</span></p>
+        <p>💰 Soldi: <span id="moneyBJ">0</span></p>
+        <p>⚡ Stamina: <span id="staminaBJ">0</span></p>
       </div>
-
-      <div class="bj-area">
-        <p><strong>Le tue carte:</strong> <span id="player-cards"></span></p>
-        <p><strong>Totale:</strong> <span id="player-total">0</span></p>
-        <p><strong>Carte banco:</strong> <span id="dealer-cards"></span></p>
-        <p><strong>Totale banco:</strong> <span id="dealer-total">0</span></p>
+      <div class="bj-frame">
+        <div class="bj-area">
+          <h3>Banco</h3>
+          <div id="dealer-cards" class="cards"></div>
+          <p><strong>Totale:</strong> <span id="dealer-total">0</span></p>
+          <hr>
+          <h3>Giocatore</h3>
+          <div id="player-cards" class="cards"></div>
+          <p><strong>Totale:</strong> <span id="player-total">0</span></p>
+        </div>
+        <div class="bj-buttons">
+          <button id="hitBtn" class="btn-spin">✋ Pesca</button>
+          <button id="standBtn" class="btn-spin">🛑 Stai</button>
+        </div>
+        <p id="bj-result"></p>
       </div>
-
-      <div class="bj-buttons">
-        <button id="hitBtn">✋ Pesca</button>
-        <button id="standBtn">🛑 Stai</button>
-      </div>
-
-      <p id="bj-result"></p>
     </div>
 
     <!-- CLASSIFICA -->
