@@ -3,16 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mini Casino</title>
+  <title>🎰 Mini Casino Deluxe</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
+
   <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <h1>🎰 Mini Casino Deluxe</h1>
+      <p id="levelLabel">Lv.1</p>
+      <div class="progress-container">
+        <div id="xpBar"></div>
+      </div>
+    </header>
 
     <!-- SLOT -->
     <div id="page-slot" class="page active">
-      <h1>🎰 Slot Machine</h1>
+      <h2>🎰 Slot Machine</h2>
       <div class="stats">
         <p>💰 Soldi: <span id="money">0</span></p>
         <p>⚡ Stamina: <span id="stamina">0</span></p>
@@ -25,13 +35,15 @@
           <div class="reel"><div class="strip"></div></div>
         </div>
         <button id="spinBtn" class="btn-spin">🎲 Gira</button>
+        <button id="autoBtn" class="btn-secondary">♻️ Auto-Spin</button>
         <p id="result"></p>
+        <div id="jackpot-display">💎 Jackpot: <span id="jackpot">1000</span></div>
       </div>
     </div>
 
     <!-- BLACKJACK -->
     <div id="page-carte" class="page">
-      <h1>🃏 Blackjack</h1>
+      <h2>🃏 Blackjack</h2>
       <div class="stats">
         <p>💰 Soldi: <span id="moneyBJ">0</span></p>
         <p>⚡ Stamina: <span id="staminaBJ">0</span></p>
@@ -54,21 +66,56 @@
       </div>
     </div>
 
+    <!-- RUOTA DELLA FORTUNA -->
+    <div id="page-ruota" class="page">
+      <h2>🎡 Ruota della Fortuna</h2>
+      <canvas id="wheelCanvas" width="300" height="300"></canvas>
+      <button id="spinWheelBtn" class="btn-spin">🎡 Gira la Ruota</button>
+      <p id="wheelResult"></p>
+    </div>
+
+    <!-- GRATTA E VINCI -->
+    <div id="page-gratta" class="page">
+      <h2>🎟️ Gratta & Vinci</h2>
+      <div class="scratch-card">
+        <canvas id="scratchCanvas" width="300" height="150"></canvas>
+        <p id="scratchResult">Gratta per scoprire se hai vinto!</p>
+      </div>
+    </div>
+
     <!-- CLASSIFICA -->
     <div id="page-classifica" class="page">
-      <h1>🏆 Classifica</h1>
+      <h2>🏆 Classifica</h2>
       <ul id="leaderboard-list"></ul>
+    </div>
+
+    <!-- MISSIONI -->
+    <div id="page-missioni" class="page">
+      <h2>🎯 Missioni Giorno</h2>
+      <ul id="missions">
+        <li>🎰 Fai 10 spin <span id="mission-spin">0/10</span></li>
+        <li>🃏 Gioca 5 mani di Blackjack <span id="mission-bj">0/5</span></li>
+        <li>🎡 Gira la ruota 3 volte <span id="mission-wheel">0/3</span></li>
+      </ul>
+      <p id="mission-reward"></p>
     </div>
 
   </div>
 
-  <!-- Navbar -->
+  <!-- NAVBAR -->
   <div class="navbar">
     <a href="#" onclick="showPage('slot')">🎰 Slot</a>
     <a href="#" onclick="showPage('carte')">🃏 Blackjack</a>
+    <a href="#" onclick="showPage('ruota')">🎡 Ruota</a>
+    <a href="#" onclick="showPage('gratta')">🎟️ Gratta</a>
+    <a href="#" onclick="showPage('missioni')">🎯 Missioni</a>
     <a href="#" onclick="showPage('classifica')">🏆 Classifica</a>
   </div>
 
+  <!-- TOAST CONTAINER -->
+  <div id="toast-container"></div>
+
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>

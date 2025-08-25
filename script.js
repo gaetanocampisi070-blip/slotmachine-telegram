@@ -1,85 +1,239 @@
 
 
-/* === CONFIG BACKEND === */
-const API_URL = "https://slot-backend-lsi6.onrender.com"; 
-const USER_ID = Telegram?.WebApp?.initDataUnsafe?.user?.id || "demo";
+// =====================
+// VARIABILI GLOBALI
+// =====================
+let money = 100;
+let stamina = 10;
+let xp = 0;
+let level = 1;
+let jackpot = 1000;
+const playerName = "guest"; // puoi collegare al login Telegram
+const apiBase = "https://slot-backend-lsi6.onrender.com";
 
-/* === NAVIGAZIONE === */
-function showPage(page){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById("page-"+page).classList.add("active");
+// =====================
+// SUONI
+// =====================
+const sounds = {
+  spin: new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg"),
+  win: new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_boing.ogg"),
+  lose: new Audio("https://actions.google.com/sounds/v1/cartoon/cartoon_cowbell.ogg"),
+  coin: new Audio("https://actions.google.com/sounds/v1/cartoon/wood_plank_hit.ogg"),
+  levelup: new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"),
+  applause: new Audio("https://actions.google.com/sounds/v1/ambiences/indoor_crowd_cheer.ogg")
+};
+let soundOn = true;
+function playSound(s) { if (soundOn && sounds[s]) sounds[s].play(); }
+
+// =====================
+// INTERFACCIA
+// =====================
+function updateStats() {
+  document.getElementById("money").textContent = money;
+  document.getElementById("stamina").textContent = stamina;
+  document.getElementById("moneyBJ").textContent = money;
+  document.getElementById("staminaBJ").textContent = stamina;
+  document.getElementById("xpBar").style.width = (xp % 100) + "%";
+  document.getElementById("levelLabel").textContent = "Lv." + level;
 }
 
-/* === STATO === */
-let money=100, stamina=100;
-
-/* === BACKEND === */
-async function loadProgress(){
-  try{
-    const res=await fetch(`${API_URL}/user/${USER_ID}`);
-    const data=await res.json();
-    money=data.money; stamina=data.stamina;
-    updateUI();
-  }catch(e){console.error("Errore load",e);}
+// Notifiche (toasts)
+function notify(msg, type="info") {
+  const div = document.createElement("div");
+  div.className = "toast " + type;
+  div.textContent = msg;
+  document.body.appendChild(div);
+  setTimeout(() => div.remove(), 3000);
 }
-async function saveProgress(){
-  try{
-    await fetch(`${API_URL}/user/${USER_ID}`,{
-      method:"POST",headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({money,stamina})
+
+// =====================
+// NAVIGAZIONE
+// =====================
+function showPage(page) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById("page-" + page).classList.add("active");
+  if (page === "classifica") loadLeaderboard();
+}
+window.showPage = showPage;
+
+// =====================
+// SLOT MACHINE
+// =====================
+const symbols = ["🍒","🍋","🍊","🍉","⭐","💎","🔔","7️⃣"];
+const spinBtn = document.getElementById("spinBtn");
+spinBtn.addEventListener("click", spin);
+
+let autoSpin = false;
+async function spin() {
+  if (stamina <= 0) {
+    document.getElementById("result").textContent = "⚡ Energia finita!";
+    playSound("lose");
+    return;
+  }
+
+  stamina--;
+  playSound("spin");
+
+  const reels = document.querySelectorAll(".reel .strip");
+  reels.forEach(strip => {
+    strip.innerHTML = "";
+    for (let i=0;i<10;i++) {
+      const sym = symbols[Math.floor(Math.random()*symbols.length)];
+      const d = document.createElement("div");
+      d.className = "sym";
+      d.textContent = sym;
+      strip.appendChild(d);
+    }
+    strip.style.transform = "translateY(0)";
+    setTimeout(()=> strip.style.transform = `translateY(-${Math.floor(Math.random()*9)*120}px)`, 50);
+  });
+
+  setTimeout(()=>{
+    const s1 = reels[0].children[1].innerText;
+    const s2 = reels[1].children[1].innerText;
+    const s3 = reels[2].children[1].innerText;
+
+    let msg = "😢 Hai perso!";
+    if (s1===s2 && s2===s3) {
+      money += 100;
+      xp += 20;
+      jackpot += 200;
+      msg = "🏆 JACKPOT TRIPLA! +100";
+      playSound("applause");
+    } else if (s1===s2 || s2===s3) {
+      money += 20;
+      xp += 10;
+      msg = "🎉 Coppia! +20";
+      playSound("win");
+    } else {
+      money -= 5;
+      jackpot += 10;
+      playSound("lose");
+    }
+    document.getElementById("result").textContent = msg;
+    levelUpCheck();
+    updateStats();
+    saveProgress();
+    if (autoSpin) spin();
+  }, 1000);
+}
+
+// =====================
+// LIVELLI E XP
+// =====================
+function levelUpCheck() {
+  if (xp >= level*100) {
+    level++;
+    stamina += 5;
+    money += 50;
+    notify("🎉 Sei salito al livello " + level + "! Bonus +50💰 +5⚡","success");
+    playSound("levelup");
+  }
+}
+
+// =====================
+// BLACKJACK (semplice)
+// =====================
+document.getElementById("hitBtn").addEventListener("click", () => {
+  stamina--;
+  money -= 5;
+  xp += 5;
+  document.getElementById("bj-result").textContent = "🥲 Hai perso la mano (demo).";
+  playSound("lose");
+  levelUpCheck();
+  updateStats();
+  saveProgress();
+});
+document.getElementById("standBtn").addEventListener("click", () => {
+  money += 15;
+  xp += 10;
+  document.getElementById("bj-result").textContent = "😎 Vittoria! +15";
+  playSound("win");
+  levelUpCheck();
+  updateStats();
+  saveProgress();
+});
+
+// =====================
+// BONUS GIORNALIERO
+// =====================
+function dailyBonus() {
+  const last = localStorage.getItem("lastBonus") || 0;
+  const now = new Date().toDateString();
+  if (last !== now) {
+    money += 100;
+    stamina += 10;
+    localStorage.setItem("lastBonus", now);
+    notify("🎁 Bonus giornaliero +100💰 +10⚡","success");
+    playSound("coin");
+    updateStats();
+    saveProgress();
+  }
+}
+
+// =====================
+// MISSIONI
+// =====================
+let spinsToday = 0;
+function checkMissions() {
+  if (spinsToday >= 10) {
+    money += 50;
+    notify("✅ Missione completata: 10 spin! +50💰","success");
+    spinsToday = 0;
+  }
+}
+
+// Hook su spin
+const oldSpin = spin;
+spin = async function() {
+  spinsToday++;
+  await oldSpin();
+  checkMissions();
+};
+
+// =====================
+// BACKEND API
+// =====================
+async function saveProgress() {
+  try {
+    await fetch(apiBase + "/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ player: playerName, money, stamina, xp, level, jackpot })
     });
-  }catch(e){console.error("Errore save",e);}
-}
-function updateUI(){
-  document.getElementById("money").textContent=money;
-  document.getElementById("stamina").textContent=stamina;
-  document.getElementById("moneyBJ").textContent=money;
-  document.getElementById("staminaBJ").textContent=stamina;
+  } catch (e) {
+    console.error("Errore salvataggio", e);
+  }
 }
 
-/* === SLOT === */
-const SYMBOLS=["🍒","🍋","🔔","⭐️","💎","7️⃣"], COPIES=24, REEL_HEIGHT=120;
-const reels=[...document.querySelectorAll('.reel')], strips=reels.map(r=>r.querySelector('.strip'));
-const spinBtn=document.getElementById("spinBtn"), resultEl=document.getElementById("result");
-function buildStrips(){strips.forEach(strip=>{strip.innerHTML="";for(let i=0;i<COPIES;i++){const s=document.createElement("div");s.className="sym";s.textContent=SYMBOLS[i%SYMBOLS.length];strip.appendChild(s);}});} buildStrips();
-const AC=new (window.AudioContext||window.webkitAudioContext)(); function tone(f,d=0.1){const o=AC.createOscillator(),g=AC.createGain();o.connect(g).connect(AC.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0.2,AC.currentTime);g.gain.exponentialRampToValueAtTime(0.001,AC.currentTime+d);o.start();o.stop(AC.currentTime+d);}
-function spinSound(){tone(220,0.08);} function tickSound(){tone(880,0.05);} function winSound(){[660,880,990].forEach((f,i)=>setTimeout(()=>tone(f,0.08),i*120));}
-const state=strips.map(()=>({y:0,speed:0,spinning:false,target:0,decel:false})); let raf; 
-function loop(){state.forEach((rs,i)=>{if(!rs.spinning)return;rs.y+=rs.speed;if(rs.decel){rs.speed=Math.max(5,rs.speed*0.95);const mod=rs.y%(SYMBOLS.length*REEL_HEIGHT);const idx=Math.round(mod/REEL_HEIGHT)%SYMBOLS.length;if(rs.speed<=6&&idx===rs.target){rs.spinning=false;rs.speed=0;rs.y=Math.round(rs.y/REEL_HEIGHT)*REEL_HEIGHT;stopReel(i);}}strips[i].style.transform=`translateY(${-rs.y%(COPIES*REEL_HEIGHT)}px)`;});if(state.some(r=>r.spinning))raf=requestAnimationFrame(loop);}
-let stopped=0; function stopReel(i){tickSound();stopped++;if(stopped===state.length){stopped=0;spinBtn.disabled=false;checkWin();}}
-spinBtn.onclick=()=>{if(AC.state==="suspended")AC.resume();if(state.some(r=>r.spinning))return;if(stamina<=0){resultEl.textContent="⚡ Stamina finita!";return;}spinSound();spinBtn.disabled=true;stamina=Math.max(0,stamina-5);updateUI();state.forEach((rs,i)=>{rs.spinning=true;rs.decel=false;rs.speed=25+i*2;rs.target=Math.floor(Math.random()*SYMBOLS.length);setTimeout(()=>{rs.decel=true;},800+i*500);});loop();};
-function centerIndex(rs){const mod=(rs.y%(SYMBOLS.length*REEL_HEIGHT));return Math.round(mod/REEL_HEIGHT)%SYMBOLS.length;}
-function checkWin(){const idx=state.map(centerIndex);const win=idx.every(i=>i===idx[0]);if(win){money+=20;winSound();resultEl.textContent="🎉 Vincita! +20";}else{money-=5;resultEl.textContent="😢 Riprova...";}updateUI();saveProgress();}
-
-/* === BLACKJACK === */
-const suits=["H","D","C","S"], values=["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
-let deck=[],playerHand=[],dealerHand=[];
-const playerCardsEl=document.getElementById("player-cards"),dealerCardsEl=document.getElementById("dealer-cards"),playerTotalEl=document.getElementById("player-total"),dealerTotalEl=document.getElementById("dealer-total"),resultBJ=document.getElementById("bj-result");
-function createDeck(){deck=[];for(let s of suits){for(let v of values){deck.push(v+s);}}deck.sort(()=>Math.random()-0.5);}
-function cardValue(card){const v=card.slice(0,-1);if(v==="A")return 11;if(["K","Q","J"].includes(v))return 10;return parseInt(v);}
-function handValue(hand){let val=0,aces=0;for(let c of hand){const v=cardValue(c);val+=v;if(c.startsWith("A"))aces++;}while(val>21&&aces>0){val-=10;aces--;}return val;}
-function renderHand(el,hand){el.innerHTML="";hand.forEach((c,i)=>{const img=document.createElement("img");img.src=`https://deckofcardsapi.com/static/img/${c}.png`;setTimeout(()=>img.classList.add("dealt"),i*200);el.appendChild(img);});}
-function startGame(){createDeck();playerHand=[];dealerHand=[];resultBJ.textContent="";playerHand.push(deck.pop(),deck.pop());dealerHand.push(deck.pop(),deck.pop());renderHand(playerCardsEl,playerHand);renderHand(dealerCardsEl,dealerHand);playerTotalEl.textContent=handValue(playerHand);dealerTotalEl.textContent=handValue(dealerHand);document.getElementById("hitBtn").disabled=false;document.getElementById("standBtn").disabled=false;}
-function endGame(msg){resultBJ.textContent=msg;document.getElementById("hitBtn").disabled=true;document.getElementById("standBtn").disabled=true;if(msg.includes("vinto")){money+=15;}if(msg.includes("perso")){money-=10;}updateUI();saveProgress();setTimeout(startGame,3000);}
-document.getElementById("hitBtn").onclick=()=>{playerHand.push(deck.pop());renderHand(playerCardsEl,playerHand);playerTotalEl.textContent=handValue(playerHand);if(handValue(playerHand)>21){endGame("😢 Sballato!");}};
-document.getElementById("standBtn").onclick=()=>{let dealerVal=handValue(dealerHand);while(dealerVal<17){dealerHand.push(deck.pop());renderHand(dealerCardsEl,dealerHand);dealerVal=handValue(dealerHand);}playerTotalEl.textContent=handValue(playerHand);dealerTotalEl.textContent=dealerVal;const pv=handValue(playerHand),dv=dealerVal;if(dv>21||pv>dv){endGame("🎉 Hai vinto!");}else if(pv<dv){endGame("😢 Hai perso...");}else{endGame("🤝 Pareggio");}};
-startGame();
-
-/* === CLASSIFICA === */
-async function loadLeaderboard(){
-  try{
-    const res=await fetch(`${API_URL}/leaderboard`);
-    const board=await res.json();
-    const list=document.getElementById("leaderboard-list");
-    list.innerHTML="";
-    board.forEach((row,i)=>{
-      const li=document.createElement("li");
-      li.innerHTML=`<span>#${i+1}</span> ${row.user} <span>${row.money} 💰</span>`;
+async function loadLeaderboard() {
+  const list = document.getElementById("leaderboard-list");
+  list.innerHTML = "<li>Caricamento...</li>";
+  try {
+    const res = await fetch(apiBase + "/leaderboard");
+    const data = await res.json();
+    list.innerHTML = "";
+    data.forEach((p, i) => {
+      const li = document.createElement("li");
+      li.innerHTML = `${i+1}. ${p.player} <span>${p.money}💰</span>`;
+      if (p.player === playerName) li.style.color = "gold";
       list.appendChild(li);
     });
-  }catch(e){console.error("Errore leaderboard",e);}
+  } catch (e) {
+    list.innerHTML = "<li>Errore caricamento classifica</li>";
+  }
 }
-document.querySelector('a[onclick="showPage(\'classifica\')"]').addEventListener("click",loadLeaderboard);
 
-/* === INIT === */
-loadProgress();
+// =====================
+// CONTROLLO SUONI
+// =====================
+document.addEventListener("keydown", e=>{
+  if (e.key==="m") { soundOn=!soundOn; notify(soundOn?"🔊 Suoni attivi":"🔇 Suoni mutati"); }
+});
+
+// =====================
+// AVVIO
+// =====================
+updateStats();
+dailyBonus();
+notify("🎰 Benvenuto al Mini Casino! Premi M per ON/OFF suoni");
