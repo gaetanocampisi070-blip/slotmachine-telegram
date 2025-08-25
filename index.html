@@ -27,11 +27,6 @@
 
       <button id="spinBtn">🎲 Gira</button>
       <p id="result"></p>
-
-      <div id="leaderboard">
-        <h2>🏆 Classifica</h2>
-        <ul id="leaderboard-list"></ul>
-      </div>
     </div>
 
     <!-- BLACKJACK -->
@@ -56,12 +51,20 @@
 
       <p id="bj-result"></p>
     </div>
+
+    <!-- CLASSIFICA -->
+    <div id="page-classifica" class="page">
+      <h1>🏆 Classifica</h1>
+      <ul id="leaderboard-list"></ul>
+    </div>
+
   </div>
 
   <!-- Navbar -->
   <div class="navbar">
     <a href="#" onclick="showPage('slot')">🎰 Slot</a>
     <a href="#" onclick="showPage('carte')">🃏 Blackjack</a>
+    <a href="#" onclick="showPage('classifica')">🏆 Classifica</a>
   </div>
 
   <script src="script.js"></script>
