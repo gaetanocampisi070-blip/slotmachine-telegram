@@ -1,158 +1,122 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gioco del Quiz - Ottimizzato</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f9;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            text-align: center;
-            background-color: white;
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-        }
-        .question {
-            font-size: 1.5em;
-            margin-bottom: 20px;
-        }
-        .answers {
-            margin: 20px 0;
-        }
-        .answers button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 15px;
-            margin: 10px;
-            font-size: 1.2em;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .answers button:hover {
-            background-color: #2980b9;
-        }
-        #startButton {
-            background-color: #2ecc71;
-            font-size: 1.5em;
-            padding: 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            color: white;
-            border: none;
-        }
-        #startButton:hover {
-            background-color: #27ae60;
-        }
-        .result {
-            font-size: 1.2em;
-            margin-top: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerCoin Game</title>
+  <style>
+    body{font-family:sans-serif;background:#f0f0f0;color:#333;margin:0;padding:0}.app{max-width:520px;margin:0 auto;padding:10px}.topbar{display:flex;align-items:center;gap:8px;padding:10px;background:#0a2a68;color:white;border-radius:16px}.pill{background:#22345f;color:white;padding:8px 12px;border-radius:999px}.cabinet{background:#0a2a68;color:white;border-radius:28px;padding:16px}.panel{background:#121b36;border-radius:22px;padding:12px}.tapCard{display:grid;place-items:center;background:#22345f;border-radius:18px;padding:14px}.tapBtn{padding:16px 26px;background:#ffe082;color:#4a3000;border:none;border-radius:22px;cursor:pointer}.tapBtn:active{transform:translateY(2px)}.tabs{display:flex;gap:8px;margin-top:10px}.tab{padding:10px 8px;background:#121b36;color:white;border-radius:12px;cursor:pointer}.tab.active{outline:2px solid #89f}.view{display:none}.view.active{display:block}.card{background:#121b36;padding:12px;border-radius:16px;margin-bottom:10px}.btn{background:#94b4ff;color:white;font-weight:700;padding:8px 12px;border-radius:10px}.toast{position:fixed;left:50%;bottom:18px;background:#111a34;color:white;padding:10px;border-radius:12px;opacity:0;transition:.3s}.toast.show{opacity:1}
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div id="startScreen">
-            <button id="startButton">Inizia il Quiz</button>
-        </div>
-        <div id="gameScreen" style="display: none;">
-            <div class="question" id="question"></div>
-            <div class="answers" id="answers"></div>
-            <div id="result" class="result"></div>
-        </div>
+  <div id="splash">
+    <div class="splash-content">
+      <div class="splash-logo">🍔 BurgerCoin</div>
+      <div class="splash-progress"><div id="progress-bar"></div></div>
     </div>
+  </div>
+  <div id="app" aria-hidden="true" class="app">
+    <div class="topbar">
+      <div class="pill">🍔 <b id="coins">0</b></div>
+      <div class="pill">⚡ <b id="energy">0</b></div>
+      <div class="pill">💎 <b id="gems">0</b></div>
+      <div class="pill" id="username">👤 Guest</div>
+    </div>
+    <div class="cabinet">
+      <div class="titleBadge">BURGER COIN</div>
+      <div class="panel">
+        <div class="progress" style="margin-bottom:8px">
+          <div class="badge">Lvl <b id="level">1</b></div>
+          <div class="track"><div class="bar" id="xpbar"></div></div>
+          <div class="badge"><b id="xptext">0/100 XP</b></div>
+        </div>
+        <div class="tapCard" id="tapArea">
+          <button class="tapBtn" id="tapBtn">TAP TO EARN</button>
+        </div>
+        <div class="grid2">
+          <div class="badge">💥 Combo: <b id="combo">x1</b></div>
+          <div class="badge">⏳ Offline: <b id="offline">0s</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="tabs">
+      <div class="tab active" data-view="home">🏠 Home</div>
+      <div class="tab" data-view="upgrades">🛒 Upgrades</div>
+      <div class="tab" data-view="missions">📜 Missions</div>
+      <div class="tab" data-view="wheel">🎡 Wheel</div>
+      <div class="tab" data-view="rank">🏆 Leaderboard</div>
+    </div>
+    <div class="view active" id="view-home">
+      <div class="card center">Tap the <b>BurgerCoin</b> to earn. Buy upgrades, complete missions, and spin the wheel!</div>
+      <div class="card grid2">
+        <div>🎁 Daily: <b id="dailyInfo">Available</b></div>
+        <button class="btn" id="claimDaily">Claim</button>
+      </div>
+      <div class="card grid2">
+        <div>🚀 Boost x2 (60s)</div>
+        <button class="btn" id="boost">Use</button>
+      </div>
+    </div>
+    <div class="view" id="view-upgrades">
+      <div id="shopList"></div>
+    </div>
+    <div class="view" id="view-missions">
+      <div id="missionList"></div>
+    </div>
+    <div class="view" id="view-wheel">
+      <div class="wheelWrap">
+        <div class="pointer"></div>
+        <div class="wheel" id="wheel"></div>
+        <div class="center">
+          <div class="small">Spin the wheel (1 gem)</div>
+          <button class="btn" id="spinWheel">Spin</button>
+        </div>
+      </div>
+    </div>
+    <div class="view" id="view-rank">
+      <div class="card">
+        <div class="small">Global Leaderboard (daily shuffle)</div>
+        <div id="rankTable"></div>
+      </div>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
 
-    <script>
-        const questions = [
-            {
-                question: "Qual è la capitale d'Italia?",
-                answers: ["Roma", "Milano", "Napoli", "Torino"],
-                correct: "Roma"
-            },
-            {
-                question: "Chi ha scritto la Divina Commedia?",
-                answers: ["Dante Alighieri", "Petrarca", "Boccaccio", "Leopardi"],
-                correct: "Dante Alighieri"
-            },
-            {
-                question: "Quanti stati ci sono negli USA?",
-                answers: ["50", "52", "51", "48"],
-                correct: "50"
-            },
-            {
-                question: "In quale anno è stato lanciato il primo uomo sulla luna?",
-                answers: ["1969", "1959", "1972", "1985"],
-                correct: "1969"
-            }
-        ];
+  <script>
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const now = () => Date.now();
+    const fmt = n => (n >= 1e12 ? (n / 1e12).toFixed(2) + "T" : n >= 1e9 ? (n / 1e9).toFixed(2) + "B" : n >= 1e6 ? (n / 1e6).toFixed(2) + "M" : n >= 1e3 ? (n / 1e3).toFixed(1) + "K" : Math.floor(n).toString());
+    let S = JSON.parse(localStorage.getItem("burgercoin-game-v2") || "{}") || { coins: 150, energy: 60, gems: 5, level: 1, xp: 0, xpMax: 120, combo: 1, daily: { last: 0, streak: 0 }, upgrades: {} };
+    
+    function save() { localStorage.setItem("burgercoin-game-v2", JSON.stringify(S)); }
+    function toast(msg) { const t = $("#toast"); t.textContent = msg; t.classList.add("show"); setTimeout(() => t.classList.remove("show"), 1800); }
+    function renderTop() {
+      $("#coins").textContent = fmt(S.coins);
+      $("#energy").textContent = Math.floor(S.energy);
+      $("#gems").textContent = S.gems;
+      $("#level").textContent = S.level;
+      $("#xptext").textContent = S.xp + "/" + S.xpMax + " XP";
+      $("#xpbar").style.width = (100 * S.xp / S.xpMax) + "%";
+    }
 
-        let currentQuestion = 0;
-        let score = 0;
+    $("#tapBtn").onclick = () => {
+      S.coins += 1 + S.combo;
+      S.xp += 2;
+      renderTop(); save();
+    };
 
-        document.getElementById('startButton').addEventListener('click', startGame);
+    $("#claimDaily").onclick = () => {
+      if (now() - S.daily.last < 24 * 3600 * 1000) return;
+      S.daily.last = now();
+      S.daily.streak = Math.min(30, S.daily.streak + 1);
+      const reward = 80 * S.daily.streak;
+      S.coins += reward;
+      toast("Daily + " + fmt(reward) + " (streak " + S.daily.streak + ")");
+      renderTop(); save();
+    };
 
-        function startGame() {
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            showQuestion();
-        }
-
-        function showQuestion() {
-            const questionData = questions[currentQuestion];
-            document.getElementById('question').textContent = questionData.question;
-            const answersDiv = document.getElementById('answers');
-            answersDiv.innerHTML = ''; // Pulisce le risposte precedenti
-
-            questionData.answers.forEach(answer => {
-                const button = document.createElement('button');
-                button.textContent = answer;
-                button.addEventListener('click', () => checkAnswer(answer));
-                answersDiv.appendChild(button);
-            });
-        }
-
-        function checkAnswer(answer) {
-            const correctAnswer = questions[currentQuestion].correct;
-            if (answer === correctAnswer) {
-                score++;
-                document.getElementById('result').textContent = "Corretto!";
-            } else {
-                document.getElementById('result').textContent = `Sbagliato! La risposta giusta era ${correctAnswer}.`;
-            }
-
-            currentQuestion++;
-            if (currentQuestion < questions.length) {
-                setTimeout(() => {
-                    document.getElementById('result').textContent = '';
-                    showQuestion();
-                }, 2000);
-            } else {
-                setTimeout(showFinalResult, 2000);
-            }
-        }
-
-        function showFinalResult() {
-            document.getElementById('gameScreen').style.display = 'none';
-            const finalMessage = `Hai finito il quiz! Il tuo punteggio finale è ${score} su ${questions.length}.`;
-            alert(finalMessage);
-            document.getElementById('startScreen').style.display = 'block';
-            currentQuestion = 0;
-            score = 0;
-        }
-    </script>
+    renderTop();
+  </script>
 </body>
 </html>
-
