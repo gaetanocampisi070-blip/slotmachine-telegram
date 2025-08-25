@@ -4,28 +4,66 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slot Machine Game</title>
+  <title>Mini Casino</title>
   <link rel="stylesheet" href="style.css">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
   <div class="container">
-    <h1>🎰 Slot Machine</h1>
 
-    <div id="stats">
-      <p>Soldi: <span id="money">100</span> 💰</p>
-      <p>Stamina: <span id="stamina">100</span> ⏳</p>
+    <!-- SLOT -->
+    <div id="page-slot" class="page active">
+      <h1>🎰 Slot Machine</h1>
+      <div class="stats">
+        <p>💰 Soldi: <span id="money">100</span></p>
+        <p>⚡ Stamina: <span id="stamina">100</span></p>
+      </div>
+
+      <div id="slot">
+        <div class="reel" id="reel1">❓</div>
+        <div class="reel" id="reel2">❓</div>
+        <div class="reel" id="reel3">❓</div>
+      </div>
+
+      <button id="spinBtn">🎲 Gira</button>
+      <p id="result"></p>
+
+      <div id="leaderboard">
+        <h2>🏆 Classifica</h2>
+        <ul id="leaderboard-list"></ul>
+      </div>
     </div>
 
-    <div id="slot">
-      <div class="reel" id="reel1">❓</div>
-      <div class="reel" id="reel2">❓</div>
-      <div class="reel" id="reel3">❓</div>
+    <!-- BLACKJACK -->
+    <div id="page-carte" class="page">
+      <h1>🃏 Blackjack</h1>
+      <div class="stats">
+        <p>💰 Soldi: <span id="moneyBJ">100</span></p>
+        <p>⚡ Stamina: <span id="staminaBJ">100</span></p>
+      </div>
+
+      <div class="bj-area">
+        <p><strong>Le tue carte:</strong> <span id="player-cards"></span></p>
+        <p><strong>Totale:</strong> <span id="player-total">0</span></p>
+        <p><strong>Carte banco:</strong> <span id="dealer-cards"></span></p>
+        <p><strong>Totale banco:</strong> <span id="dealer-total">0</span></p>
+      </div>
+
+      <div class="bj-buttons">
+        <button id="hitBtn">✋ Pesca</button>
+        <button id="standBtn">🛑 Stai</button>
+      </div>
+
+      <p id="bj-result"></p>
     </div>
+  </div>
 
-    <button id="spinBtn">Gira 🎲</button>
-    <div id="result"></div>
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="#" onclick="showPage('slot')">🎰 Slot</a>
+    <a href="#" onclick="showPage('carte')">🃏 Blackjack</a>
+  </div>
 
-    <!-- Classifica -->
-    <div id="leaderboard">
-      <h2>🏆
+  <script src="script.js"></script>
+</body>
+</html>
