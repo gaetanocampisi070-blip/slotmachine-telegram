@@ -1,119 +1,157 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎰 Mini Casino Deluxe</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport"
+        content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover,user-scalable=no" />
+  <title>Mini Casino Deluxe</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
 
-  <div class="container">
-
-    <!-- HEADER -->
-    <header>
-      <h1>🎰 Mini Casino Deluxe</h1>
-      <p id="levelLabel">Lv.1</p>
-      <div class="progress-container">
-        <div id="xpBar"></div>
+  <!-- App fissa mobile -->
+  <div id="app">
+    <!-- Header compatto -->
+    <header class="app-header">
+      <div class="brand">
+        <span class="logo">💎</span>
+        <h1>Mini Casino</h1>
+      </div>
+      <div class="top-cta">
+        <button id="soundToggle" class="icon-btn" aria-label="Suono ON/OFF">🔊</button>
       </div>
     </header>
 
-    <!-- SLOT -->
-    <div id="page-slot" class="page active">
-      <h2>🎰 Slot Machine</h2>
-      <div class="stats">
-        <p>💰 Soldi: <span id="money">0</span></p>
-        <p>⚡ Stamina: <span id="stamina">0</span></p>
+    <!-- Info giocatore -->
+    <section class="player-info">
+      <div class="money">💰 <span id="money">0</span></div>
+      <div class="stamina">⚡ <span id="stamina">0</span></div>
+      <div class="level">
+        <span id="levelLabel">Lv.1</span>
+        <div class="xp-wrap"><div id="xpBar"></div></div>
       </div>
-      <div class="slot-frame">
-        <div class="reels" id="reels">
-          <div class="win-line"></div>
-          <div class="reel"><div class="strip"></div></div>
-          <div class="reel"><div class="strip"></div></div>
-          <div class="reel"><div class="strip"></div></div>
+    </section>
+
+    <!-- Contenuto pagine -->
+    <main id="pages">
+
+      <!-- SLOT -->
+      <section id="page-slot" class="page active" aria-label="Slot Machine">
+        <h2 class="page-title">🎰 Slot Machine</h2>
+        <div class="slot-frame">
+          <div class="reels">
+            <div class="reel"><div class="strip"></div></div>
+            <div class="reel"><div class="strip"></div></div>
+            <div class="reel"><div class="strip"></div></div>
+            <div class="win-line"></div>
+          </div>
+          <div class="controls-row">
+            <button id="spinBtn" class="btn primary">🎲 Gira</button>
+            <button id="autoBtn" class="btn ghost">♻️ Auto</button>
+          </div>
+          <p id="result" class="result"></p>
+          <div class="jackpot">Jackpot Globale: <span id="jackpot">1000</span> 💎</div>
         </div>
-        <button id="spinBtn" class="btn-spin">🎲 Gira</button>
-        <button id="autoBtn" class="btn-secondary">♻️ Auto-Spin</button>
-        <p id="result"></p>
-        <div id="jackpot-display">💎 Jackpot: <span id="jackpot">1000</span></div>
-      </div>
-    </div>
 
-    <!-- BLACKJACK -->
-    <div id="page-carte" class="page">
-      <h2>🃏 Blackjack</h2>
-      <div class="stats">
-        <p>💰 Soldi: <span id="moneyBJ">0</span></p>
-        <p>⚡ Stamina: <span id="staminaBJ">0</span></p>
-      </div>
-      <div class="bj-frame">
-        <div class="bj-area">
-          <h3>Banco</h3>
-          <div id="dealer-cards" class="cards"></div>
-          <p><strong>Totale:</strong> <span id="dealer-total">0</span></p>
-          <hr>
-          <h3>Giocatore</h3>
-          <div id="player-cards" class="cards"></div>
-          <p><strong>Totale:</strong> <span id="player-total">0</span></p>
+        <div class="info-row">
+          <div class="pill">🎁 Bonus Giornaliero <button id="dailyBtn" class="mini-btn">Riscatta</button></div>
+          <div class="pill">🎯 Missioni <button class="mini-btn" onclick="showPage('missioni')">Vai</button></div>
         </div>
-        <div class="bj-buttons">
-          <button id="hitBtn" class="btn-spin">✋ Pesca</button>
-          <button id="standBtn" class="btn-spin">🛑 Stai</button>
+      </section>
+
+      <!-- BLACKJACK -->
+      <section id="page-blackjack" class="page" aria-label="Blackjack">
+        <h2 class="page-title">🃏 Blackjack</h2>
+        <div class="bj-table">
+          <div class="row">
+            <h3>Banco</h3>
+            <div id="dealer-cards" class="cards"></div>
+            <div class="tot">Totale: <span id="dealer-total">0</span></div>
+          </div>
+          <hr/>
+          <div class="row">
+            <h3>Giocatore</h3>
+            <div id="player-cards" class="cards"></div>
+            <div class="tot">Totale: <span id="player-total">0</span></div>
+          </div>
+          <div class="controls-row">
+            <button id="bjDealBtn" class="btn primary">🎴 Distribuisci</button>
+            <button id="hitBtn" class="btn">✋ Pesca</button>
+            <button id="standBtn" class="btn">🛑 Stai</button>
+          </div>
+          <p id="bj-result" class="result"></p>
         </div>
-        <p id="bj-result"></p>
-      </div>
-    </div>
+      </section>
 
-    <!-- RUOTA DELLA FORTUNA -->
-    <div id="page-ruota" class="page">
-      <h2>🎡 Ruota della Fortuna</h2>
-      <canvas id="wheelCanvas" width="300" height="300"></canvas>
-      <button id="spinWheelBtn" class="btn-spin">🎡 Gira la Ruota</button>
-      <p id="wheelResult"></p>
-    </div>
+      <!-- RUOTA DELLA FORTUNA -->
+      <section id="page-ruota" class="page" aria-label="Ruota della Fortuna">
+        <h2 class="page-title">🎡 Ruota della Fortuna</h2>
+        <div class="wheel-wrap">
+          <canvas id="wheelCanvas" width="320" height="320"></canvas>
+          <div class="pointer">▲</div>
+        </div>
+        <button id="spinWheelBtn" class="btn primary">Gira la Ruota</button>
+        <p id="wheelResult" class="result"></p>
+      </section>
 
-    <!-- GRATTA E VINCI -->
-    <div id="page-gratta" class="page">
-      <h2>🎟️ Gratta & Vinci</h2>
-      <div class="scratch-card">
-        <canvas id="scratchCanvas" width="300" height="150"></canvas>
-        <p id="scratchResult">Gratta per scoprire se hai vinto!</p>
-      </div>
-    </div>
+      <!-- GRATTA & VINCI -->
+      <section id="page-gratta" class="page" aria-label="Gratta & Vinci">
+        <h2 class="page-title">🎟️ Gratta & Vinci</h2>
+        <div class="scratch-card">
+          <div class="prize" id="scratchPrize">???</div>
+          <canvas id="scratchCanvas" width="320" height="180"></canvas>
+        </div>
+        <p id="scratchResult" class="result">Gratta oltre il 60% per scoprire il premio!</p>
+        <button id="newScratchBtn" class="btn">Nuovo biglietto</button>
+      </section>
 
-    <!-- CLASSIFICA -->
-    <div id="page-classifica" class="page">
-      <h2>🏆 Classifica</h2>
-      <ul id="leaderboard-list"></ul>
-    </div>
+      <!-- MISSIONI -->
+      <section id="page-missioni" class="page" aria-label="Missioni giornaliere">
+        <h2 class="page-title">🎯 Missioni Giornaliere</h2>
+        <ul id="missions" class="mission-list">
+          <!-- Render dinamico -->
+        </ul>
+        <p id="mission-reward" class="result"></p>
+      </section>
 
-    <!-- MISSIONI -->
-    <div id="page-missioni" class="page">
-      <h2>🎯 Missioni Giorno</h2>
-      <ul id="missions">
-        <li>🎰 Fai 10 spin <span id="mission-spin">0/10</span></li>
-        <li>🃏 Gioca 5 mani di Blackjack <span id="mission-bj">0/5</span></li>
-        <li>🎡 Gira la ruota 3 volte <span id="mission-wheel">0/3</span></li>
-      </ul>
-      <p id="mission-reward"></p>
-    </div>
+      <!-- CLASSIFICA -->
+      <section id="page-classifica" class="page" aria-label="Classifica">
+        <h2 class="page-title">🏆 Classifica</h2>
+        <ul id="leaderboard-list" class="leaderboard"></ul>
+      </section>
 
+      <!-- IMPOSTAZIONI (opzionale) -->
+      <section id="page-settings" class="page" aria-label="Impostazioni">
+        <h2 class="page-title">⚙️ Impostazioni</h2>
+        <div class="settings">
+          <label class="switch">
+            <input type="checkbox" id="soundChk" checked />
+            <span>Suoni</span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="vibrateChk" checked />
+            <span>Vibrazione</span>
+          </label>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Navbar fissa -->
+    <nav class="navbar">
+      <button onclick="showPage('slot')" aria-label="Slot">🎰</button>
+      <button onclick="showPage('blackjack')" aria-label="Blackjack">🃏</button>
+      <button onclick="showPage('ruota')" aria-label="Ruota">🎡</button>
+      <button onclick="showPage('gratta')" aria-label="Gratta & Vinci">🎟️</button>
+      <button onclick="showPage('missioni')" aria-label="Missioni">🎯</button>
+      <button onclick="showPage('classifica')" aria-label="Classifica">🏆</button>
+      <button onclick="showPage('settings')" aria-label="Impostazioni">⚙️</button>
+    </nav>
+
+    <!-- Toast -->
+    <div id="toast-container"></div>
   </div>
-
-  <!-- NAVBAR -->
-  <div class="navbar">
-    <a href="#" onclick="showPage('slot')">🎰 Slot</a>
-    <a href="#" onclick="showPage('carte')">🃏 Blackjack</a>
-    <a href="#" onclick="showPage('ruota')">🎡 Ruota</a>
-    <a href="#" onclick="showPage('gratta')">🎟️ Gratta</a>
-    <a href="#" onclick="showPage('missioni')">🎯 Missioni</a>
-    <a href="#" onclick="showPage('classifica')">🏆 Classifica</a>
-  </div>
-
-  <!-- TOAST CONTAINER -->
-  <div id="toast-container"></div>
 
   <!-- Script -->
   <script src="script.js"></script>
