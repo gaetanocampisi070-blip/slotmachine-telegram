@@ -1,89 +1,89 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" name="viewport"/>
-<title>BurgerCoin — Idle Tap</title>
-<meta content="#0a2a68" name="theme-color"/>
-<style>
-:root{
-  --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
-  --panel:#121b36; --panel2:#1c2d5b;
-  --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
-  --mint1:#b2ff59; --mint2:#69f0ae;
-  --text:#fff; --muted:#c7d2fe;
-  --shadow: 0 18px 32px rgba(0,0,0,.46);
-  --inset: inset 0 -2px 0 rgba(0,0,0,.2), inset 0 2px 0 rgba(255,255,255,.12);
-}
-*{box-sizing:border-box}
-html,body{height:100%; margin:0}
-/* Keep screen fixed (no scroll) for mobile */
-html, body{ overflow:hidden; background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%); color:var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif; }
-.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; gap:12px; padding: calc(10px + env(safe-area-inset-top)) 10px 20px; }
-/* SPLASH SCREEN STYLES */
-#splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%); display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
-.splash-content{ text-align:center; color:#fff }
-.splash-logo{ font-weight:900; font-size:34px; letter-spacing:.8px; margin:10px 0 14px }
-.splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1); padding:18px 18px 16px; border-radius:20px; box-shadow: var(--shadow) }
-.splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden; background: rgba(255,255,255,.18); margin-top:12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
-#progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
-/* GENERAL GAME STYLES */
-.coinBtn{ width: 56%; max-width: 300px; aspect-ratio:1/1; background-image:url('burger_image.jpeg'); background-size:contain; background-position:center; background-repeat:no-repeat; cursor:pointer; user-select:none; touch-action:manipulation; filter: drop-shadow(0 10px 18px rgba(0,0,0,.35)); }
-.coinBtn:active{ transform:translateY(2px) }
-.tapped{ animation: tapBounce .12s ease-out both }
-.fly{ position:absolute; left:50%; top:56%; transform:translate(-50%,-50%); font-weight:900; text-shadow:0 2px 0 rgba(0,0,0,.3); opacity:0; }
-/* bounce animation on tap */
-@keyframes tapBounce{ 0%{transform:scale(1)} 40%{transform:scale(.92)} 100%{transform:scale(1)} }
-/* Top bar and progress bar */
-.topbar{ position:sticky; top: calc(env(safe-area-inset-top) + 6px); z-index:5; display:flex; align-items:center; gap:8px; flex-wrap:wrap; padding:10px; background: linear-gradient(180deg, var(--panel2), var(--panel)); border-radius:16px; box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.06); }
-.pill{ display:flex; align-items:center; gap:8px; background: rgba(10,15,35,.8); border:1px solid rgba(255,255,255,.08); padding:8px 12px; border-radius:999px; box-shadow: var(--inset); white-space:nowrap }
-.icoCoin{ width:18px; height:18px; vertical-align:middle; image-rendering:auto; }
-/* Tap Card */
-.tapCard{ margin-top:10px; display:grid; place-items:center; background: radial-gradient(60% 60% at 50% 35%, #22345f 0%, #121b36 60%); border-radius:18px; border:1px solid rgba(255,255,255,.05); padding:14px; position:relative; overflow:hidden; min-height: 340px; }
-/* Progress bar styling */
-.track{flex:1; height:14px; border-radius:999px; background: rgba(255,255,255,.08); box-shadow: inset 0 2px 4px rgba(0,0,0,.35); overflow:hidden}
-.bar{height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width:0%}
-/* Golden border around the quadrant */
-.coinContainer {
-  border: 3px solid var(--gold2);
-  border-radius: 16px;
-  padding: 20px;
-  position:relative;
-}
-/* Buttons Section */
-.buttonContainer {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 20px;
-  width: 100%;
-}
-.button {
-  padding: 12px;
-  background-color: #ffca28;
-  border-radius: 8px;
-  border: none;
-  color: white;
-  font-size: 16px;
-  cursor: pointer;
-  width: 100%;
-}
-.button:hover {
-  background-color: #ffb300;
-}
-</style>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" name="viewport"/>
+  <title>BurgerCoin — Idle Tap</title>
+  <meta content="#0a2a68" name="theme-color"/>
+  <style>
+    :root {
+      --bg: #0a2a68; --sky1: #224aa2; --sky2: #081b43;
+      --panel: #121b36; --panel2: #1c2d5b;
+      --gold1: #ffe082; --gold2: #ffca28; --gold3: #ffb300;
+      --mint1: #b2ff59; --mint2: #69f0ae;
+      --text: #fff; --muted: #c7d2fe;
+      --shadow: 0 18px 32px rgba(0, 0, 0, .46);
+      --inset: inset 0 -2px 0 rgba(0, 0, 0, .2), inset 0 2px 0 rgba(255, 255, 255, .12);
+    }
+    * { box-sizing: border-box }
+    html, body { height: 100%; margin: 0; }
+    html, body {
+      overflow: hidden;
+      background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
+    }
+    .app { max-width: 520px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; gap: 12px; padding: calc(10px + env(safe-area-inset-top)) 10px 20px; }
+    /* SPLASH SCREEN STYLES */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      z-index: 9999;
+      transition: opacity .6s ease;
+    }
+    .splash-content { text-align: center; color: #fff; }
+    .splash-logo { font-weight: 900; font-size: 34px; letter-spacing: .8px; margin: 10px 0 14px; }
+    .splash-card { background: linear-gradient(180deg, #22345f, #121b36); border: 1px solid rgba(255, 255, 255, .1); padding: 18px 18px 16px; border-radius: 20px; box-shadow: var(--shadow); }
+    .splash-progress { width: 260px; height: 18px; border-radius: 12px; overflow: hidden; background: rgba(255, 255, 255, .18); margin-top: 12px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, .35); }
+    #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease; }
+    /* GENERAL GAME STYLES */
+    .coinBtn { width: 56%; max-width: 300px; aspect-ratio: 1/1; background-image: url('burger_image.jpeg'); background-size: contain; background-position: center; background-repeat: no-repeat; cursor: pointer; user-select: none; touch-action: manipulation; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35)); }
+    .coinBtn:active { transform: translateY(2px) }
+    .tapped { animation: tapBounce .12s ease-out both }
+    .fly { position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%); font-weight: 900; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); opacity: 0; }
+    /* bounce animation on tap */
+    @keyframes tapBounce { 0% { transform: scale(1) } 40% { transform: scale(.92) } 100% { transform: scale(1) } }
+    /* Top bar and progress bar */
+    .topbar { position: sticky; top: calc(env(safe-area-inset-top) + 6px); z-index: 5; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; background: linear-gradient(180deg, var(--panel2), var(--panel)); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, .06); }
+    .pill { display: flex; align-items: center; gap: 8px; background: rgba(10, 15, 35, .8); border: 1px solid rgba(255, 255, 255, .08); padding: 8px 12px; border-radius: 999px; box-shadow: var(--inset); white-space: nowrap }
+    .icoCoin { width: 18px; height: 18px; vertical-align: middle; image-rendering: auto; }
+    /* Tap Card */
+    .tapCard { margin-top: 10px; display: grid; place-items: center; background: radial-gradient(60% 60% at 50% 35%, #22345f 0%, #121b36 60%); border-radius: 18px; border: 1px solid rgba(255, 255, 255, .05); padding: 14px; position: relative; overflow: hidden; min-height: 340px; }
+    /* Progress bar styling */
+    .track { flex: 1; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35); overflow: hidden }
+    .bar { height: 100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width: 0% }
+    /* Golden border around the quadrant */
+    .coinContainer { border: 3px solid var(--gold2); border-radius: 16px; padding: 20px; position: relative; }
+    /* Buttons Section */
+    .buttonContainer {
+      display: flex;
+      flex-direction: row; /* Pulsanti in riga orizzontale */
+      gap: 10px;
+      margin-top: 20px;
+      width: 100%;
+      overflow-x: auto; /* Consente di scorrere orizzontalmente */
+      white-space: nowrap; /* Evita il ritorno a capo dei pulsanti */
+    }
+    .button { padding: 12px; background-color: #ffca28; border-radius: 8px; border: none; color: white; font-size: 16px; cursor: pointer; width: 100px; }
+    .button:hover { background-color: #ffb300; }
+  </style>
 </head>
 <body>
 <!-- SPLASH SCREEN -->
 <div aria-label="Loading" id="splash" role="dialog">
-<div class="splash-content">
-<div class="splash-card">
-<img alt="BurgerCoin logo" src="burger_image.jpeg" style="width:180px; display:block; margin:0 auto 8px;"/>
-<div class="splash-logo">🍔 BurgerCoin</div>
-<div class="splash-progress"><div id="progress-bar"></div></div>
-<div class="smallnote">Loading resources…</div>
-</div>
-</div>
+  <div class="splash-content">
+    <div class="splash-card">
+      <img alt="BurgerCoin logo" src="burger_image.jpeg" style="width:180px; display:block; margin:0 auto 8px;"/>
+      <div class="splash-logo">🍔 BurgerCoin</div>
+      <div class="splash-progress"><div id="progress-bar"></div></div>
+      <div class="smallnote">Loading resources…</div>
+    </div>
+  </div>
 </div>
 
 <!-- GAME CONTENT -->
@@ -152,23 +152,23 @@ let xpRequiredForNextLevel = 100;
 
 document.getElementById('coinBtn').addEventListener('click', function() {
   if (energy > 0) {
-    coins += 1; // Increment coins on tap
-    energy -= 1; // Decrease energy
-    xp += 10; // Increase XP on coin tap
+    coins += 1; // Incrementa le monete
+    energy -= 1; // Diminuisce l'energia
+    xp += 10; // Aumenta l'XP
 
-    // Level up and increase XP required
+    // Aumento del livello
     if (xp >= xpRequiredForNextLevel) {
       xp = 0;
-      level += 1; // Level up
-      xpRequiredForNextLevel = Math.round(xpRequiredForNextLevel * 1.2); // Increase XP needed for next level
+      level += 1; // Aumenta il livello
+      xpRequiredForNextLevel = Math.round(xpRequiredForNextLevel * 1.2); // Incrementa l'XP necessario per il livello successivo
     }
 
-    // Update display
+    // Aggiorna la visualizzazione
     document.getElementById('coins').textContent = coins;
     document.getElementById('energy').textContent = energy;
     document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
     document.getElementById('level').textContent = level;
-    document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`; // Update XP bar
+    document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`; // Aggiorna la barra dell'XP
   }
 });
 
