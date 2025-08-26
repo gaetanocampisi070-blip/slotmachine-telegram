@@ -23,7 +23,15 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
     }
-    .app { max-width: 520px; margin: 0 auto; height: 100dvh; display: flex; flex-direction: column; gap: 12px; padding: calc(10px + env(safe-area-inset-top)) 10px 20px; }
+    .app { 
+      max-width: 100%; 
+      margin: 0 auto; 
+      height: 100vh; 
+      display: flex; 
+      flex-direction: column; 
+      gap: 12px; 
+      padding: 10px; 
+    }
     /* SPLASH SCREEN STYLES */
     #splash {
       position: fixed;
@@ -42,35 +50,73 @@
     .splash-progress { width: 260px; height: 18px; border-radius: 12px; overflow: hidden; background: rgba(255, 255, 255, .18); margin-top: 12px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, .35); }
     #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease; }
     /* GENERAL GAME STYLES */
-    .coinBtn { width: 56%; max-width: 300px; aspect-ratio: 1/1; background-image: url('burger_image.jpeg'); background-size: contain; background-position: center; background-repeat: no-repeat; cursor: pointer; user-select: none; touch-action: manipulation; filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35)); }
+    .coinBtn { 
+      width: 56%; 
+      max-width: 300px; 
+      aspect-ratio: 1/1; 
+      background-image: url('burger_image.jpeg'); 
+      background-size: contain; 
+      background-position: center; 
+      background-repeat: no-repeat; 
+      cursor: pointer; 
+      user-select: none; 
+      touch-action: manipulation; 
+      filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35)); 
+    }
     .coinBtn:active { transform: translateY(2px) }
-    .tapped { animation: tapBounce .12s ease-out both }
-    .fly { position: absolute; left: 50%; top: 56%; transform: translate(-50%, -50%); font-weight: 900; text-shadow: 0 2px 0 rgba(0, 0, 0, .3); opacity: 0; }
-    /* bounce animation on tap */
-    @keyframes tapBounce { 0% { transform: scale(1) } 40% { transform: scale(.92) } 100% { transform: scale(1) } }
-    /* Top bar and progress bar */
-    .topbar { position: sticky; top: calc(env(safe-area-inset-top) + 6px); z-index: 5; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px; background: linear-gradient(180deg, var(--panel2), var(--panel)); border-radius: 16px; box-shadow: var(--shadow); border: 1px solid rgba(255, 255, 255, .06); }
-    .pill { display: flex; align-items: center; gap: 8px; background: rgba(10, 15, 35, .8); border: 1px solid rgba(255, 255, 255, .08); padding: 8px 12px; border-radius: 999px; box-shadow: var(--inset); white-space: nowrap }
+    .topbar { 
+      position: sticky; 
+      top: calc(env(safe-area-inset-top) + 6px); 
+      z-index: 5; 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      flex-wrap: wrap; 
+      padding: 10px; 
+      background: linear-gradient(180deg, var(--panel2), var(--panel)); 
+      border-radius: 16px; 
+      box-shadow: var(--shadow); 
+      border: 1px solid rgba(255, 255, 255, .06); 
+    }
+    .pill { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      background: rgba(10, 15, 35, .8); 
+      border: 1px solid rgba(255, 255, 255, .08); 
+      padding: 8px 12px; 
+      border-radius: 999px; 
+      box-shadow: var(--inset); 
+      white-space: nowrap 
+    }
     .icoCoin { width: 18px; height: 18px; vertical-align: middle; image-rendering: auto; }
-    /* Tap Card */
-    .tapCard { margin-top: 10px; display: grid; place-items: center; background: radial-gradient(60% 60% at 50% 35%, #22345f 0%, #121b36 60%); border-radius: 18px; border: 1px solid rgba(255, 255, 255, .05); padding: 14px; position: relative; overflow: hidden; min-height: 340px; }
-    /* Progress bar styling */
-    .track { flex: 1; height: 14px; border-radius: 999px; background: rgba(255, 255, 255, .08); box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35); overflow: hidden }
-    .bar { height: 100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width: 0% }
-    /* Golden border around the quadrant */
     .coinContainer { border: 3px solid var(--gold2); border-radius: 16px; padding: 20px; position: relative; }
-    /* Buttons Section */
     .buttonContainer {
       display: flex;
-      flex-direction: row; /* Pulsanti in riga orizzontale */
+      flex-wrap: nowrap;
+      justify-content: flex-start;
       gap: 10px;
       margin-top: 20px;
       width: 100%;
-      overflow-x: auto; /* Consente di scorrere orizzontalmente */
+      overflow-x: auto; /* Permette lo scorrimento orizzontale */
       white-space: nowrap; /* Evita il ritorno a capo dei pulsanti */
     }
-    .button { padding: 12px; background-color: #ffca28; border-radius: 8px; border: none; color: white; font-size: 16px; cursor: pointer; width: 100px; }
-    .button:hover { background-color: #ffb300; }
+    .button { 
+      padding: 12px; 
+      background-color: var(--panel2); 
+      border-radius: 8px; 
+      border: none; 
+      color: white; 
+      font-size: 14px; 
+      cursor: pointer; 
+      width: 100px;
+      display: flex; 
+      justify-content: center; 
+      align-items: center;
+      gap: 5px; 
+    }
+    .button:hover { background-color: var(--gold2); }
+    .button i { font-size: 18px; }
   </style>
 </head>
 <body>
@@ -95,39 +141,40 @@
     <div class="pill" id="username">👤 Guest</div>
   </div>
 
-  <div class="cabinet">
-    <div class="titleBadge" style="text-align:center; font-size:28px; font-weight:bold; color: var(--gold2);">BURGER COIN</div>
-    <div class="coinContainer">
-      <div class="progress" style="margin-bottom:8px">
-        <div class="badge">Lvl <b id="level">1</b></div>
-        <div class="track"><div class="bar" id="xpbar"></div></div>
-        <div class="badge"><b id="xptext">0/100 XP</b></div>
-      </div>
+  <div class="coinContainer">
+    <div class="progress" style="margin-bottom:8px">
+      <div class="badge">Lvl <b id="level">1</b></div>
+      <div class="track"><div class="bar" id="xpbar"></div></div>
+      <div class="badge"><b id="xptext">0/100 XP</b></div>
+    </div>
 
-      <div class="tapCard" id="tapArea">
-        <div aria-label="Tap coin to earn" class="coinBtn" id="coinBtn"></div>
-        <div class="fly" id="fly"></div>
-      </div>
+    <div class="tapCard" id="tapArea">
+      <div aria-label="Tap coin to earn" class="coinBtn" id="coinBtn"></div>
     </div>
   </div>
 
-  <!-- Buttons Section (5 buttons) -->
+  <!-- Button Section -->
   <div class="buttonContainer">
-    <button class="button" id="leaderboardBtn">Leaderboard</button>
-    <button class="button" id="missionBtn">Mission</button>
-    <button class="button" id="wheelBtn">Wheel</button>
-    <button class="button" id="upgradeBtn">Upgrade</button>
-    <button class="button" id="settingsBtn">Settings</button>
+    <button class="button" id="walletBtn"><i>💰</i> Wallet</button>
+    <button class="button" id="missionBtn"><i>🎯</i> Mission</button>
+    <button class="button" id="wheelBtn"><i>🎉</i> Wheel</button>
+    <button class="button" id="upgradeBtn"><i>🔧</i> Upgrade</button>
+    <button class="button" id="settingsBtn"><i>⚙️</i> Settings</button>
   </div>
 </div>
 
 <script>
-// Loading simulation for splash screen
-let progress = 0;
-const progressBar = document.getElementById("progress-bar");
+// Game mechanics
+let coins = 0;
+let energy = 100;
+let xp = 0;
+let level = 1;
+let xpRequiredForNextLevel = 100;
+let progress = 0; // Variabile per simulare il progresso di caricamento
 
+// Funzione per aggiornare la barra di progresso
 function updateProgressBar() {
-  progress += Math.random() * 20; // Random increment
+  progress += 2; // Incremento il valore del progresso
   if (progress >= 100) {
     progress = 100;
     setTimeout(() => {
@@ -135,21 +182,48 @@ function updateProgressBar() {
       setTimeout(() => {
         document.getElementById("splash").style.display = "none";
         document.getElementById("app").removeAttribute("aria-hidden");
-      }, 620); // Hide splash after 620ms
-    }, 280); // Keep splash visible for a while before disappearing
+      }, 620); // Nasconde la schermata dopo 620ms
+    }, 280); // Mantieni visibile la schermata di caricamento per un po'
   }
-  progressBar.style.width = progress + "%";
+  document.getElementById("progress-bar").style.width = progress + "%";
 }
 
 setInterval(updateProgressBar, 300);
 
-// Game mechanics
-let coins = 0;
-let energy = 100;
-let xp = 0;
-let level = 1;
-let xpRequiredForNextLevel = 100;
+// Funzione per salvare i progressi nel localStorage
+function saveProgress() {
+  localStorage.setItem('coins', coins);
+  localStorage.setItem('energy', energy);
+  localStorage.setItem('xp', xp);
+  localStorage.setItem('level', level);
+  localStorage.setItem('xpRequiredForNextLevel', xpRequiredForNextLevel);
+}
 
+// Funzione per caricare i progressi dal localStorage
+function loadProgress() {
+  coins = parseInt(localStorage.getItem('coins')) || 0;
+  energy = parseInt(localStorage.getItem('energy')) || 100;
+  xp = parseInt(localStorage.getItem('xp')) || 0;
+  level = parseInt(localStorage.getItem('level')) || 1;
+  xpRequiredForNextLevel = parseInt(localStorage.getItem('xpRequiredForNextLevel')) || 100;
+}
+
+// Funzione per aggiornare l'interfaccia utente
+function updateUI() {
+  document.getElementById('coins').textContent = coins;
+  document.getElementById('energy').textContent = energy;
+  document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
+  document.getElementById('level').textContent = level;
+  document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`;
+}
+
+// Carica i progressi all'avvio del gioco
+window.onload = function() {
+  loadProgress();
+  updateUI();
+}
+
+// Aggiungi l'evento per il click sul pulsante del coin
 document.getElementById('coinBtn').addEventListener('click', function() {
   if (energy > 0) {
     coins += 1; // Incrementa le monete
@@ -164,34 +238,11 @@ document.getElementById('coinBtn').addEventListener('click', function() {
     }
 
     // Aggiorna la visualizzazione
-    document.getElementById('coins').textContent = coins;
-    document.getElementById('energy').textContent = energy;
-    document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
-    document.getElementById('level').textContent = level;
-    document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`; // Aggiorna la barra dell'XP
+    updateUI();
+    saveProgress(); // Salva i progressi
   }
 });
-
-// Button functionality (stub functions for now)
-document.getElementById('leaderboardBtn').addEventListener('click', function() {
-  alert('Leaderboard functionality to be implemented!');
-});
-
-document.getElementById('missionBtn').addEventListener('click', function() {
-  alert('Mission functionality to be implemented!');
-});
-
-document.getElementById('wheelBtn').addEventListener('click', function() {
-  alert('Wheel functionality to be implemented!');
-});
-
-document.getElementById('upgradeBtn').addEventListener('click', function() {
-  alert('Upgrade functionality to be implemented!');
-});
-
-document.getElementById('settingsBtn').addEventListener('click', function() {
-  alert('Settings functionality to be implemented!');
-});
 </script>
+
 </body>
 </html>
