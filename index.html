@@ -23,15 +23,8 @@
       color: var(--text);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
     }
-    .app { 
-      max-width: 100%; 
-      margin: 0 auto; 
-      height: 100vh; 
-      display: flex; 
-      flex-direction: column; 
-      gap: 12px; 
-      padding: 10px; 
-    }
+
+    .app { max-width: 100%; margin: 0 auto; height: 100vh; display: flex; flex-direction: column; gap: 12px; padding: 10px; }
     /* SPLASH SCREEN STYLES */
     #splash {
       position: fixed;
@@ -49,6 +42,7 @@
     .splash-card { background: linear-gradient(180deg, #22345f, #121b36); border: 1px solid rgba(255, 255, 255, .1); padding: 18px 18px 16px; border-radius: 20px; box-shadow: var(--shadow); }
     .splash-progress { width: 260px; height: 18px; border-radius: 12px; overflow: hidden; background: rgba(255, 255, 255, .18); margin-top: 12px; box-shadow: inset 0 2px 6px rgba(0, 0, 0, .35); }
     #progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease; }
+
     /* GENERAL GAME STYLES */
     .coinBtn { 
       width: 56%; 
@@ -62,8 +56,11 @@
       user-select: none; 
       touch-action: manipulation; 
       filter: drop-shadow(0 10px 18px rgba(0, 0, 0, .35)); 
+      display: block;
+      margin: 0 auto;
     }
     .coinBtn:active { transform: translateY(2px) }
+
     .topbar { 
       position: sticky; 
       top: calc(env(safe-area-inset-top) + 6px); 
@@ -90,7 +87,16 @@
       white-space: nowrap 
     }
     .icoCoin { width: 18px; height: 18px; vertical-align: middle; image-rendering: auto; }
-    .coinContainer { border: 3px solid var(--gold2); border-radius: 16px; padding: 20px; position: relative; }
+    .coinContainer { 
+      border: 3px solid var(--gold2); 
+      border-radius: 16px; 
+      padding: 20px; 
+      position: relative; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 20px;
+    }
     .buttonContainer {
       display: flex;
       flex-wrap: nowrap;
@@ -117,6 +123,21 @@
     }
     .button:hover { background-color: var(--gold2); }
     .button i { font-size: 18px; }
+    /* Barra XP Styling */
+    .track { 
+      flex: 1; 
+      height: 14px; 
+      border-radius: 999px; 
+      background: rgba(255, 255, 255, .08); 
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, .35); 
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .bar { 
+      height: 100%; 
+      background: linear-gradient(90deg, var(--mint2), var(--mint1)); 
+      width: 0%;
+    }
   </style>
 </head>
 <body>
@@ -153,7 +174,7 @@
     </div>
   </div>
 
-  <!-- Button Section -->
+  <!-- Button Section (5 buttons) -->
   <div class="buttonContainer">
     <button class="button" id="walletBtn"><i>💰</i> Wallet</button>
     <button class="button" id="missionBtn"><i>🎯</i> Mission</button>
@@ -164,85 +185,74 @@
 </div>
 
 <script>
-// Game mechanics
-let coins = 0;
-let energy = 100;
-let xp = 0;
-let level = 1;
-let xpRequiredForNextLevel = 100;
-let progress = 0; // Variabile per simulare il progresso di caricamento
+// Loading simulation for splash screen
+let progress = 0;
+const progressBar = document.getElementById("progress-bar");
 
-// Funzione per aggiornare la barra di progresso
 function updateProgressBar() {
-  progress += 2; // Incremento il valore del progresso
+  progress += Math.random() * 20; // Random increment
   if (progress >= 100) {
     progress = 100;
     setTimeout(() => {
       document.getElementById("splash").style.opacity = 0;
       setTimeout(() => {
         document.getElementById("splash").style.display = "none";
-        document.getElementById("app").removeAttribute("aria-hidden");
-      }, 620); // Nasconde la schermata dopo 620ms
-    }, 280); // Mantieni visibile la schermata di caricamento per un po'
+        document.getElementById("app").style.display = "block"; // Make the game visible
+      }, 620); // Hide splash after 620ms
+    }, 280); // Keep splash visible for a while before disappearing
   }
-  document.getElementById("progress-bar").style.width = progress + "%";
+  progressBar.style.width = progress + "%";
 }
 
 setInterval(updateProgressBar, 300);
 
-// Funzione per salvare i progressi nel localStorage
+// Load progress from localStorage or set to default
+let coins = localStorage.getItem('coins') ? parseInt(localStorage.getItem('coins')) : 0;
+let energy = localStorage.getItem('energy') ? parseInt(localStorage.getItem('energy')) : 100;
+let xp = localStorage.getItem('xp') ? parseInt(localStorage.getItem('xp')) : 0;
+let level = localStorage.getItem('level') ? parseInt(localStorage.getItem('level')) : 1;
+let xpRequiredForNextLevel = 100;
+
+// Update the display with saved data
+document.getElementById('coins').textContent = coins;
+document.getElementById('energy').textContent = energy;
+document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
+document.getElementById('level').textContent = level;
+document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`; // Update XP bar
+
+// Function to save progress to localStorage
 function saveProgress() {
   localStorage.setItem('coins', coins);
   localStorage.setItem('energy', energy);
   localStorage.setItem('xp', xp);
   localStorage.setItem('level', level);
-  localStorage.setItem('xpRequiredForNextLevel', xpRequiredForNextLevel);
 }
 
-// Funzione per caricare i progressi dal localStorage
-function loadProgress() {
-  coins = parseInt(localStorage.getItem('coins')) || 0;
-  energy = parseInt(localStorage.getItem('energy')) || 100;
-  xp = parseInt(localStorage.getItem('xp')) || 0;
-  level = parseInt(localStorage.getItem('level')) || 1;
-  xpRequiredForNextLevel = parseInt(localStorage.getItem('xpRequiredForNextLevel')) || 100;
-}
-
-// Funzione per aggiornare l'interfaccia utente
-function updateUI() {
-  document.getElementById('coins').textContent = coins;
-  document.getElementById('energy').textContent = energy;
-  document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
-  document.getElementById('level').textContent = level;
-  document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`;
-}
-
-// Carica i progressi all'avvio del gioco
-window.onload = function() {
-  loadProgress();
-  updateUI();
-}
-
-// Aggiungi l'evento per il click sul pulsante del coin
+// Game mechanics
 document.getElementById('coinBtn').addEventListener('click', function() {
   if (energy > 0) {
-    coins += 1; // Incrementa le monete
-    energy -= 1; // Diminuisce l'energia
-    xp += 10; // Aumenta l'XP
+    coins += 1; // Increment coins on tap
+    energy -= 1; // Decrease energy
+    xp += 10; // Increase XP on coin tap
 
-    // Aumento del livello
+    // Level up and increase XP required
     if (xp >= xpRequiredForNextLevel) {
       xp = 0;
-      level += 1; // Aumenta il livello
-      xpRequiredForNextLevel = Math.round(xpRequiredForNextLevel * 1.2); // Incrementa l'XP necessario per il livello successivo
+      level += 1; // Level up
+      xpRequiredForNextLevel = Math.round(xpRequiredForNextLevel * 1.2); // Increase XP needed for next level
     }
 
-    // Aggiorna la visualizzazione
-    updateUI();
-    saveProgress(); // Salva i progressi
+    // Update display
+    document.getElementById('coins').textContent = coins;
+    document.getElementById('energy').textContent = energy;
+    document.getElementById('xptext').textContent = `${xp}/${xpRequiredForNextLevel} XP`;
+    document.getElementById('level').textContent = level;
+    document.getElementById('xpbar').style.width = `${(xp / xpRequiredForNextLevel) * 100}%`; // Update XP bar
+
+    // Save the progress
+    saveProgress();
   }
 });
 </script>
-
 </body>
 </html>
