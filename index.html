@@ -17,7 +17,8 @@
 html,body{height:100%; margin:0; overflow:hidden;
   background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
   color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
-.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; justify-content:flex-start; }
+.app{ max-width:520px; margin:35% auto 0 auto; /* ✅ tutto giù del 35% */
+  height:100dvh; display:flex; flex-direction:column; justify-content:flex-start; }
 
 /* TOPBAR */
 .topbar{ margin-top:10px; display:flex; justify-content:center; gap:14px;
@@ -39,6 +40,15 @@ html,body{height:100%; margin:0; overflow:hidden;
   border:1px solid rgba(255,255,255,.15);
   box-shadow: 0 4px 10px rgba(0,0,0,.4);
   color: var(--gold2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#balance.flash {
+  animation: balanceAnim 0.6s ease;
+}
+@keyframes balanceAnim {
+  0% { transform: scale(1); box-shadow: 0 0 6px gold; }
+  50% { transform: scale(1.2); box-shadow: 0 0 16px gold; }
+  100% { transform: scale(1); }
 }
 
 /* TITOLO */
@@ -106,12 +116,12 @@ html,body{height:100%; margin:0; overflow:hidden;
   color: var(--mint2);
   text-shadow: 0 0 6px rgba(0,255,128,.8);
   box-shadow: 0 0 8px rgba(0,0,0,.6);
-  transition: background 0.3s, color 0.3s;
+  transition: color 0.3s;
 }
 #comboText.flash { animation: glow 0.4s ease; }
 @keyframes glow {
-  0%{ transform:scale(1); box-shadow:0 0 6px lime; }
-  50%{ transform:scale(1.15); box-shadow:0 0 16px gold; }
+  0%{ transform:scale(1); text-shadow:0 0 6px lime; }
+  50%{ transform:scale(1.3); text-shadow:0 0 16px gold; }
   100%{ transform:scale(1); }
 }
 
@@ -169,7 +179,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 <script>
 // VARIABILI
 let coins=0, energy=100, xp=0, level=1, xpToNext=100;
-let combo=1.00, comboTimer, balance=0.00;
+let combo=1.00, comboTimer, balance=0.00, lastBalance=0.00;
 
 const coinBtn=document.getElementById('coinBtn');
 const comboText=document.getElementById('comboText');
@@ -202,8 +212,9 @@ coinBtn.addEventListener('click',()=>{
     }
     updateComboStyle();
     comboText.classList.add("flash");
-    coinBtn.classList.add("clickAnim");
     setTimeout(()=>comboText.classList.remove("flash"),400);
+
+    coinBtn.classList.add("clickAnim");
     setTimeout(()=>coinBtn.classList.remove("clickAnim"),250);
 
     clearTimeout(comboTimer);
@@ -217,6 +228,13 @@ coinBtn.addEventListener('click',()=>{
     // Balance update
     balance=(Math.floor(coins/10)*0.01).toFixed(2);
     balanceEl.textContent=`$${balance}`;
+
+    // Animazione saldo ogni 0.10$
+    if(parseFloat(balance)-parseFloat(lastBalance) >= 0.10){
+      balanceEl.classList.add("flash");
+      setTimeout(()=>balanceEl.classList.remove("flash"),600);
+      lastBalance=parseFloat(balance);
+    }
 
     // Level
     if(xp>=xpToNext){ xp=0; level++; xpToNext=Math.floor(xpToNext*1.5); }
