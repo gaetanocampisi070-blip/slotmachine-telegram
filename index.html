@@ -1,168 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" name="viewport"/>
-  <title>BurgerCoin — Idle Tap</title>
-  <meta content="#0a2a68" name="theme-color"/>
-  <style>
-    :root {
-      --bg: #0a2a68; --sky1: #224aa2; --sky2: #081b43;
-      --panel: #121b36; --panel2: #1c2d5b;
-      --gold1: #ffe082; --gold2: #ffca28; --gold3: #ffb300;
-      --mint1: #b2ff59; --mint2: #69f0ae;
-      --text: #fff; --muted: #c7d2fe;
-      --shadow: 0 18px 32px rgba(0, 0, 0, .46);
-    }
-    * { box-sizing: border-box }
-    html, body { height: 100%; margin: 0; overflow: hidden; }
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", Arial, system-ui, sans-serif;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
+<title>BurgerCoin — Idle Tap</title>
+<meta name="theme-color" content="#0a2a68"/>
+<style>
+:root {
+  --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
+  --panel:#121b36; --panel2:#1c2d5b;
+  --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
+  --mint1:#b2ff59; --mint2:#69f0ae;
+  --text:#fff; --muted:#c7d2fe;
+  --shadow: 0 18px 32px rgba(0,0,0,.46);
+}
+*{box-sizing:border-box}
+html,body{height:100%; margin:0; overflow:hidden; background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%); color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
+.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; justify-content:space-between; }
 
-    .app { 
-      width: 100%; 
-      height: 100%; 
-      display: flex; 
-      flex-direction: column; 
-      justify-content: space-between; 
-    }
+/* SPLASH */
+#splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%); display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
+.splash-content{ text-align:center; color:#fff }
+.splash-logo{ font-weight:900; font-size:34px; margin:10px 0 14px }
+.splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1); padding:18px; border-radius:20px; box-shadow: var(--shadow) }
+.splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden; background: rgba(255,255,255,.18); margin-top:12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
+#progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
 
-    /* SPLASH SCREEN */
-    #splash{ 
-      position: fixed; inset: 0; 
-      background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%); 
-      display:flex; align-items:center; justify-content:center; flex-direction:column; 
-      z-index: 9999; transition: opacity .6s ease 
-    }
-    .splash-content{ text-align:center; color:#fff }
-    .splash-logo{ font-weight:900; font-size:34px; letter-spacing:.8px; margin:10px 0 14px }
-    .splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1); padding:18px 18px 16px; border-radius:20px; box-shadow: var(--shadow) }
-    .splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden; background: rgba(255,255,255,.18); margin-top:12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
-    #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
+/* TOPBAR */
+.topbar{ margin-top:8%; display:flex; align-items:center; gap:8px; padding:10px; background: linear-gradient(180deg, var(--panel2), var(--panel)); border-radius:16px; box-shadow: var(--shadow); }
+.pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8); border:1px solid rgba(255,255,255,.08); padding:6px 10px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); white-space:nowrap }
+.icoCoin{ width:20px; height:20px; border-radius:50%; }
 
-    /* TOP BAR */
-    .topbar { 
-      padding: 10px; 
-      background: linear-gradient(180deg, var(--panel2), var(--panel)); 
-      border-radius: 16px; 
-      box-shadow: var(--shadow); 
-      margin: 5%;
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .pill { 
-      background: rgba(10, 15, 35, .8); 
-      padding: 8px 12px; 
-      border-radius: 999px; 
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .pill img {
-      width: 20px;
-      height: 20px;
-    }
+/* TITOLO FUORI DAL QUADRANTE */
+.title {
+  text-align:center;
+  font-size:26px;
+  font-weight:800;
+  color: var(--gold2);
+  text-shadow: 0 0 6px var(--gold3), 0 0 12px rgba(255, 215, 0, 0.8);
+  margin-top:5%;
+  margin-bottom:12px;
+}
 
-    /* TITOLO */
-    .title {
-      text-align: center;
-      font-size: 28px;
-      font-weight: bold;
-      color: var(--gold2);
-      text-shadow: 0 0 6px var(--gold3), 0 0 12px rgba(255, 215, 0, 0.8);
-      margin: 0 0 12px 0;
-    }
+/* QUADRANTE CENTRALE */
+.coinContainer {
+  flex:1;
+  margin-top:-30%; /* spostato verso sopra */
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border:3px solid var(--gold2);
+  border-radius:18px;
+  padding:20px;
+  box-shadow: var(--shadow);
+  background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.2));
+}
 
-    /* AREA CENTRALE */
-    .centerArea {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+/* XP BAR */
+.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+.track{flex:1; height:14px; border-radius:999px; background: rgba(255,255,255,.08); overflow:hidden;}
+.bar{height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width:0%}
+.badge{font-size:13px;}
 
-    .coinContainer { 
-      border: 3px solid var(--gold2); 
-      border-radius: 16px; 
-      padding: 30px; 
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      box-shadow: var(--shadow);
-      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(0,0,0,.2));
-      width: 85%;  
-      max-width: 440px;
-      margin-bottom: 5%; 
-    }
+/* MONETA */
+.coinBtn{ width:200px; height:200px; border-radius:50%; background:url('burger_image.jpeg') center/cover no-repeat; cursor:pointer; transition:transform .1s ease; }
+.coinBtn:active{ transform:scale(.95); }
 
-    .progress { 
-      width: 100%; 
-      display: flex; 
-      align-items: center; 
-      gap: 8px; 
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-    .track { flex: 1; height: 14px; border-radius: 999px; background: rgba(255,255,255,.08); overflow: hidden; }
-    .bar { height: 100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width: 0%; }
-
-    /* MONETA BURGER */
-    .coinBtn { 
-      width: 200px; 
-      height: 200px;
-      background-image: url('burger_image.jpeg'); /* immagine caricata */
-      background-size: contain; 
-      background-position: center;
-      background-repeat: no-repeat;
-      border-radius: 50%;
-      cursor: pointer;
-      transition: transform 0.1s ease;
-    }
-    .coinBtn:active {
-      transform: scale(0.9);
-    }
-
-    /* PULSANTI */
-    .buttonContainer {
-      display: flex;
-      flex-wrap: nowrap;
-      overflow-x: auto;
-      gap: 12px;
-      padding: 12px;
-      background: linear-gradient(180deg, var(--panel2), var(--panel)); 
-      border-radius: 16px;
-      box-shadow: var(--shadow);
-      margin: 10px;
-      margin-bottom: 13%;
-    }
-    .button { 
-      min-width: 100px; 
-      padding: 12px; 
-      border: none; 
-      border-radius: 8px; 
-      background: var(--panel2); 
-      color: white; 
-      font-size: 16px;
-    }
-    .button:hover { background: var(--gold2); }
-  </style>
+/* BUTTONS */
+.buttonContainer{ display:flex; justify-content:space-around; margin-bottom:10%; }
+.button{ background: linear-gradient(180deg, var(--panel2), var(--panel)); color:var(--text); padding:10px 16px; border-radius:14px; font-size:15px; cursor:pointer; box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);}
+</style>
 </head>
 <body>
-<!-- SPLASH SCREEN -->
-<div aria-label="Loading" id="splash" role="dialog">
+<!-- SPLASH -->
+<div id="splash">
   <div class="splash-content">
     <div class="splash-card">
-      <img alt="BurgerCoin logo" src="burger_image.jpeg" style="width:180px; display:block; margin:0 auto 8px;"/>
+      <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:160px; border-radius:50%;"/>
       <div class="splash-logo">🍔 BurgerCoin</div>
       <div class="splash-progress"><div id="progress-bar"></div></div>
       <div class="smallnote">Loading resources…</div>
@@ -170,97 +85,67 @@
   </div>
 </div>
 
-<!-- GAME APP -->
-<div class="app hidden" id="gameApp">
-  <!-- TOP BAR -->
+<!-- GAME -->
+<div class="app" id="app" aria-hidden="true">
   <div class="topbar">
-    <div class="pill">
-      <img src="burger_image.jpeg" alt="BurgerCoin"/> 
-      <b id="coins">0</b>
-    </div>
+    <div class="pill"><img src="burger_image.jpeg" class="icoCoin"/> <b id="coins">0</b></div>
     <div class="pill">⚡ <b id="energy">100</b></div>
     <div class="pill">💎 <b id="gems">0</b></div>
-    <div class="pill">👤 Guest</div>
   </div>
 
-  <!-- CENTRO -->
-  <div class="centerArea">
-    <h1 class="title">Burger Coin</h1>
-    <div class="coinContainer">
-      <div class="progress">
-        <span>Lvl <b id="level">1</b></span>
-        <div class="track"><div class="bar" id="xpbar"></div></div>
-        <span><b id="xptext">0/100 XP</b></span>
-      </div>
-      <div class="coinBtn" id="coinBtn"></div>
+  <!-- titolo fuori dal quadrante -->
+  <h1 class="title">Burger Coin</h1>
+
+  <div class="coinContainer">
+    <div class="progress">
+      <div class="badge">Lvl <b id="level">1</b></div>
+      <div class="track"><div class="bar" id="xpbar"></div></div>
+      <div class="badge"><b id="xptext">0/100 XP</b></div>
     </div>
+    <div class="coinBtn" id="coinBtn"></div>
   </div>
 
-  <!-- PULSANTI -->
   <div class="buttonContainer">
     <button class="button">💰 Wallet</button>
     <button class="button">🎯 Mission</button>
     <button class="button">🎡 Wheel</button>
-    <button class="button">🛠️ Upgrade</button>
+    <button class="button">🔧 Upgrade</button>
     <button class="button">⚙️ Settings</button>
   </div>
 </div>
 
 <script>
-  // Progress bar animazione splash
-  let progress = 0;
-  const progressBar = document.getElementById("progress-bar");
-
-  function updateProgressBar() {
-    progress += Math.random() * 20; 
-    if (progress >= 100) {
-      progress = 100;
+// SPLASH
+let progress = 0;
+const progressBar = document.getElementById("progress-bar");
+function updateProgressBar() {
+  progress += Math.random() * 20;
+  if (progress >= 100) {
+    progress = 100;
+    setTimeout(() => {
+      document.getElementById("splash").style.opacity = 0;
       setTimeout(() => {
-        document.getElementById("splash").style.opacity = 0;
-        setTimeout(() => {
-          document.getElementById("splash").style.display = "none";
-          document.getElementById("gameApp").classList.remove("hidden");
-        }, 600);
-      }, 400);
-    }
-    progressBar.style.width = progress + "%";
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("app").removeAttribute("aria-hidden");
+      }, 600);
+    }, 300);
   }
+  progressBar.style.width = progress + "%";
+}
+setInterval(updateProgressBar, 300);
 
-  setInterval(updateProgressBar, 300);
-
-  // LOGICA GIOCO
-  let coins = 0;
-  let energy = 100;
-  let xp = 0;
-  let level = 1;
-  let xpToNext = 100;
-
-  const coinEl = document.getElementById("coins");
-  const energyEl = document.getElementById("energy");
-  const xpbarEl = document.getElementById("xpbar");
-  const xptextEl = document.getElementById("xptext");
-  const levelEl = document.getElementById("level");
-
-  document.getElementById("coinBtn").addEventListener("click", () => {
-    if (energy > 0) {
-      coins++;
-      energy--;
-      xp += 5;
-
-      if (xp >= xpToNext) {
-        xp = 0;
-        level++;
-        xpToNext = Math.floor(xpToNext * 1.5);
-      }
-
-      // aggiorna UI
-      coinEl.textContent = coins;
-      energyEl.textContent = energy;
-      xptextEl.textContent = `${xp}/${xpToNext} XP`;
-      levelEl.textContent = level;
-      xpbarEl.style.width = (xp / xpToNext * 100) + "%";
-    }
-  });
+// GAME LOGIC
+let coins=0, energy=100, xp=0, level=1;
+document.getElementById('coinBtn').addEventListener('click',()=>{
+  if(energy>0){
+    coins++; energy--; xp+=5;
+    document.getElementById('coins').textContent=coins;
+    document.getElementById('energy').textContent=energy;
+    document.getElementById('xptext').textContent=`${xp}/100 XP`;
+    document.getElementById('xpbar').style.width=`${(xp/100)*100}%`;
+    if(xp>=100){ level++; xp=0; document.getElementById('level').textContent=level; }
+  }
+});
 </script>
 </body>
 </html>
