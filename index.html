@@ -25,7 +25,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   display:flex; 
   flex-direction:column; 
   justify-content:space-between;
-  transform: translateY(-7%); 
+  transform: translateY(5%);
 }
 
 /* SPLASH */
@@ -190,113 +190,53 @@ html,body{height:100%; margin:0; overflow:hidden;
 
   <div class="coinContainer">
     <div class="progress">
+      <div class="badge">XP</div>
       <div class="track">
-        <div class="bar" id="xpbar"></div>
+        <div class="bar" id="xp-bar"></div>
       </div>
-      <div class="badge">
-        <span id="xptext">0/100 XP</span> - <span id="level">1</span> LVL
-      </div>
+      <div class="badge" id="xp-progress">0/100</div>
     </div>
+
     <div class="coinBtn" id="coinBtn"></div>
-    <div class="combo" id="combo">Combo 1.00x</div>
+    <div class="combo" id="combo"></div>
+
+    <div class="buttonContainer">
+      <button class="button">Settings</button>
+      <button class="button">Upgrade</button>
+    </div>
   </div>
 
-  <!-- BOTTONI -->
-  <div class="buttonContainer">
-    <button class="button" id="upgradeBtn">Upgrade</button>
-    <button class="button" id="shopBtn">Shop</button>
-  </div>
-
-  <div class="footer">
-    <span>Made with ❤️ by [Your Name]</span>
-  </div>
+  <div class="footer">Created by BurgerCoin Team</div>
 </div>
 
 <script>
-// Dichiarazione variabili di gioco
-let coins = 0, energy = 100, xp = 0, level = 1, xpToNext = 100, balance = 0.0, combo = 1;
+let coins = 0; // Monete iniziali
 
-// Seleziona gli elementi del DOM
-const coinsEl = document.getElementById('coins');
-const energyEl = document.getElementById('energy');
-const xptextEl = document.getElementById('xptext');
-const levelEl = document.getElementById('level');
-const xpbarEl = document.getElementById('xpbar');
-const comboEl = document.getElementById('combo');
-const balanceEl = document.getElementById('balance');
-
-// Carica lo stato di gioco dal localStorage
-function loadGameState() {
-  const savedData = JSON.parse(localStorage.getItem('burgerCoinState'));
-  if (savedData) {
-    coins = savedData.coins;
-    energy = savedData.energy;
-    xp = savedData.xp;
-    level = savedData.level;
-    xpToNext = savedData.xpToNext;
-    balance = savedData.balance;
-    combo = savedData.combo;
-
-    // Aggiorna l'interfaccia
-    coinsEl.textContent = Math.floor(coins);
-    energyEl.textContent = energy;
-    xptextEl.textContent = `${xp}/${xpToNext} XP`;
-    levelEl.textContent = level;
-    xpbarEl.style.width = (xp / xpToNext * 100) + "%";
-    comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
-    balanceEl.textContent = balance.toFixed(2);
-  }
-}
-
-// Salva lo stato di gioco nel localStorage
-function saveGameState() {
-  const gameState = {
-    coins: coins,
-    energy: energy,
-    xp: xp,
-    level: level,
-    xpToNext: xpToNext,
-    balance: balance,
-    combo: combo
-  };
-  localStorage.setItem('burgerCoinState', JSON.stringify(gameState));
-}
-
-// Carica i dati all'avvio
-window.onload = loadGameState;
-
-// Gestione evento per cliccare sul pulsante della moneta
-document.getElementById('coinBtn').addEventListener('click', () => {
-  if (energy > 0) {
-    coins += 1 * combo;
-    energy--; xp += 5;
-    if (xp >= xpToNext) { xp = 0; level++; xpToNext = Math.floor(xpToNext * 1.5); }
-    coinsEl.textContent = Math.floor(coins);
-    energyEl.textContent = energy;
-    xptextEl.textContent = `${xp}/${xpToNext} XP`;
-    levelEl.textContent = level;
-    xpbarEl.style.width = (xp / xpToNext * 100) + "%";
-
-    // Bilancio
-    if (Math.floor(coins) % 10 === 0) {
-      balance += 0.01;
-      balanceEl.textContent = balance.toFixed(2);
+document.addEventListener('DOMContentLoaded', () => {
+  const coinBtn = document.getElementById('coinBtn');
+  const coinDisplay = document.getElementById('coins');
+  
+  // Funzione per il click sulla moneta
+  coinBtn.addEventListener('click', () => {
+    coins++; // Aumenta il numero delle monete
+    coinDisplay.textContent = coins; // Aggiorna il display delle monete
+  });
+  
+  // Funzione di caricamento iniziale (Splash Screen)
+  let progress = 0;
+  const progressBar = document.getElementById('progress-bar');
+  const splash = document.getElementById('splash');
+  
+  const interval = setInterval(() => {
+    progress += 5;
+    progressBar.style.width = `${progress}%`;
+    
+    if (progress >= 100) {
+      clearInterval(interval);
+      splash.style.opacity = 0;
+      setTimeout(() => { splash.style.display = 'none'; }, 600);
     }
-
-    // Combo
-    combo = Math.min(3, (combo + 0.01));
-    comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
-
-    // Salvataggio dello stato
-    saveGameState();
-
-    // Reset della combo dopo 7 secondi
-    clearTimeout(comboTimer);
-    comboTimer = setTimeout(() => {
-      combo = 1;
-      comboEl.textContent = "Combo 1.00x";
-    }, 7000);
-  }
+  }, 100);
 });
 </script>
 </body>
