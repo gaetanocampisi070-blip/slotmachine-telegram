@@ -24,34 +24,34 @@ html,body{height:100%; margin:0; overflow:hidden;
 #splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
   display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
 .splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1);
-  padding:18px; border-radius:20px; box-shadow: var(--shadow) }
+  padding:22px; border-radius:20px; box-shadow: var(--shadow); display:flex; flex-direction:column; align-items:center; }
 .splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden;
-  background: rgba(255,255,255,.18); margin-top:12px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
+  background: rgba(255,255,255,.18); margin-top:16px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
 #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
 
 /* TOPBAR */
-.topbar{ margin-top:10%; display:flex; justify-content:center; gap:12px;
+.topbar{ margin-top:20%; display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
   border-radius:16px; box-shadow: var(--shadow); }
 .pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
   border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
 .icoCoin{ width:20px; height:20px; border-radius:50%; }
 
-/* TITOLO FUORI DAL QUADRANTE */
+/* TITOLO */
 .title {
   text-align:center;
-  font-size:26px;
-  font-weight:800;
+  font-size:28px;
+  font-weight:900;
   color: var(--gold2);
-  text-shadow: 0 0 6px var(--gold3), 0 0 12px rgba(255, 215, 0, 0.8);
+  text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
   margin-top:5%;
-  margin-bottom:5%;
+  margin-bottom:4%;
 }
 
 /* QUADRANTE CENTRALE */
 .coinContainer {
   flex:1;
-  margin:0 5% 10% 5%;
+  margin:0 5% 0 5%;
   padding:20px;
   background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
   border:2px solid var(--gold2);
@@ -60,31 +60,47 @@ html,body{height:100%; margin:0; overflow:hidden;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
+  justify-content:flex-start;
+  margin-top:15%;
+  margin-bottom:20%; /* ridotto sotto del 10% */
 }
 
-/* XP BAR migliorata */
-.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:16px;}
+/* XP BAR nuovo stile */
+.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:20px;}
 .track{
-  flex:1; height:16px; border-radius:12px;
-  background: rgba(255,255,255,.1);
-  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 6px rgba(255,215,0,.3);
+  flex:1; height:18px; border-radius:14px;
+  background: rgba(255,255,255,.08);
+  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 8px rgba(255,215,0,.4);
+  border:1px solid rgba(255,255,255,.15);
 }
 .bar{
   height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1));
-  width:0%; border-radius:12px 0 0 12px;
-  box-shadow: 0 0 8px rgba(105,240,174,.8);
+  width:0%; border-radius:14px;
+  box-shadow: 0 0 10px rgba(105,240,174,.8);
 }
 .badge{font-size:13px;}
 
-/* MONETA */
+/* MONETA con effetto luccichio */
 .coinBtn{ width:200px; height:200px; border-radius:50%;
   background:url('burger_image.jpeg') center/cover no-repeat;
-  cursor:pointer; transition:transform .1s ease; }
+  cursor:pointer; transition:transform .1s ease;
+  position:relative; margin-top:20px;
+  overflow:hidden;
+}
 .coinBtn:active{ transform:scale(.95); }
+.coinBtn::after{
+  content:""; position:absolute; top:-50%; left:-50%;
+  width:200%; height:200%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 40%, transparent 80%);
+  transform: rotate(25deg); animation: shine 4s infinite;
+}
+@keyframes shine {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  50% { transform: translateX(100%) rotate(25deg); }
+  100% { transform: translateX(200%) rotate(25deg); }
+}
 
 /* BUTTONS */
-.buttonContainer{ display:flex; justify-content:space-around; margin-bottom:10%; }
+.buttonContainer{ display:flex; justify-content:space-around; margin-bottom:0; margin-top:auto; transform:translateY(-10%); }
 .button{ background: linear-gradient(180deg, var(--panel2), var(--panel));
   color:var(--text); padding:10px 16px; border-radius:14px; font-size:15px; cursor:pointer;
   box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);}
@@ -94,8 +110,8 @@ html,body{height:100%; margin:0; overflow:hidden;
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-card">
-    <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:140px; border-radius:50%;"/>
-    <div class="splash-logo" style="font-size:28px; font-weight:900; margin:12px 0;">🍔 BurgerCoin</div>
+    <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:140px; border-radius:50%; margin-bottom:12px;"/>
+    <div class="splash-logo" style="font-size:28px; font-weight:900; margin:6px 0;">🍔 BurgerCoin</div>
     <div class="splash-progress"><div id="progress-bar"></div></div>
   </div>
 </div>
@@ -110,7 +126,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 
   <h1 class="title">Burger Coin</h1>
 
-  <div class="coinContainer" style="margin-top:15%;">
+  <div class="coinContainer">
     <div class="progress">
       <div class="badge">Lvl <b id="level">1</b></div>
       <div class="track"><div class="bar" id="xpbar"></div></div>
