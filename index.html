@@ -30,20 +30,22 @@ html,body{height:100%; margin:0; overflow:hidden;
 #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
 
 /* TOPBAR */
-.topbar{ margin-top:30%; display:flex; justify-content:center; gap:14px;
+.topbar{ margin-top:40%; display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
   border-radius:16px; box-shadow: var(--shadow); }
 .pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
   border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
 .icoCoin{ width:20px; height:20px; border-radius:50%; }
 
-/* SALDO */
-.balance {
-  text-align:center;
-  font-size:20px;
+/* SALDO COME PILL */
+.balance-pill {
+  display:flex;
+  justify-content:center;
+  margin:14px 0;
+}
+.balance-pill .pill {
   font-weight:700;
-  margin:10px 0;
-  color:white;
+  font-size:18px;
   animation: blink 1s infinite;
 }
 @keyframes blink {
@@ -58,7 +60,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   font-weight:900;
   color: var(--gold2);
   text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
-  margin-top:4%;
+  margin-top:2%;
   margin-bottom:2%;
 }
 
@@ -126,8 +128,8 @@ html,body{height:100%; margin:0; overflow:hidden;
 /* BUTTONS */
 .buttonContainer{
   display:flex;
-  overflow-x:auto;      /* scroll solo orizzontale */
-  overflow-y:hidden;    /* blocca verticale */
+  overflow-x:auto;      
+  overflow-y:hidden;    
   gap:14px;
   padding:12px;
   margin:0 5% 6px;
@@ -171,7 +173,11 @@ html,body{height:100%; margin:0; overflow:hidden;
     <div class="pill">💎 <b id="gems">0</b></div>
   </div>
 
-  <div class="balance" id="balance">$0.00</div>
+  <!-- SALDO -->
+  <div class="balance-pill">
+    <div class="pill">$ <b id="balance">0.00</b></div>
+  </div>
+
   <h1 class="title">Burger Coin</h1>
 
   <div class="coinContainer">
@@ -242,7 +248,7 @@ document.getElementById('coinBtn').addEventListener('click',()=>{
     // Balance ogni 10 monete → +0.01$
     if(Math.floor(coins)%10===0){
       balance+=0.01;
-      balanceEl.textContent=`$${balance.toFixed(2)}`;
+      balanceEl.textContent=balance.toFixed(2);
     }
 
     // Combo logic
