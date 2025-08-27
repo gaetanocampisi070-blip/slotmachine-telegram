@@ -11,129 +11,139 @@
   --panel:#121b36; --panel2:#1c2d5b;
   --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
   --mint1:#b2ff59; --mint2:#69f0ae;
-  --text:#fff; --muted:#c7d2fe;
-  --shadow: 0 18px 32px rgba(0,0,0,.46);
+  --text:#fff;
 }
 *{box-sizing:border-box}
 html,body{height:100%; margin:0; overflow:hidden;
   background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
   color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
-.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; justify-content:space-between; }
+.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; justify-content:flex-start; }
 
 /* TOPBAR */
-.topbar{ margin-top:20%; display:flex; justify-content:center; gap:14px;
+.topbar{ margin-top:10px; display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
-  border-radius:16px; box-shadow: var(--shadow); }
+  border-radius:16px; box-shadow: 0 8px 16px rgba(0,0,0,.5); }
 .pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
-  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
-.icoCoin{ width:20px; height:20px; border-radius:50%; }
+  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px;
+  box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); font-weight:600; }
+
+/* SALDO $ */
+#balance {
+  margin:8px auto 4px auto;
+  display:inline-block;
+  font-size:16px;
+  font-weight:700;
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border-radius:18px;
+  padding:8px 16px;
+  border:1px solid rgba(255,255,255,.15);
+  box-shadow: 0 4px 10px rgba(0,0,0,.4);
+  color: var(--gold2);
+}
 
 /* TITOLO */
 .title {
   text-align:center;
-  font-size:28px;
+  font-size:26px;
   font-weight:900;
   color: var(--gold2);
   text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
-  margin-top:5%;
-  margin-bottom:4%;
+  margin:2% 0; /* quasi attaccata al saldo */
 }
 
 /* COIN CONTAINER */
 .coinContainer {
   margin:0 5% 0 5%;
-  padding:20px;
+  padding:16px;
   background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
   border:2px solid var(--gold2);
-  border-radius:22px;
+  border-radius:20px;
   box-shadow: 0 6px 18px rgba(0,0,0,.6), inset 0 2px 8px rgba(255,255,255,.08);
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  margin-top:5%;
-  margin-bottom:0; /* ✅ ora si chiude subito sopra i pulsanti */
+  margin-bottom:0;
 }
 
 /* XP BAR */
-.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:20px;}
+.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:12px;}
 .track{
-  flex:1; height:18px; border-radius:14px;
+  flex:1; height:14px; border-radius:12px;
   background: rgba(255,255,255,.08);
-  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 8px rgba(255,215,0,.4);
+  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5);
   border:1px solid rgba(255,255,255,.15);
 }
-.bar{
-  height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1));
-  width:0%; border-radius:14px;
-  box-shadow: 0 0 10px rgba(105,240,174,.8);
-}
-.badge{font-size:13px;}
+.bar{ height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1)); width:0%; border-radius:12px; }
+.badge{font-size:12px;}
 
 /* MONETA */
-.coinBtn{ width:200px; height:200px; border-radius:50%;
+.coinBtn{ width:160px; height:160px; border-radius:50%;
   background:url('burger_image.jpeg') center/cover no-repeat;
-  cursor:pointer; transition:transform .1s ease;
-  position:relative; margin-top:10px;
-  overflow:hidden;
+  cursor:pointer; transition:transform .1s ease, box-shadow .2s ease;
+  position:relative; margin:8px 0;
 }
-.coinBtn:active{ transform:scale(.95); }
-.coinBtn::after{
-  content:""; position:absolute; top:-50%; left:-50%;
-  width:200%; height:200%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 40%, transparent 80%);
-  transform: rotate(25deg); animation: shine 4s infinite;
+.coinBtn:active{ transform:scale(.9); }
+.coinBtn.clickAnim{
+  animation: pop 0.25s ease;
+  box-shadow: 0 0 20px rgba(255,215,0,.7);
 }
-@keyframes shine {
-  0% { transform: translateX(-100%) rotate(25deg); }
-  50% { transform: translateX(100%) rotate(25deg); }
-  100% { transform: translateX(200%) rotate(25deg); }
+@keyframes pop {
+  0%{ transform:scale(1); }
+  50%{ transform:scale(1.15); }
+  100%{ transform:scale(1); }
 }
 
 /* COMBO STILIZZATO */
 #comboText {
-  margin-top:16px;
+  margin:8px 0 0 0;
   background: linear-gradient(180deg, var(--panel2), var(--panel));
   border:1px solid rgba(255,255,255,.15);
-  border-radius:18px;
-  padding:10px 18px;
-  font-size:18px;
+  border-radius:16px;
+  padding:8px 14px;
+  font-size:17px;
   font-weight:700;
   color: var(--mint2);
   text-shadow: 0 0 6px rgba(0,255,128,.8);
-  box-shadow: var(--shadow);
+  box-shadow: 0 0 8px rgba(0,0,0,.6);
+  transition: background 0.3s, color 0.3s;
+}
+#comboText.flash { animation: glow 0.4s ease; }
+@keyframes glow {
+  0%{ transform:scale(1); box-shadow:0 0 6px lime; }
+  50%{ transform:scale(1.15); box-shadow:0 0 16px gold; }
+  100%{ transform:scale(1); }
 }
 
 /* BUTTONS */
 .buttonContainer{
-  display:flex;
-  overflow-x:auto;
-  gap:12px;
-  padding:12px;
-  margin-top:0;   /* ✅ attaccati sotto il container */
-  scrollbar-width: none;
+  display:flex; overflow-x:auto; gap:12px;
+  padding:10px; margin-top:0; /* subito dopo container */
+  scrollbar-width:none;
 }
 .buttonContainer::-webkit-scrollbar{ display:none; }
 .button{
   flex:0 0 auto;
   background: linear-gradient(180deg, var(--panel2), var(--panel));
   color:var(--text); 
-  padding:14px 20px;
-  border-radius:18px;
-  font-size:17px;
+  padding:12px 18px;
+  border-radius:16px;
+  font-size:16px;
   cursor:pointer;
-  box-shadow: var(--shadow); 
   border:1px solid rgba(255,255,255,.08);
+  box-shadow: 0 4px 10px rgba(0,0,0,.4);
 }
 </style>
 </head>
 <body>
-<div class="app" id="app">
+<div class="app">
   <div class="topbar">
-    <div class="pill"><img src="burger_image.jpeg" class="icoCoin"/> <b id="coins">0</b></div>
+    <div class="pill">🍔 <b id="coins">0</b></div>
     <div class="pill">⚡ <b id="energy">100</b></div>
     <div class="pill">💎 <b id="gems">0</b></div>
   </div>
 
+  <div id="balance">$0.00</div>
   <h1 class="title">Burger Coin</h1>
 
   <div class="coinContainer">
@@ -157,39 +167,61 @@ html,body{height:100%; margin:0; overflow:hidden;
 </div>
 
 <script>
-// GAME VARIABLES
+// VARIABILI
 let coins=0, energy=100, xp=0, level=1, xpToNext=100;
+let combo=1.00, comboTimer, balance=0.00;
 
-// Combo system
-let combo=1.00;
-let comboTimer;
-const comboText=document.getElementById("comboText");
+const coinBtn=document.getElementById('coinBtn');
+const comboText=document.getElementById('comboText');
+const balanceEl=document.getElementById('balance');
 
+// Reset combo
 function resetCombo(){
   combo=1.00;
-  comboText.textContent=`Combo ${combo.toFixed(2)}X`;
+  updateComboStyle();
 }
 
-document.getElementById('coinBtn').addEventListener('click',()=>{
+// Aggiorna stile combo in base al valore
+function updateComboStyle(){
+  comboText.textContent=`Combo ${combo.toFixed(2)}X`;
+  let c=combo;
+  if(c<1.5){ comboText.style.color="#69f0ae"; }
+  else if(c<2.0){ comboText.style.color="#00e5ff"; }
+  else if(c<2.5){ comboText.style.color="#ffca28"; }
+  else if(c<3.0){ comboText.style.color="#ff7043"; }
+  else{ comboText.style.color="#f44336"; }
+}
+
+// Click sulla moneta
+coinBtn.addEventListener('click',()=>{
   if(energy>0){
-    // update combo
+    // Combo logic
     if(combo<3.00){
       combo+=0.01;
       if(combo>3.00) combo=3.00;
     }
-    comboText.textContent=`Combo ${combo.toFixed(2)}X`;
+    updateComboStyle();
+    comboText.classList.add("flash");
+    coinBtn.classList.add("clickAnim");
+    setTimeout(()=>comboText.classList.remove("flash"),400);
+    setTimeout(()=>coinBtn.classList.remove("clickAnim"),250);
 
-    // reset timer
     clearTimeout(comboTimer);
     comboTimer=setTimeout(resetCombo,7000);
 
-    // calculate earnings
+    // Coin gain
     let earned=Math.floor(1*combo);
     coins+=earned;
     energy--; xp+=5;
 
+    // Balance update
+    balance=(Math.floor(coins/10)*0.01).toFixed(2);
+    balanceEl.textContent=`$${balance}`;
+
+    // Level
     if(xp>=xpToNext){ xp=0; level++; xpToNext=Math.floor(xpToNext*1.5); }
 
+    // UI
     document.getElementById('coins').textContent=coins;
     document.getElementById('energy').textContent=energy;
     document.getElementById('xptext').textContent=`${xp}/${xpToNext} XP`;
