@@ -11,133 +11,76 @@
   --panel:#121b36; --panel2:#1c2d5b;
   --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
   --mint1:#b2ff59; --mint2:#69f0ae;
-  --text:#fff; --muted:#c7d2fe;
-  --shadow: 0 18px 32px rgba(0,0,0,.46);
+  --text:#fff; --shadow:0 18px 32px rgba(0,0,0,.46);
 }
 *{box-sizing:border-box}
-html,body{height:100%; margin:0; overflow:hidden;
+html,body{height:100%;margin:0;overflow:hidden;
   background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
-  color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
-.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; padding-top:10%; }
+  font-family:Inter,Roboto,Arial,sans-serif;color:var(--text);}
+.app{max-width:520px;margin:0 auto;height:100dvh;display:flex;flex-direction:column;padding-top:10%;}
 
 /* SPLASH */
-#splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
-  display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
-.splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1);
-  padding:22px; border-radius:20px; box-shadow: var(--shadow); display:flex; flex-direction:column; align-items:center; }
-.splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden;
-  background: rgba(255,255,255,.18); margin-top:16px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
-#progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
+#splash{position:fixed;inset:0;background:radial-gradient(140% 140% at 50% 0%,#2b3f78 0%,#111a34 70%);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;z-index:9999;transition:opacity .6s ease}
+.splash-card{background:linear-gradient(180deg,#22345f,#121b36);border:1px solid rgba(255,255,255,.1);
+  padding:22px;border-radius:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;}
+.splash-progress{width:260px;height:18px;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.18);margin-top:16px;}
+#progress-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold1),var(--gold3));transition:width .25s ease}
 
 /* TOPBAR */
-.topbar{ display:flex; justify-content:center; gap:14px;
-  padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
-  border-radius:16px; box-shadow: var(--shadow); }
-.pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
-  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
-.icoCoin{ width:20px; height:20px; border-radius:50%; }
+.topbar{display:flex;justify-content:center;gap:14px;
+  padding:10px 16px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border-radius:16px;box-shadow:var(--shadow);}
+.pill{display:flex;align-items:center;gap:6px;background:rgba(10,15,35,.8);
+  border:1px solid rgba(255,255,255,.08);padding:6px 12px;border-radius:999px;}
+.icoCoin{width:20px;height:20px;border-radius:50%;}
 
-/* SALDO */
-.balance {
-  display:inline-block;
-  margin:12px auto 6px;
-  padding:6px 14px;
-  border-radius:999px;
-  background: linear-gradient(180deg, var(--panel2), var(--panel));
-  font-weight:600;
-  font-size:16px;
-  box-shadow: var(--shadow);
-  color: var(--text);
-}
+/* BALANCE */
+.balance{display:inline-block;margin:12px auto 6px;padding:6px 14px;
+  border-radius:999px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  font-weight:600;font-size:16px;box-shadow:var(--shadow);color:var(--text);transition:background .3s ease}
+.balance.flash{background:linear-gradient(180deg,var(--gold2),var(--gold3));color:#000;}
 
-/* TITOLO */
-.title {
-  text-align:center;
-  font-size:28px;
-  font-weight:900;
-  color: var(--gold2);
-  text-shadow: 0 0 6px var(--gold3);
-  margin:6px 0 14px;
-}
+/* TITLE */
+.title{text-align:center;font-size:28px;font-weight:900;color:var(--gold2);
+  text-shadow:0 0 6px var(--gold3);margin:6px 0 14px;}
 
-/* QUADRANTE CENTRALE */
-.coinContainer {
-  flex:1;
-  margin:0 5% 5%;
-  padding:20px;
-  background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
-  border:2px solid var(--gold2);
-  border-radius:22px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.6), inset 0 2px 8px rgba(255,255,255,.08);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  max-height:65%; /* tagliato in basso */
-}
-
-/* XP BAR */
-.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:16px;}
-.track{
-  flex:1; height:18px; border-radius:14px;
-  background: rgba(255,255,255,.08);
-  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 8px rgba(255,215,0,.4);
-  border:1px solid rgba(255,255,255,.15);
-}
-.bar{
-  height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1));
-  width:0%; border-radius:14px;
-  box-shadow: 0 0 10px rgba(105,240,174,.8);
-}
+/* CONTAINER */
+.coinContainer{flex:1;margin:0 5%;padding:20px;
+  background:linear-gradient(180deg,rgba(0,0,0,.6),rgba(30,30,50,.9));
+  border:2px solid var(--gold2);border-radius:22px;box-shadow:0 6px 18px rgba(0,0,0,.6);
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  max-height:75%;}
+.progress{width:100%;display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.track{flex:1;height:18px;border-radius:14px;background:rgba(255,255,255,.08);overflow:hidden;}
+.bar{height:100%;background:linear-gradient(90deg,var(--mint2),var(--mint1));width:0%;}
 .badge{font-size:13px;}
 
-/* MONETA */
-.coinBtn{ width:220px; height:220px; border-radius:50%;
+/* COIN */
+.coinBtn{width:220px;height:220px;border-radius:50%;
   background:url('burger_image.jpeg') center/cover no-repeat;
-  cursor:pointer; transition:transform .1s ease;
-  position:relative; margin:12px 0;
-  overflow:hidden;
-}
-.coinBtn:active{ transform:scale(.95); }
-
-/* COMBO */
-.combo {
-  margin-top:6px;
-  background: linear-gradient(180deg, var(--panel2), var(--panel));
-  padding:6px 16px;
-  border-radius:14px;
-  font-weight:700;
-  font-size:16px;
-  box-shadow: var(--shadow);
-  transition: transform 0.2s ease;
-}
-.combo.bump { transform: scale(1.2); }
+  cursor:pointer;transition:transform .1s ease;margin:12px 0;}
+.coinBtn:active{transform:scale(.95);}
+.combo{margin-top:12px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  padding:6px 16px;border-radius:14px;font-weight:700;font-size:16px;box-shadow:var(--shadow);
+  transition:transform .2s ease;}
+.combo.bump{transform:scale(1.2);}
 
 /* BUTTONS */
-.buttonContainer{
-  display:flex;
-  overflow-x:auto;
-  gap:14px;
-  padding:12px;
-  scrollbar-width: none;
-  margin-top:0;
-}
-.buttonContainer::-webkit-scrollbar{ display:none; }
-.button{
-  flex:0 0 auto;
-  background: linear-gradient(180deg, var(--panel2), var(--panel));
-  color:var(--text); padding:12px 20px;
-  border-radius:14px; font-size:16px; cursor:pointer;
-  box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);
-}
+.buttonContainer{display:flex;overflow-x:auto;gap:14px;padding:12px;margin-top:12px;scrollbar-width:none;}
+.buttonContainer::-webkit-scrollbar{display:none;}
+.button{flex:0 0 auto;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  color:var(--text);padding:14px 22px;border-radius:14px;font-size:17px;cursor:pointer;
+  box-shadow:var(--shadow);border:1px solid rgba(255,255,255,.08);}
+.footer{text-align:center;font-size:14px;color:var(--muted);margin-top:6px;}
 </style>
 </head>
 <body>
 <!-- SPLASH -->
 <div id="splash">
   <div class="splash-card">
-    <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:140px; border-radius:50%; margin-bottom:12px;"/>
-    <div class="splash-logo" style="font-size:28px; font-weight:900; margin:6px 0;">🍔 BurgerCoin</div>
+    <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:140px;border-radius:50%;margin-bottom:12px;"/>
+    <div style="font-size:28px;font-weight:900;margin:6px 0;">🍔 BurgerCoin</div>
     <div class="splash-progress"><div id="progress-bar"></div></div>
   </div>
 </div>
@@ -150,7 +93,7 @@ html,body{height:100%; margin:0; overflow:hidden;
     <div class="pill">💎 <b id="gems">0</b></div>
   </div>
 
-  <div class="balance" id="balance">0.00</div>
+  <div class="balance" id="balance">$0.00</div>
   <h1 class="title">Burger Coin</h1>
 
   <div class="coinContainer">
@@ -171,11 +114,12 @@ html,body{height:100%; margin:0; overflow:hidden;
     <button class="button">🃏 Burger Jack</button>
     <button class="button">🏆 Leaderboard</button>
   </div>
+  <div class="footer">by Burger Games</div>
 </div>
 
 <script>
 // SPLASH
-let progress=0; const progressBar=document.getElementById("progress-bar");
+let progress=0;const progressBar=document.getElementById("progress-bar");
 function updateProgressBar(){
   progress+=Math.random()*20;
   if(progress>=100){
@@ -193,8 +137,8 @@ function updateProgressBar(){
 setInterval(updateProgressBar,300);
 
 // GAME LOGIC
-let coins=0, energy=100, xp=0, level=1, xpToNext=100;
-let balance=0, combo=1.00, comboTimer=null;
+let coins=0,energy=100,xp=0,level=1,xpToNext=100;
+let balance=0,combo=1.00,comboTimer=null;
 
 const coinEl=document.getElementById('coins');
 const energyEl=document.getElementById('energy');
@@ -206,33 +150,32 @@ const comboEl=document.getElementById('combo');
 
 document.getElementById('coinBtn').addEventListener('click',()=>{
   if(energy>0){
-    coins++; energy--; xp+=5;
+    coins++;energy--;xp+=5;
 
     // saldo
-    if(coins % 10 === 0){
+    if(coins%10===0){
       balance+=0.01;
-      balanceEl.textContent=balance.toFixed(2);
+      balanceEl.textContent="$"+balance.toFixed(2);
+      balanceEl.classList.add("flash");
+      setTimeout(()=>balanceEl.classList.remove("flash"),400);
     }
 
-    // XP e livello
-    if(xp>=xpToNext){ xp=0; level++; xpToNext=Math.floor(xpToNext*1.5); }
+    // xp
+    if(xp>=xpToNext){xp=0;level++;xpToNext=Math.floor(xpToNext*1.5);}
     coinEl.textContent=coins;
     energyEl.textContent=energy;
     xpText.textContent=`${xp}/${xpToNext} XP`;
     levelEl.textContent=level;
     xpBar.style.width=(xp/xpToNext*100)+"%";
 
-    // Combo
-    combo=Math.min(3, combo+0.01);
+    // combo
+    combo=Math.min(3,combo+0.01);
     comboEl.textContent=`Combo: ${combo.toFixed(2)}x`;
     comboEl.classList.add("bump");
     setTimeout(()=>comboEl.classList.remove("bump"),200);
 
-    if(comboTimer) clearTimeout(comboTimer);
-    comboTimer=setTimeout(()=>{
-      combo=1.00;
-      comboEl.textContent="Combo: 1.00x";
-    },7000);
+    if(comboTimer)clearTimeout(comboTimer);
+    comboTimer=setTimeout(()=>{combo=1.00;comboEl.textContent="Combo: 1.00x";},7000);
   }
 });
 </script>
