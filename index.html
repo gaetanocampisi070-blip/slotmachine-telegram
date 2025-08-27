@@ -61,11 +61,11 @@ html,body{height:100%; margin:0; overflow:hidden;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
-  margin-top:10%;   /* ALZATO verso sopra */
-  margin-bottom:10%; /* RIDOTTO sotto del 20% */
+  margin-top:5%;   /* ✅ avvicinato alla scritta Burger Coin */
+  margin-bottom:8%;
 }
 
-/* XP BAR nuovo stile */
+/* XP BAR */
 .progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:20px;}
 .track{
   flex:1; height:18px; border-radius:14px;
@@ -80,11 +80,11 @@ html,body{height:100%; margin:0; overflow:hidden;
 }
 .badge{font-size:13px;}
 
-/* MONETA con effetto luccichio */
+/* MONETA */
 .coinBtn{ width:200px; height:200px; border-radius:50%;
   background:url('burger_image.jpeg') center/cover no-repeat;
   cursor:pointer; transition:transform .1s ease;
-  position:relative; margin-top:10px; /* ALZATA del 10% */
+  position:relative; margin-top:10px;
   overflow:hidden;
 }
 .coinBtn:active{ transform:scale(.95); }
@@ -99,11 +99,25 @@ html,body{height:100%; margin:0; overflow:hidden;
   100% { transform: translateX(200%) rotate(25deg); }
 }
 
-/* BUTTONS */
-.buttonContainer{ display:flex; justify-content:space-around; margin-bottom:0; margin-top:auto; transform:translateY(-30%); } /* ALZATI del 20% */
-.button{ background: linear-gradient(180deg, var(--panel2), var(--panel));
-  color:var(--text); padding:10px 16px; border-radius:14px; font-size:15px; cursor:pointer;
-  box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);}
+/* BUTTONS SCORREVOLI */
+.buttonContainer{
+  display:flex;
+  overflow-x:auto;
+  gap:12px;
+  padding:12px;
+  margin-bottom:0;
+  margin-top:auto;
+  transform:translateY(-20%); /* ✅ alzati di 20% */
+  scrollbar-width: none;
+}
+.buttonContainer::-webkit-scrollbar{ display:none; }
+.button{
+  flex:0 0 auto;
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  color:var(--text); padding:10px 16px;
+  border-radius:14px; font-size:15px; cursor:pointer;
+  box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);
+}
 </style>
 </head>
 <body>
@@ -141,6 +155,8 @@ html,body{height:100%; margin:0; overflow:hidden;
     <button class="button">🎡 Wheel</button>
     <button class="button">🔧 Upgrade</button>
     <button class="button">⚙️ Settings</button>
+    <button class="button">🏆 Leaderboard</button>
+    <button class="button">🎁 Bonus</button>
   </div>
 </div>
 
