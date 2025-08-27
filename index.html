@@ -18,7 +18,7 @@
 html,body{height:100%; margin:0; overflow:hidden;
   background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
   color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
-.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; }
+.app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; padding-top:10%; }
 
 /* SPLASH */
 #splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
@@ -30,7 +30,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
 
 /* TOPBAR */
-.topbar{ margin-top:12px; display:flex; justify-content:center; gap:14px;
+.topbar{ display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
   border-radius:16px; box-shadow: var(--shadow); }
 .pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
@@ -39,28 +39,31 @@ html,body{height:100%; margin:0; overflow:hidden;
 
 /* SALDO */
 .balance {
-  text-align:center;
-  font-size:18px;
+  display:inline-block;
+  margin:12px auto 6px;
+  padding:6px 14px;
+  border-radius:999px;
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
   font-weight:600;
-  margin-top:12px;
-  color: var(--gold1);
-  text-shadow: 0 0 6px var(--gold3);
+  font-size:16px;
+  box-shadow: var(--shadow);
+  color: var(--text);
 }
 
 /* TITOLO */
 .title {
   text-align:center;
-  font-size:30px;
+  font-size:28px;
   font-weight:900;
   color: var(--gold2);
-  text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
-  margin:4px 0 12px;
+  text-shadow: 0 0 6px var(--gold3);
+  margin:6px 0 14px;
 }
 
 /* QUADRANTE CENTRALE */
 .coinContainer {
   flex:1;
-  margin:0 5%;
+  margin:0 5% 5%;
   padding:20px;
   background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
   border:2px solid var(--gold2);
@@ -70,6 +73,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   flex-direction:column;
   align-items:center;
   justify-content:flex-start;
+  max-height:65%; /* tagliato in basso */
 }
 
 /* XP BAR */
@@ -88,27 +92,17 @@ html,body{height:100%; margin:0; overflow:hidden;
 .badge{font-size:13px;}
 
 /* MONETA */
-.coinBtn{ width:240px; height:240px; border-radius:50%;
+.coinBtn{ width:220px; height:220px; border-radius:50%;
   background:url('burger_image.jpeg') center/cover no-repeat;
   cursor:pointer; transition:transform .1s ease;
   position:relative; margin:12px 0;
   overflow:hidden;
 }
 .coinBtn:active{ transform:scale(.95); }
-.coinBtn::after{
-  content:""; position:absolute; top:-50%; left:-50%;
-  width:200%; height:200%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 40%, transparent 80%);
-  transform: rotate(25deg); animation: shine 4s infinite;
-}
-@keyframes shine {
-  0% { transform: translateX(-100%) rotate(25deg); }
-  50% { transform: translateX(100%) rotate(25deg); }
-  100% { transform: translateX(200%) rotate(25deg); }
-}
 
 /* COMBO */
 .combo {
-  margin-top:10px;
+  margin-top:6px;
   background: linear-gradient(180deg, var(--panel2), var(--panel));
   padding:6px 16px;
   border-radius:14px;
@@ -117,15 +111,13 @@ html,body{height:100%; margin:0; overflow:hidden;
   box-shadow: var(--shadow);
   transition: transform 0.2s ease;
 }
-.combo.bump {
-  transform: scale(1.2);
-}
+.combo.bump { transform: scale(1.2); }
 
 /* BUTTONS */
 .buttonContainer{
   display:flex;
   overflow-x:auto;
-  gap:12px;
+  gap:14px;
   padding:12px;
   scrollbar-width: none;
   margin-top:0;
@@ -134,8 +126,8 @@ html,body{height:100%; margin:0; overflow:hidden;
 .button{
   flex:0 0 auto;
   background: linear-gradient(180deg, var(--panel2), var(--panel));
-  color:var(--text); padding:10px 16px;
-  border-radius:14px; font-size:15px; cursor:pointer;
+  color:var(--text); padding:12px 20px;
+  border-radius:14px; font-size:16px; cursor:pointer;
   box-shadow: var(--shadow); border:1px solid rgba(255,255,255,.08);
 }
 </style>
@@ -158,7 +150,7 @@ html,body{height:100%; margin:0; overflow:hidden;
     <div class="pill">💎 <b id="gems">0</b></div>
   </div>
 
-  <div class="balance">Balance: $<span id="balance">0.00</span></div>
+  <div class="balance" id="balance">0.00</div>
   <h1 class="title">Burger Coin</h1>
 
   <div class="coinContainer">
