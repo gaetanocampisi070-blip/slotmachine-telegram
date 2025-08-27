@@ -20,15 +20,6 @@ html,body{height:100%; margin:0; overflow:hidden;
   color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
 .app{ max-width:520px; margin:0 auto; height:100dvh; display:flex; flex-direction:column; justify-content:space-between; }
 
-/* SPLASH */
-#splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
-  display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
-.splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1);
-  padding:22px; border-radius:20px; box-shadow: var(--shadow); display:flex; flex-direction:column; align-items:center; }
-.splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden;
-  background: rgba(255,255,255,.18); margin-top:16px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
-#progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
-
 /* TOPBAR */
 .topbar{ margin-top:20%; display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
@@ -48,9 +39,8 @@ html,body{height:100%; margin:0; overflow:hidden;
   margin-bottom:4%;
 }
 
-/* QUADRANTE CENTRALE */
+/* COIN CONTAINER */
 .coinContainer {
-  flex:1;
   margin:0 5% 0 5%;
   padding:20px;
   background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
@@ -62,7 +52,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   align-items:center;
   justify-content:flex-start;
   margin-top:5%;
-  margin-bottom:2%;  /* ✅ quasi attaccati ai pulsanti */
+  margin-bottom:0; /* ✅ ora si chiude subito sopra i pulsanti */
 }
 
 /* XP BAR */
@@ -99,24 +89,27 @@ html,body{height:100%; margin:0; overflow:hidden;
   100% { transform: translateX(200%) rotate(25deg); }
 }
 
-/* COMBO TEXT */
+/* COMBO STILIZZATO */
 #comboText {
-  margin-top:12px;
-  font-size:20px;
+  margin-top:16px;
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:18px;
+  padding:10px 18px;
+  font-size:18px;
   font-weight:700;
   color: var(--mint2);
   text-shadow: 0 0 6px rgba(0,255,128,.8);
+  box-shadow: var(--shadow);
 }
 
-/* BUTTONS SCORREVOLI */
+/* BUTTONS */
 .buttonContainer{
   display:flex;
   overflow-x:auto;
   gap:12px;
   padding:12px;
-  margin-bottom:0;
-  margin-top:2%;  /* ✅ quasi attaccati */
-  transform:translateY(0); /* ora naturali, attaccati */
+  margin-top:0;   /* ✅ attaccati sotto il container */
   scrollbar-width: none;
 }
 .buttonContainer::-webkit-scrollbar{ display:none; }
@@ -134,17 +127,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 </style>
 </head>
 <body>
-<!-- SPLASH -->
-<div id="splash">
-  <div class="splash-card">
-    <img src="burger_image.jpeg" alt="BurgerCoin logo" style="width:140px; border-radius:50%; margin-bottom:12px;"/>
-    <div class="splash-logo" style="font-size:28px; font-weight:900; margin:6px 0;">🍔 BurgerCoin</div>
-    <div class="splash-progress"><div id="progress-bar"></div></div>
-  </div>
-</div>
-
-<!-- GAME -->
-<div class="app" id="app" aria-hidden="true">
+<div class="app" id="app">
   <div class="topbar">
     <div class="pill"><img src="burger_image.jpeg" class="icoCoin"/> <b id="coins">0</b></div>
     <div class="pill">⚡ <b id="energy">100</b></div>
@@ -160,7 +143,7 @@ html,body{height:100%; margin:0; overflow:hidden;
       <div class="badge"><b id="xptext">0/100 XP</b></div>
     </div>
     <div class="coinBtn" id="coinBtn"></div>
-    <div id="comboText">Combo 1.00X</div> <!-- ✅ combo sotto la moneta -->
+    <div id="comboText">Combo 1.00X</div>
   </div>
 
   <div class="buttonContainer">
@@ -174,25 +157,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 </div>
 
 <script>
-// SPLASH
-let progress=0; const progressBar=document.getElementById("progress-bar");
-function updateProgressBar(){
-  progress+=Math.random()*20;
-  if(progress>=100){
-    progress=100;
-    setTimeout(()=>{
-      document.getElementById("splash").style.opacity=0;
-      setTimeout(()=>{
-        document.getElementById("splash").style.display="none";
-        document.getElementById("app").removeAttribute("aria-hidden");
-      },600);
-    },300);
-  }
-  progressBar.style.width=progress+"%";
-}
-setInterval(updateProgressBar,300);
-
-// GAME LOGIC
+// GAME VARIABLES
 let coins=0, energy=100, xp=0, level=1, xpToNext=100;
 
 // Combo system
@@ -208,7 +173,10 @@ function resetCombo(){
 document.getElementById('coinBtn').addEventListener('click',()=>{
   if(energy>0){
     // update combo
-    combo+=0.05;
+    if(combo<3.00){
+      combo+=0.01;
+      if(combo>3.00) combo=3.00;
+    }
     comboText.textContent=`Combo ${combo.toFixed(2)}X`;
 
     // reset timer
