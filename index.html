@@ -62,7 +62,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   align-items:center;
   justify-content:flex-start;
   margin-top:5%;
-  margin-bottom:30%;  /* ✅ alzato di 30% da sotto */
+  margin-bottom:2%;  /* ✅ quasi attaccati ai pulsanti */
 }
 
 /* XP BAR */
@@ -99,6 +99,15 @@ html,body{height:100%; margin:0; overflow:hidden;
   100% { transform: translateX(200%) rotate(25deg); }
 }
 
+/* COMBO TEXT */
+#comboText {
+  margin-top:12px;
+  font-size:20px;
+  font-weight:700;
+  color: var(--mint2);
+  text-shadow: 0 0 6px rgba(0,255,128,.8);
+}
+
 /* BUTTONS SCORREVOLI */
 .buttonContainer{
   display:flex;
@@ -106,8 +115,8 @@ html,body{height:100%; margin:0; overflow:hidden;
   gap:12px;
   padding:12px;
   margin-bottom:0;
-  margin-top:auto;
-  transform:translateY(-30%); /* ✅ saliti di 30% */
+  margin-top:2%;  /* ✅ quasi attaccati */
+  transform:translateY(0); /* ora naturali, attaccati */
   scrollbar-width: none;
 }
 .buttonContainer::-webkit-scrollbar{ display:none; }
@@ -115,9 +124,9 @@ html,body{height:100%; margin:0; overflow:hidden;
   flex:0 0 auto;
   background: linear-gradient(180deg, var(--panel2), var(--panel));
   color:var(--text); 
-  padding:14px 20px;      /* ✅ più grandi */
-  border-radius:18px;     /* ✅ più stondati */
-  font-size:17px;         /* ✅ testo più grande */
+  padding:14px 20px;
+  border-radius:18px;
+  font-size:17px;
   cursor:pointer;
   box-shadow: var(--shadow); 
   border:1px solid rgba(255,255,255,.08);
@@ -151,6 +160,7 @@ html,body{height:100%; margin:0; overflow:hidden;
       <div class="badge"><b id="xptext">0/100 XP</b></div>
     </div>
     <div class="coinBtn" id="coinBtn"></div>
+    <div id="comboText">Combo 1.00X</div> <!-- ✅ combo sotto la moneta -->
   </div>
 
   <div class="buttonContainer">
@@ -184,10 +194,34 @@ setInterval(updateProgressBar,300);
 
 // GAME LOGIC
 let coins=0, energy=100, xp=0, level=1, xpToNext=100;
+
+// Combo system
+let combo=1.00;
+let comboTimer;
+const comboText=document.getElementById("comboText");
+
+function resetCombo(){
+  combo=1.00;
+  comboText.textContent=`Combo ${combo.toFixed(2)}X`;
+}
+
 document.getElementById('coinBtn').addEventListener('click',()=>{
   if(energy>0){
-    coins++; energy--; xp+=5;
+    // update combo
+    combo+=0.05;
+    comboText.textContent=`Combo ${combo.toFixed(2)}X`;
+
+    // reset timer
+    clearTimeout(comboTimer);
+    comboTimer=setTimeout(resetCombo,7000);
+
+    // calculate earnings
+    let earned=Math.floor(1*combo);
+    coins+=earned;
+    energy--; xp+=5;
+
     if(xp>=xpToNext){ xp=0; level++; xpToNext=Math.floor(xpToNext*1.5); }
+
     document.getElementById('coins').textContent=coins;
     document.getElementById('energy').textContent=energy;
     document.getElementById('xptext').textContent=`${xp}/${xpToNext} XP`;
