@@ -278,11 +278,12 @@ function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
   const d = JSON.parse(raw);
-  coins = d.coins || 0; energy = d.energy || 500; xp = d.xp || 0; level = d.level || 1;
+  coins = d.coins || 0; energy = d.energy || 100; xp = d.xp || 0; level = d.level || 1;
   xpToNext = d.xpToNext || 100; combo = d.combo || 1; balance = d.balance || 0; gems = d.gems || 0;
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    energy = Math.min(500, energy + minutesPassed);
+    // Non far rialzare l'energia a 500, mantienila zero se necessario.
+    energy = Math.min(500, energy + minutesPassed);  
   }
   updateUI();
 }
