@@ -166,25 +166,24 @@ html,body{height:100%; margin:0; overflow:hidden;
   margin-bottom:8px;
 }
 
-/* POPUP +🍔 */
+/* POPUP */
 .popup {
-  position:absolute;
-  font-weight:700;
-  color:var(--gold1);
-  text-shadow:0 0 6px black;
-  opacity:1;
-  animation: popFade 0.8s forwards;
+  position: absolute;
+  color: var(--gold1);
+  font-weight: 700;
   pointer-events: none;
+  animation: popFade 0.8s ease-out forwards;
+  text-shadow: 0 0 6px black;
 }
 @keyframes popFade {
-  0% { transform:translateY(0); opacity:1; }
-  100% { transform:translateY(-40px); opacity:0; }
+  0% { opacity: 1; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1.3); }
 }
 </style>
 </head>
 <body>
 <!-- SUONO CLICK -->
-<audio id="clickSound" src="click.mp3" preload="auto"></audio>
+<audio id="clickSound" src="click.wav" preload="auto"></audio>
 
 <!-- SPLASH -->
 <div id="splash">
@@ -287,25 +286,6 @@ function loadGame() {
 window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000);
 
-// Popup dinamico
-function spawnPopup(amount){
-  const coinBtn=document.getElementById('coinBtn');
-  const popup=document.createElement('div');
-  popup.className='popup';
-  popup.textContent=`+🍔 ${amount}`;
-
-  if(amount < 10) popup.style.fontSize="16px";
-  else if(amount < 100) popup.style.fontSize="20px";
-  else if(amount < 1000) popup.style.fontSize="24px";
-  else popup.style.fontSize="28px";
-
-  popup.style.left=(Math.random()*120)+"px";
-  popup.style.top=(Math.random()*120)+"px";
-
-  coinBtn.appendChild(popup);
-  setTimeout(()=>popup.remove(),800);
-}
-
 function updateUI() {
   coinsEl.textContent = Math.floor(coins);
   energyEl.textContent = energy;
@@ -317,8 +297,20 @@ function updateUI() {
   gemsEl.textContent = gems;
 }
 
+// --- FUNZIONE POPUP ---
+function showPopup(x, y, text, size=16) {
+  const popup = document.createElement("div");
+  popup.className = "popup";
+  popup.style.left = x + "px";
+  popup.style.top = y + "px";
+  popup.style.fontSize = size + "px";
+  popup.textContent = text;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 800);
+}
+
 // CLICK MONETA
-document.getElementById('coinBtn').addEventListener('click', () => {
+document.getElementById('coinBtn').addEventListener('click', (e) => {
   if (energy > 0) {
     let earnedCoins = 1 * combo;
     coins += earnedCoins;
@@ -345,10 +337,14 @@ document.getElementById('coinBtn').addEventListener('click', () => {
     // SUONO
     const sound = document.getElementById('clickSound');
     sound.currentTime = 0;
-    sound.play().catch(err=>console.log("Audio bloccato:",err));
+    sound.play().catch(()=>{});
 
-    // POPUP
-    spawnPopup(earnedCoins.toFixed(1));
+    // POPUP +🍔
+    const rect = coinBtn.getBoundingClientRect();
+    const x = rect.left + rect.width/2 + (Math.random()*60 - 30);
+    const y = rect.top + rect.height/2 + (Math.random()*60 - 30);
+    const size = 14 + Math.min(earnedCoins, 30);
+    showPopup(x, y, `+🍔${earnedCoins.toFixed(0)}`, size);
   }
 });
 
