@@ -165,6 +165,21 @@ html,body{height:100%; margin:0; overflow:hidden;
   color:var(--muted);
   margin-bottom:8px;
 }
+
+/* POPUP +🍔 */
+.popup {
+  position:absolute;
+  font-weight:700;
+  color:var(--gold1);
+  text-shadow:0 0 6px black;
+  opacity:1;
+  animation: popFade 0.8s forwards;
+  pointer-events: none;
+}
+@keyframes popFade {
+  0% { transform:translateY(0); opacity:1; }
+  100% { transform:translateY(-40px); opacity:0; }
+}
 </style>
 </head>
 <body>
@@ -272,6 +287,25 @@ function loadGame() {
 window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000);
 
+// Popup dinamico
+function spawnPopup(amount){
+  const coinBtn=document.getElementById('coinBtn');
+  const popup=document.createElement('div');
+  popup.className='popup';
+  popup.textContent=`+🍔 ${amount}`;
+
+  if(amount < 10) popup.style.fontSize="16px";
+  else if(amount < 100) popup.style.fontSize="20px";
+  else if(amount < 1000) popup.style.fontSize="24px";
+  else popup.style.fontSize="28px";
+
+  popup.style.left=(Math.random()*120)+"px";
+  popup.style.top=(Math.random()*120)+"px";
+
+  coinBtn.appendChild(popup);
+  setTimeout(()=>popup.remove(),800);
+}
+
 function updateUI() {
   coinsEl.textContent = Math.floor(coins);
   energyEl.textContent = energy;
@@ -311,7 +345,10 @@ document.getElementById('coinBtn').addEventListener('click', () => {
     // SUONO
     const sound = document.getElementById('clickSound');
     sound.currentTime = 0;
-    sound.play().catch(()=>{});
+    sound.play().catch(err=>console.log("Audio bloccato:",err));
+
+    // POPUP
+    spawnPopup(earnedCoins.toFixed(1));
   }
 });
 
