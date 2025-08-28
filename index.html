@@ -231,6 +231,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 </div>
 
 <script>
+// Gestione variabili
 let progress = 0;
 const progressBar = document.getElementById("progress-bar");
 
@@ -272,18 +273,20 @@ function saveGame() {
   const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
+
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
   const d = JSON.parse(raw);
-  coins = d.coins||0; energy = d.energy||500; xp = d.xp||0; level = d.level||1;
-  xpToNext = d.xpToNext||100; combo = d.combo||1; balance = d.balance||0; gems = d.gems||0;
+  coins = d.coins || 0; energy = d.energy || 500; xp = d.xp || 0; level = d.level || 1;
+  xpToNext = d.xpToNext || 100; combo = d.combo || 1; balance = d.balance || 0; gems = d.gems || 0;
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
     energy = Math.min(500, energy + minutesPassed);
   }
   updateUI();
 }
+
 window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000);
 
@@ -299,7 +302,7 @@ function updateUI() {
 }
 
 // --- FUNZIONE POPUP ---
-function showPopup(x, y, text, size=16) {
+function showPopup(x, y, text, size = 16) {
   const popup = document.createElement("div");
   popup.className = "popup";
   popup.style.left = x + "px";
@@ -335,7 +338,7 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
     coins += earnedCoins;
     energy--; xp += 5;
     if (xp >= xpToNext) { xp = 0; level++; xpToNext = Math.floor(xpToNext * 1.5); }
-    if (Math.floor(coins/10) > Math.floor((coins-earnedCoins)/10)) balance += 0.01;
+    if (Math.floor(coins / 10) > Math.floor((coins - earnedCoins) / 10)) balance += 0.01;
 
     combo = Math.min(3, (combo + 0.01));
     comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
@@ -359,8 +362,8 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
 
     // POPUP +🍔
     const rect = coinBtn.getBoundingClientRect();
-    const x = rect.left + rect.width/2 + (Math.random()*60 - 30);
-    const y = rect.top + rect.height/2 + (Math.random()*60 - 30);
+    const x = rect.left + rect.width / 2 + (Math.random() * 60 - 30);
+    const y = rect.top + rect.height / 2 + (Math.random() * 60 - 30);
     const size = 14 + Math.min(earnedCoins, 30);
     showPopup(x, y, `+🍔${earnedCoins.toFixed(0)}`, size);
   }
