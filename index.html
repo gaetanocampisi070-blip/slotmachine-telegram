@@ -269,7 +269,6 @@ const energyTimerEl = document.getElementById('energyTimer');
 
 // PERSISTENZA
 const SAVE_KEY = 'burgercoin_save_v1';
-
 function saveGame() {
   const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -279,21 +278,12 @@ function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
   const d = JSON.parse(raw);
-  coins = d.coins || 0; 
-  energy = (d.energy >= 0 ? d.energy : 0); // Evita che l'energia venga mai impostata a valori superiori o inferiori al limite
-  xp = d.xp || 0; 
-  level = d.level || 1;
-  xpToNext = d.xpToNext || 100; 
-  combo = d.combo || 1; 
-  balance = d.balance || 0; 
-  gems = d.gems || 0;
-
-  // Aggiorna l'energia dopo il login basandosi sul tempo
+  coins = d.coins || 0; energy = d.energy || 500; xp = d.xp || 0; level = d.level || 1;
+  xpToNext = d.xpToNext || 100; combo = d.combo || 1; balance = d.balance || 0; gems = d.gems || 0;
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    energy = Math.max(0, energy + minutesPassed);  // Mantieni energia a zero se è a zero
+    energy = Math.min(500, energy + minutesPassed);
   }
-  
   updateUI();
 }
 
