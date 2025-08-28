@@ -25,7 +25,7 @@ html,body{height:100%; margin:0; overflow:hidden;
   display:flex; 
   flex-direction:column; 
   justify-content:space-between;
-  transform: translateY(5%);
+  transform: translateY(-7%); /* Alzato dell'8% rispetto alla versione precedente */
 }
 
 /* SPLASH */
@@ -38,7 +38,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 #progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
 
 /* TOPBAR */
-.topbar{ margin-top:40%; display:flex; justify-content:center; gap:14px;
+.topbar{ margin-top:30%; display:flex; justify-content:center; gap:14px;
   padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
   border-radius:16px; box-shadow: var(--shadow); }
 .pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
@@ -92,8 +92,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 /* XP BAR */
 .progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:20px;}
 .track{
-  flex:1; height:18px; border-radius:14px;
-  background: rgba(255,255,255,.08);
+  flex:1; height:18px; border-radius:14px; background: rgba(255,255,255,.08);
   overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 8px rgba(255,215,0,.4);
   border:1px solid rgba(255,255,255,.15);
 }
@@ -190,54 +189,192 @@ html,body{height:100%; margin:0; overflow:hidden;
 
   <div class="coinContainer">
     <div class="progress">
-      <div class="badge">XP</div>
-      <div class="track">
-        <div class="bar" id="xp-bar"></div>
-      </div>
-      <div class="badge" id="xp-progress">0/100</div>
+      <div class="badge">Lvl <b id="level">1</b></div>
+      <div class="track"><div class="bar" id="xpbar"></div></div>
+      <div class="badge"><b id="xptext">0/100 XP</b></div>
     </div>
-
     <div class="coinBtn" id="coinBtn"></div>
-    <div class="combo" id="combo"></div>
-
-    <div class="buttonContainer">
-      <button class="button">Settings</button>
-      <button class="button">Upgrade</button>
-    </div>
+    <div class="combo" id="combo">Combo 1.00x</div>
   </div>
 
-  <div class="footer">Created by BurgerCoin Team</div>
+  <div class="buttonContainer">
+    <button class="button">💰 Wallet</button>
+    <button class="button">🎯 Mission</button>
+    <button class="button">🎡 Wheel</button>
+    <button class="button">🔧 Upgrade</button>
+    <button class="button">🃏 Burger Jack</button>
+    <button class="button">🏆 Leaderboard</button>
+  </div>
+
+  <div class="footer">by Burger Games</div>
 </div>
 
 <script>
-let coins = 0; // Monete iniziali
+// =========================
+// SPLASH
+// =========================
+let progress = 0;
+const progressBar = document.getElementById("progress-bar");
 
-document.addEventListener('DOMContentLoaded', () => {
-  const coinBtn = document.getElementById('coinBtn');
-  const coinDisplay = document.getElementById('coins');
-  
-  // Funzione per il click sulla moneta
-  coinBtn.addEventListener('click', () => {
-    coins++; // Aumenta il numero delle monete
-    coinDisplay.textContent = coins; // Aggiorna il display delle monete
-  });
-  
-  // Funzione di caricamento iniziale (Splash Screen)
-  let progress = 0;
-  const progressBar = document.getElementById('progress-bar');
-  const splash = document.getElementById('splash');
-  
-  const interval = setInterval(() => {
-    progress += 5;
-    progressBar.style.width = `${progress}%`;
-    
-    if (progress >= 100) {
-      clearInterval(interval);
-      splash.style.opacity = 0;
-      setTimeout(() => { splash.style.display = 'none'; }, 600);
-    }
-  }, 100);
+function updateProgressBar() {
+  progress += Math.random() * 20;
+  if (progress >= 100) {
+    progress = 100;
+    setTimeout(() => {
+      document.getElementById("splash").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("app").removeAttribute("aria-hidden");
+        // Salva quando lo splash termina (non cambia logica di gioco)
+        saveGame();
+      }, 600);
+    }, 300);
+  }
+  progressBar.style.width = progress + "%";
+}
+setInterval(updateProgressBar, 300);
+
+// =========================
+// VARIABILI DI GIOCO
+// =========================
+let coins = 0;
+let energy = 100;
+let xp = 0;
+let level = 1;
+let xpToNext = 100;
+let combo = 1;
+let balance = 0;
+// Aggiunta variabile gems per persistenza diamanti (UI già presente)
+let gems = 0;
+
+let comboTimer;
+
+// =========================
+// RIFERIMENTI UI
+// =========================
+const coinsEl = document.getElementById('coins');
+const energyEl = document.getElementById('energy');
+const xptextEl = document.getElementById('xptext');
+const levelEl = document.getElementById('level');
+const xpbarEl = document.getElementById('xpbar');
+const comboEl = document.getElementById('combo');
+const balanceEl = document.getElementById('balance');
+const gemsEl = document.getElementById('gems');
+
+// =========================
+// PERSISTENZA (LocalStorage)
+// =========================
+const SAVE_KEY = 'burgercoin_save_v1';
+
+function saveGame() {
+  try {
+    const data = {
+      coins, energy, xp, level, xpToNext, combo, balance, gems
+    };
+    localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+  } catch (e) {
+    // Non alteriamo la logica: solo log silenzioso
+    console && console.warn && console.warn('Save failed', e);
+  }
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return;
+    const d = JSON.parse(raw);
+
+    if (typeof d.coins === 'number') coins = d.coins;
+    if (typeof d.energy === 'number') energy = d.energy;
+    if (typeof d.xp === 'number') xp = d.xp;
+    if (typeof d.level === 'number') level = d.level;
+    if (typeof d.xpToNext === 'number') xpToNext = d.xpToNext;
+    if (typeof d.combo === 'number') combo = d.combo;
+    if (typeof d.balance === 'number') balance = d.balance;
+    if (typeof d.gems === 'number') gems = d.gems;
+
+    // Dopo il load aggiorniamo subito la UI
+    updateUI();
+  } catch (e) {
+    console && console.warn && console.warn('Load failed', e);
+  }
+}
+
+// Salva quando la pagina sta per chiudersi o andare in background
+window.addEventListener('beforeunload', saveGame);
+window.addEventListener('pagehide', saveGame);
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) saveGame();
 });
+
+// Autosave periodico (non influisce sulla logica)
+setInterval(saveGame, 5000);
+
+// =========================
+/* Funzione per aggiornare la UI */
+// =========================
+function updateUI() {
+  coinsEl.textContent = Math.floor(coins);
+  energyEl.textContent = energy;
+  xptextEl.textContent = `${xp}/${xpToNext} XP`;
+  levelEl.textContent = level;
+  xpbarEl.style.width = (xp / xpToNext * 100) + "%";
+  balanceEl.textContent = balance.toFixed(2);
+  comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
+  gemsEl.textContent = gems; // diamantI
+}
+
+// =========================
+// CLICK SULLA MONETA (logica invariata)
+// =========================
+document.getElementById('coinBtn').addEventListener('click', () => {
+  if (energy > 0) {
+    // Aggiungi monete con combo
+    let earnedCoins = 1 * combo;
+    coins += earnedCoins;
+
+    // Riduci energia
+    energy--; 
+
+    // Aggiungi XP
+    xp += 5; 
+    if (xp >= xpToNext) {
+      xp = 0; 
+      level++; 
+      xpToNext = Math.floor(xpToNext * 1.5); // Aumenta difficoltà per il prossimo livello
+    }
+
+    // Ogni 10 monete → +0.01$
+    if (Math.floor(coins / 10) > Math.floor((coins - earnedCoins) / 10)) {  // Verifica se siamo passati al multiplo successivo di 10
+      balance += 0.01;
+    }
+
+    // Aggiorna la combo
+    combo = Math.min(3, (combo + 0.01));
+    comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
+    comboEl.style.transform = "scale(1.2)";
+    setTimeout(() => comboEl.style.transform = "scale(1)", 100);
+
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(() => {
+      combo = 1;
+      comboEl.textContent = "Combo 1.00x";
+      saveGame(); // salviamo anche quando la combo scade
+    }, 7000);
+
+    // Aggiorna la UI
+    updateUI();
+
+    // Salvataggio immediato dopo il click (non cambia la logica)
+    saveGame();
+  }
+});
+
+// =========================
+// CARICAMENTO INIZIALE
+// =========================
+loadGame();    // carica eventuale salvataggio
+updateUI();    // assicura la sincronizzazione UI anche se non c'è salvataggio
 </script>
 </body>
 </html>
