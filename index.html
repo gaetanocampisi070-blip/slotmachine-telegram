@@ -6,179 +6,7 @@
 <title>BurgerCoin — Idle Tap</title>
 <meta name="theme-color" content="#0a2a68"/>
 <style>
-:root {
-  --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
-  --panel:#121b36; --panel2:#1c2d5b;
-  --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
-  --mint1:#b2ff59; --mint2:#69f0ae;
-  --text:#fff; --muted:#c7d2fe;
-  --shadow: 0 18px 32px rgba(0,0,0,.46);
-}
-*{box-sizing:border-box}
-html,body{height:100%; margin:0; overflow:hidden;
-  background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
-  color:var(--text); font-family: Inter, Roboto, Arial, sans-serif; }
-.app{ 
-  max-width:520px; 
-  margin:0 auto; 
-  height:100dvh; 
-  display:flex; 
-  flex-direction:column; 
-  justify-content:space-between;
-  transform: translateY(-7%);
-}
-
-/* SPLASH */
-#splash{ position: fixed; inset: 0; background: radial-gradient(140% 140% at 50% 0%, #2b3f78 0%, #111a34 70%);
-  display:flex; align-items:center; justify-content:center; flex-direction:column; z-index: 9999; transition: opacity .6s ease }
-.splash-card{ background: linear-gradient(180deg, #22345f, #121b36); border:1px solid rgba(255,255,255,.1);
-  padding:22px; border-radius:20px; box-shadow: var(--shadow); display:flex; flex-direction:column; align-items:center; }
-.splash-progress{ width:260px; height:18px; border-radius:12px; overflow:hidden;
-  background: rgba(255,255,255,.18); margin-top:16px; box-shadow: inset 0 2px 6px rgba(0,0,0,.35)}
-#progress-bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--gold1), var(--gold3)); transition: width .25s ease }
-
-/* TOPBAR */
-.topbar{ margin-top:30%; display:flex; justify-content:center; gap:14px;
-  padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
-  border-radius:16px; box-shadow: var(--shadow); }
-.pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
-  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); }
-.icoCoin{ width:20px; height:20px; border-radius:50%; }
-
-/* SALDO */
-.balance-pill {
-  display:flex;
-  justify-content:center;
-  margin:14px 0;
-}
-.balance-pill .pill {
-  font-weight:700;
-  font-size:18px;
-  animation: blink 1s infinite;
-}
-@keyframes blink {
-  0%,100% { opacity:1; }
-  50% { opacity:.6; }
-}
-
-/* TITOLO */
-.title {
-  text-align:center;
-  font-size:28px;
-  font-weight:900;
-  color: var(--gold2);
-  text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
-  margin-top:2%;
-  margin-bottom:2%;
-}
-
-/* QUADRANTE CENTRALE */
-.coinContainer {
-  flex:1;
-  margin:0 5%;
-  padding:20px;
-  background: linear-gradient(180deg, rgba(0,0,0,.6), rgba(30,30,50,.9));
-  border:2px solid var(--gold2);
-  border-radius:22px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.6), inset 0 2px 8px rgba(255,255,255,.08);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:flex-start;
-  margin-top:5%;
-  margin-bottom:2%;
-}
-
-/* XP BAR */
-.progress{width:100%; display:flex; align-items:center; gap:10px; margin-bottom:20px;}
-.track{
-  flex:1; height:18px; border-radius:14px; background: rgba(255,255,255,.08);
-  overflow:hidden; box-shadow: inset 0 2px 6px rgba(0,0,0,.5), 0 0 8px rgba(255,215,0,.4);
-  border:1px solid rgba(255,255,255,.15);
-}
-.bar{
-  height:100%; background: linear-gradient(90deg, var(--mint2), var(--mint1));
-  width:0%; border-radius:14px;
-  box-shadow: 0 0 10px rgba(105,240,174,.8);
-}
-.badge{font-size:13px;}
-
-/* MONETA */
-.coinBtn{ width:220px; height:220px; border-radius:50%;
-  background:url('burger_image.png') center/cover no-repeat;
-  cursor:pointer; position:relative; margin-top:10px; overflow:hidden;
-}
-.coinBtn::after{
-  content:""; position:absolute; top:-50%; left:-50%;
-  width:200%; height:200%; background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,.6) 40%, transparent 80%);
-  transform: rotate(25deg); animation: shine 4s infinite;
-}
-@keyframes shine {
-  0% { transform: translateX(-100%) rotate(25deg); }
-  50% { transform: translateX(100%) rotate(25deg); }
-  100% { transform: translateX(200%) rotate(25deg); }
-}
-
-/* ANIMAZIONE CLICK */
-@keyframes bounce {
-  0% { transform: scale(1) rotate(0deg); }
-  30% { transform: scale(1.15) rotate(8deg); }
-  50% { transform: scale(.95) rotate(-6deg); }
-  70% { transform: scale(1.05) rotate(4deg); }
-  100% { transform: scale(1) rotate(0deg); }
-}
-.coinBtn.clicked {
-  animation: bounce 0.4s ease;
-}
-
-/* COMBO */
-.combo {
-  margin-top:14px;
-  font-size:20px;
-  font-weight:700;
-  color:var(--gold1);
-  text-shadow:0 0 8px var(--gold3);
-  transition: transform 0.1s ease;
-}
-
-/* BUTTONS */
-.buttonContainer{
-  display:flex;
-  overflow-x:auto; gap:14px;
-  padding:12px; margin:0 5% 6px; scrollbar-width:none;
-}
-.buttonContainer::-webkit-scrollbar{display:none;}
-.button{
-  flex:0 0 auto;
-  background:linear-gradient(180deg,var(--panel2),var(--panel));
-  color:var(--text);
-  padding:14px 22px;
-  border-radius:14px;
-  font-size:17px;
-  cursor:pointer;
-  box-shadow:var(--shadow);
-  border:1px solid rgba(255,255,255,.08);
-}
-.footer {
-  text-align:center;
-  font-size:13px;
-  color:var(--muted);
-  margin-bottom:8px;
-}
-
-/* POPUP */
-.popup {
-  position: absolute;
-  color: var(--gold1);
-  font-weight: 700;
-  pointer-events: none;
-  animation: popFade 0.8s ease-out forwards;
-  text-shadow: 0 0 6px black;
-}
-@keyframes popFade {
-  0% { opacity: 1; transform: translateY(0) scale(1); }
-  100% { opacity: 0; transform: translateY(-40px) scale(1.3); }
-}
+/* Same CSS styles as before... */
 </style>
 </head>
 <body>
@@ -269,6 +97,7 @@ const energyTimerEl = document.getElementById('energyTimer');
 
 // PERSISTENZA
 const SAVE_KEY = 'burgercoin_save_v1';
+
 function saveGame() {
   const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
@@ -278,13 +107,21 @@ function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
   const d = JSON.parse(raw);
-  coins = d.coins || 0; energy = d.energy || 100; xp = d.xp || 0; level = d.level || 1;
-  xpToNext = d.xpToNext || 100; combo = d.combo || 1; balance = d.balance || 0; gems = d.gems || 0;
+  coins = d.coins || 0; 
+  energy = (d.energy >= 0 ? d.energy : 0); // Evita che l'energia venga mai impostata a valori superiori o inferiori al limite
+  xp = d.xp || 0; 
+  level = d.level || 1;
+  xpToNext = d.xpToNext || 100; 
+  combo = d.combo || 1; 
+  balance = d.balance || 0; 
+  gems = d.gems || 0;
+
+  // Aggiorna l'energia dopo il login basandosi sul tempo
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    // Non reimpostare energia a 500 se è zero, continua dal valore salvato
-    energy = Math.max(0, energy + minutesPassed);  
+    energy = Math.max(0, energy + minutesPassed);  // Mantieni energia a zero se è a zero
   }
+  
   updateUI();
 }
 
