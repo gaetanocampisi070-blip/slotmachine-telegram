@@ -198,7 +198,7 @@ html,body{height:100%; margin:0; overflow:hidden;
 <div class="app" id="app" aria-hidden="true">
   <div class="topbar">
     <div class="pill"><img src="burger_image.png" class="icoCoin"/> <b id="coins">0</b></div>
-    <div class="pill">⚡ <b id="energy">100</b> <small id="energyTimer" style="font-size:10px;opacity:0.7;margin-left:4px;">60s</small></div>
+    <div class="pill">⚡ <b id="energy">500</b> <small id="energyTimer" style="font-size:10px;opacity:0.7;margin-left:4px;">60s</small></div>
     <div class="pill">💎 <b id="gems">0</b></div>
   </div>
 
@@ -253,7 +253,7 @@ function updateProgressBar() {
 setInterval(updateProgressBar, 300);
 
 // VARIABILI DI GIOCO
-let coins = 0, energy = 100, xp = 0, level = 1, xpToNext = 100, combo = 1, balance = 0, gems = 0;
+let coins = 0, energy = 500, xp = 0, level = 1, xpToNext = 100, combo = 1, balance = 0, gems = 0;
 let comboTimer;
 
 // RIFERIMENTI UI
@@ -278,11 +278,17 @@ function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
   const d = JSON.parse(raw);
-  coins = d.coins || 0; energy = d.energy || 500; xp = d.xp || 0; level = d.level || 1;
-  xpToNext = d.xpToNext || 100; combo = d.combo || 1; balance = d.balance || 0; gems = d.gems || 0;
+  coins = d.coins || 0;
+  energy = d.energy || 500; // energia iniziale deve essere 500
+  xp = d.xp || 0;
+  level = d.level || 1;
+  xpToNext = d.xpToNext || 100;
+  combo = d.combo || 1;
+  balance = d.balance || 0;
+  gems = d.gems || 0;
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    energy = Math.min(500, energy + minutesPassed);
+    energy = Math.min(500, energy + minutesPassed * 2); // Recupero energia di 2 per minuto
   }
   updateUI();
 }
@@ -319,7 +325,7 @@ setInterval(() => {
   if (energy < 500) {
     energyCountdown--;
     if (energyCountdown <= 0) {
-      energy++;
+      energy = Math.min(500, energy + 2); // Aggiungi energia
       energyCountdown = 60;
       updateUI();
       saveGame();
