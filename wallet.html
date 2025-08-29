@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit="cover"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
   <title>BurgerCoin - Wallet</title>
   <meta name="theme-color" content="#0a2a68"/>
   <style>
@@ -156,6 +156,13 @@
   <img src="burger_logo.png" alt="Burger Coin Logo" class="burger-logo"/>
   <h1 class="title">BurgerCoin Wallet</h1>
 
+  <!-- Coins and Balance -->
+  <div class="balance-pill">
+    <div class="pill">
+      Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
+    </div>
+  </div>
+
   <!-- Wallet Address Input -->
   <div class="topbar">
     <div class="pill">
@@ -164,13 +171,6 @@
     </div>
     <!-- Set Wallet Button -->
     <button id="setWallet" class="button">Set Wallet</button>
-  </div>
-
-  <!-- Coins and Balance -->
-  <div class="balance-pill">
-    <div class="pill">
-      Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
-    </div>
   </div>
 
   <!-- BurgerCoin Info -->
