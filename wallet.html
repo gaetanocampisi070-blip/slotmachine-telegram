@@ -29,7 +29,7 @@
     html, body {
       height: 100%;
       margin: 0;
-      overflow: hidden;
+      overflow-x: hidden;  /* Impedisce lo scorrimento orizzontale */
       background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
       color: var(--text);
       font-family: 'Inter', 'Roboto', Arial, sans-serif;
@@ -38,14 +38,14 @@
     .app {
       max-width: 520px;
       margin: 0 auto;
-      height: 100dvh;
+      min-height: 100vh;  /* Usa min-height per consentire scorrimento più fluido */
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-direction: column-reverse; /* Inverte la direzione del contenuto */
+      justify-content: flex-start; /* Allinea il contenuto verso l'alto */
       transform: translateY(-10%);
       text-align: center;
-      overflow-y: auto;  /* Permette lo scroll verticale */
-      max-height: 90vh;  /* Impedisce che il contenuto superi il 90% dell'altezza della finestra */
+      overflow-y: auto;  /* Permette lo scorrimento verticale */
+      padding-bottom: 20px; /* Aggiungi un po' di spazio in basso */
     }
 
     /* Title */
@@ -154,8 +154,7 @@
 
 <!-- Wallet Page -->
 <div class="app" id="app">
-  <!-- Title & Burger Coin Logo -->
-  <img src="burger_logo.png" alt="Burger Coin Logo" class="burger-logo"/>
+  <!-- Title -->
   <h1 class="title">BurgerCoin Wallet</h1>
 
   <!-- Coins and Balance -->
