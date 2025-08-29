@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit="cover"/>
+  <title>BurgerCoin - Wallet</title>
+  <meta name="theme-color" content="#0a2a68"/>
+  <style>
+    :root {
+      --bg: #0a2a68;
+      --sky1: #224aa2;
+      --sky2: #081b43;
+      --panel: #121b36;
+      --panel2: #1c2d5b;
+      --gold1: #ffe082;
+      --gold2: #ffca28;
+      --gold3: #ffb300;
+      --mint1: #b2ff59;
+      --mint2: #69f0ae;
+      --text: #fff;
+      --muted: #c7d2fe;
+      --shadow: 0 18px 32px rgba(0, 0, 0, .46);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+      background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
+      color: var(--text);
+      font-family: 'Inter', 'Roboto', Arial, sans-serif;
+    }
+
+    .app {
+      max-width: 520px;
+      margin: 0 auto;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      transform: translateY(-10%);
+      text-align: center;
+    }
+
+    /* Title */
+    .title {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--gold2);
+      text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
+      margin-bottom: 20px;
+    }
+
+    .burger-logo {
+      width: 100px; /* Adjust logo size */
+      margin-bottom: 15px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px 16px;
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      margin-bottom: 25px;
+    }
+
+    .pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(10, 15, 35, .8);
+      border: 1px solid rgba(255, 255, 255, .08);
+      padding: 10px 20px;
+      border-radius: 999px;
+      box-shadow: inset 0 -2px 0 rgba(0, 0, 0, .2);
+    }
+
+    .balance-pill {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 20px 0;
+    }
+
+    .balance-pill .pill {
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    .footer {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 30px;
+    }
+
+    .button {
+      background: linear-gradient(180deg, var(--panel2), var(--panel));
+      color: var(--text);
+      padding: 14px 22px;
+      border-radius: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(255, 255, 255, .08);
+      text-align: center;
+      width: 100%;
+      margin-top: 20px;
+      display: inline-block;
+    }
+
+    .button a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .requirements {
+      margin-top: 25px;
+      text-align: left;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .requirements h2 {
+      font-size: 22px;
+      margin-bottom: 15px;
+      color: var(--gold2);
+    }
+
+    .requirements ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .requirements ul li {
+      font-size: 18px;
+      color: var(--text);
+      margin: 10px 0;
+    }
+
+  </style>
+</head>
+<body>
+
+<!-- Wallet Page -->
+<div class="app" id="app">
+  <!-- Title & Burger Coin Logo -->
+  <img src="burger_logo.png" alt="Burger Coin Logo" class="burger-logo"/>
+  <h1 class="title">BurgerCoin Wallet</h1>
+
+  <!-- Wallet Address Input -->
+  <div class="topbar">
+    <div class="pill">
+      <b>TON Wallet Address:</b>
+      <input id="walletAddress" type="text" placeholder="Enter your TON Wallet address" />
+    </div>
+    <!-- Set Wallet Button -->
+    <button id="setWallet" class="button">Set Wallet</button>
+  </div>
+
+  <!-- Coins and Balance -->
+  <div class="balance-pill">
+    <div class="pill">
+      Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
+    </div>
+  </div>
+
+  <!-- BurgerCoin Info -->
+  <div class="balance-pill" style="margin-bottom: 0;">
+    <p style="font-size: 16px;">
+      BurgerCoin is a cryptocurrency that will be released on TON on <b>October 15, 2025</b>.
+    </p>
+  </div>
+
+  <!-- AirDrop Requirements -->
+  <div class="requirements">
+    <h2>AirDrop Requirements:</h2>
+    <ul>
+      <li>Invite 3 friends</li>
+      <li>Complete 5 missions</li>
+      <li>Play for 5 consecutive days</li>
+      <li>Reach level 10 in BurgerCoin</li>
+      <li>Do not cheat in missions, or you won't be eligible for the AirDrop!</li>
+    </ul>
+  </div>
+
+  <!-- Countdown Timer -->
+  <div class="balance-pill">
+    <div class="pill">
+      Time left: <b id="countdown"></b>
+    </div>
+  </div>
+
+  <!-- Home Button -->
+  <div class="button">
+    <a href="index.html">Go to Home</a>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">by Burger Games</div>
+</div>
+
+<script>
+// Timer for the countdown to October 15, 2025
+function updateCountdown() {
+  const targetDate = new Date('2025-10-15T00:00:00Z');
+  const now = new Date();
+  const timeDiff = targetDate - now;
+
+  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+  document.getElementById('countdown').textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+  if (timeDiff <= 0) {
+    document.getElementById('countdown').textContent = "BurgerCoin is now live!";
+  }
+}
+
+// Load saved data
+function loadData() {
+  const savedData = localStorage.getItem('burgercoin_data');
+  if (savedData) {
+    const data = JSON.parse(savedData);
+    document.getElementById('coins').textContent = data.coins || 0;
+    document.getElementById('balance').textContent = data.balance || 0.00;
+    document.getElementById('walletAddress').value = data.wallet || '';
+  }
+}
+
+// Save wallet address
+document.getElementById('walletAddress').addEventListener('input', function () {
+  const walletAddress = document.getElementById('walletAddress').value;
+  const coins = document.getElementById('coins').textContent;
+  const balance = document.getElementById('balance').textContent;
+
+  const data = {
+    wallet: walletAddress,
+    coins: coins,
+    balance: balance
+  };
+
+  localStorage.setItem('burgercoin_data', JSON.stringify(data));
+});
+
+// Set Wallet Action
+document.getElementById('setWallet').addEventListener('click', function() {
+  const walletAddress = document.getElementById('walletAddress').value;
+  if (walletAddress) {
+    alert('Wallet Address Set!');
+    loadData();
+  } else {
+    alert('Please enter a valid wallet address.');
+  }
+});
+
+// Initialize and update countdown every second
+setInterval(updateCountdown, 1000);
+
+// Load saved data on page load
+loadData();
+
+</script>
+</body>
+</html>
