@@ -291,10 +291,21 @@ function saveGame() {
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
-  const d = JSON.parse(raw);
+  let d;
+  try {
+    d = JSON.parse(raw);
+    // Verifica se i dati sono validi
+    if (typeof d.coins !== 'number' || typeof d.balance !== 'number') {
+      throw new Error("Dati corrotti");
+    }
+  } catch (e) {
+    console.error("Errore nel caricamento dei dati:", e);
+    resetGame();  // Funzione per resettare i dati
+    return;
+  }
 
   coins = d.coins || 0;
-  energy = d.energy || 500; // Energia iniziale deve essere 500
+  energy = d.energy || 500;
   xp = d.xp || 0;
   level = d.level || 1;
   xpToNext = d.xpToNext || 100;
@@ -302,14 +313,10 @@ function loadGame() {
   balance = d.balance || 0;
   gems = d.gems || 0;
 
-  if (d.lastSave) {
-    const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    energy = Math.min(500, energy + minutesPassed * 2); // Recupero energia di 2 per minuto
-  }
-
   updateUI(); // Aggiorna l'interfaccia utente
-  updateProgressBar(); // Assicurati di aggiornare anche la barra di progresso
+  updateProgressBar();
 }
+
 
 window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000); // Salva ogni 5 secondi
