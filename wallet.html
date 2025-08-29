@@ -149,12 +149,6 @@
       margin: 10px 0;
     }
 
-    /* Nuova classe per l'immagine del burger */
-    .coin-image {
-      width: 20px;
-      height: 20px;
-      margin-right: 8px;
-    }
   </style>
 </head>
 <body>
@@ -172,7 +166,6 @@
   <!-- Coins and Balance -->
   <div class="balance-pill">
     <div class="pill">
-      <img src="burger_image.png" class="coin-image" alt="BurgerCoin" />
       Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
     </div>
   </div>
@@ -238,11 +231,11 @@ function updateCountdown() {
 
 // Funzione per caricare i dati salvati da `localStorage`
 function loadData() {
-  const savedData = localStorage.getItem('burgercoin_save_v1'); // Recupera i dati da index.html
+  const savedData = localStorage.getItem('burgercoin_data');
   if (savedData) {
     const data = JSON.parse(savedData);
-    document.getElementById('coins').textContent = Math.floor(data.coins);  // Mostra i coins come intero
-    document.getElementById('balance').textContent = data.balance.toFixed(2);  // Mostra il balance come numero con 2 decimali
+    document.getElementById('coins').textContent = data.coins || 0;  // Mostra i coins
+    document.getElementById('balance').textContent = data.balance || 0.00;  // Mostra il balance
     document.getElementById('walletAddress').value = data.wallet || '';  // Mostra l'indirizzo del wallet
   }
 }
@@ -281,4 +274,3 @@ loadData();
 </script>
 </body>
 </html>
-
