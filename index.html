@@ -218,14 +218,26 @@ html,body{height:100%; margin:0; overflow:hidden;
     <div class="combo" id="combo">Combo 1.00x</div>
   </div>
 
-  <div class="buttonContainer">
-    <button class="button">💰 Wallet</button>
-    <button class="button">🎯 Mission</button>
-    <button class="button">🎡 Wheel</button>
-    <button class="button">🔧 Upgrade</button>
-    <button class="button">🃏 Burger Jack</button>
-    <button class="button">🏆 Leaderboard</button>
-  </div>
+	<div class="buttonContainer">
+  <a href="wallet.html" class="button">
+    💰 Wallet
+  </a>
+  <a href="mission.html" class="button">
+    🎯 Mission
+  </a>
+  <a href="wheel.html" class="button">
+    🎡 Wheel
+  </a>
+  <a href="upgrade.html" class="button">
+    🔧 Upgrade
+  </a>
+  <a href="burgerjack.html" class="button">
+    🃏 Burger Jack
+  </a>
+  <a href="leaderboard.html" class="button">
+    🏆 Leaderboard
+  </a>
+</div>
 
   <div class="footer">by Burger Games</div>
 </div>
@@ -326,8 +338,9 @@ function showPopup(x, y, text, size = 16) {
 }
 
 // --- TIMER ENERGIA ---
+let energyCountdown = 60;
 setInterval(() => {
-  if (energy < 500 && energy > 1) {  // Make sure energy doesn't drop below 1
+  if (energy < 500) {
     energyCountdown--;
     if (energyCountdown <= 0) {
       energy = Math.min(500, energy + 2); // Aggiungi energia
@@ -336,8 +349,6 @@ setInterval(() => {
       saveGame();
     }
     energyTimerEl.textContent = energyCountdown + "s";
-  } else if (energy <= 1) {
-    energyTimerEl.textContent = "Energy depleted!";
   } else {
     energyTimerEl.textContent = "MAX";
     energyCountdown = 60;
@@ -346,7 +357,7 @@ setInterval(() => {
 
 // CLICK MONETA
 document.getElementById('coinBtn').addEventListener('click', (e) => {
-  if (energy > 0) {
+  if (energy > 1) {
     let earnedCoins = 1 * combo;
     coins += earnedCoins;
     energy--; xp += 5;
