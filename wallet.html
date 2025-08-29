@@ -230,8 +230,8 @@ function loadData() {
   }
 }
 
-// Funzione per salvare i dati del wallet nel `localStorage`
-document.getElementById('walletAddress').addEventListener('input', function () {
+// Funzione per salvare i dati nel `localStorage`
+function saveData() {
   const walletAddress = document.getElementById('walletAddress').value;
   const coins = document.getElementById('coins').textContent;
   const balance = document.getElementById('balance').textContent;
@@ -242,15 +242,15 @@ document.getElementById('walletAddress').addEventListener('input', function () {
     balance: balance
   };
 
-  localStorage.setItem('burgercoin_data', JSON.stringify(data));  // Salva i dati
-});
+  localStorage.setItem('burgercoin_save_v1', JSON.stringify(data));  // Salva i dati
+}
 
 // Funzione per impostare l'indirizzo del wallet
 document.getElementById('setWallet').addEventListener('click', function() {
   const walletAddress = document.getElementById('walletAddress').value;
   if (walletAddress) {
     alert('Wallet Address Set!');
-    loadData();  // Ricarica i dati
+    saveData();  // Salva i dati quando il wallet è impostato
   } else {
     alert('Please enter a valid wallet address.');
   }
