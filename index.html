@@ -326,9 +326,8 @@ function showPopup(x, y, text, size = 16) {
 }
 
 // --- TIMER ENERGIA ---
-let energyCountdown = 60;
 setInterval(() => {
-  if (energy < 500) {
+  if (energy < 500 && energy > 1) {  // Make sure energy doesn't drop below 1
     energyCountdown--;
     if (energyCountdown <= 0) {
       energy = Math.min(500, energy + 2); // Aggiungi energia
@@ -337,6 +336,8 @@ setInterval(() => {
       saveGame();
     }
     energyTimerEl.textContent = energyCountdown + "s";
+  } else if (energy <= 1) {
+    energyTimerEl.textContent = "Energy depleted!";
   } else {
     energyTimerEl.textContent = "MAX";
     energyCountdown = 60;
