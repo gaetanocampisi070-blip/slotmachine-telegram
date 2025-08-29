@@ -279,7 +279,8 @@ function loadGame() {
   if (!raw) return;
   const d = JSON.parse(raw);
   coins = d.coins || 0;
-  
+  energy = d.energy || energy; // Se esiste un valore salvato per l'energia, usalo, altrimenti mantieni il valore corrente
+ iniziale deve essere 500
   xp = d.xp || 0;
   level = d.level || 1;
   xpToNext = d.xpToNext || 100;
