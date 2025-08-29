@@ -221,7 +221,7 @@ function updateCountdown() {
 
 // Funzione per caricare i dati salvati da `localStorage`
 function loadData() {
-  const savedData = localStorage.getItem('burgercoin_data'); // Usa una chiave consistente
+  const savedData = localStorage.getItem('burgercoin_save_v1');
   if (savedData) {
     const data = JSON.parse(savedData);
     document.getElementById('coins').textContent = Math.floor(data.coins);  // Mostra i coins come intero
@@ -242,7 +242,7 @@ function saveData() {
     balance: balance
   };
 
-  localStorage.setItem('burgercoin_data', JSON.stringify(data));  // Usa la chiave corretta
+  localStorage.setItem('burgercoin_save_v1', JSON.stringify(data));  // Salva i dati
 }
 
 // Funzione per impostare l'indirizzo del wallet
