@@ -120,6 +120,7 @@
     .button a {
       text-decoration: none;
       color: inherit;
+      display: block;  /* Rende l'intero tasto cliccabile */
     }
 
     .requirements {
@@ -164,7 +165,9 @@
 
   <!-- Coins and Balance -->
   <div class="balance-pill">
-    <div class="pill">Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b></div>
+    <div class="pill">
+      Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
+    </div>
   </div>
 
   <!-- Wallet Address Input -->
@@ -208,9 +211,27 @@
 </div>
 
 <script>
+// Funzione per aggiornare il countdown fino al 15 ottobre 2025
+function updateCountdown() {
+  const targetDate = new Date('2025-10-15T00:00:00Z');
+  const now = new Date();
+  const timeDiff = targetDate - now;
+
+  const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+  const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+  const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+  document.getElementById('countdown').textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+
+  if (timeDiff <= 0) {
+    document.getElementById('countdown').textContent = "BurgerCoin is now live!";
+  }
+}
+
 // Funzione per caricare i dati salvati da `localStorage`
 function loadData() {
-  const savedData = localStorage.getItem('burgercoin_data');
+  const savedData = localStorage.getItem('burgercoin_save_v1'); // Recupera i dati da index.html
   if (savedData) {
     const data = JSON.parse(savedData);
     document.getElementById('coins').textContent = data.coins || 0;  // Mostra i coins
@@ -219,7 +240,7 @@ function loadData() {
   }
 }
 
-// Funzione per salvare i dati nel `localStorage`
+// Funzione per salvare i dati del wallet nel `localStorage`
 document.getElementById('walletAddress').addEventListener('input', function () {
   const walletAddress = document.getElementById('walletAddress').value;
   const coins = document.getElementById('coins').textContent;
@@ -233,6 +254,20 @@ document.getElementById('walletAddress').addEventListener('input', function () {
 
   localStorage.setItem('burgercoin_data', JSON.stringify(data));  // Salva i dati
 });
+
+// Funzione per impostare l'indirizzo del wallet
+document.getElementById('setWallet').addEventListener('click', function() {
+  const walletAddress = document.getElementById('walletAddress').value;
+  if (walletAddress) {
+    alert('Wallet Address Set!');
+    loadData();  // Ricarica i dati
+  } else {
+    alert('Please enter a valid wallet address.');
+  }
+});
+
+// Inizializzare il countdown ogni secondo
+setInterval(updateCountdown, 1000);
 
 // Carica i dati salvati dal localStorage all'avvio
 loadData();
