@@ -29,7 +29,7 @@
     html, body {
       height: 100%;
       margin: 0;
-      overflow-x: hidden;  /* Impedisce lo scorrimento orizzontale */
+      overflow-x: hidden;
       background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
       color: var(--text);
       font-family: 'Inter', 'Roboto', Arial, sans-serif;
@@ -38,17 +38,16 @@
     .app {
       max-width: 520px;
       margin: 0 auto;
-      min-height: 120vh;  /* Aumenta il min-height per rendere il contenuto più lungo */
+      min-height: 120vh;
       display: flex;
-      flex-direction: column-reverse; /* Inverte la direzione del contenuto */
-      justify-content: flex-start; /* Allinea il contenuto verso l'alto */
-      transform: translateY(-15%); /* Sposta tutto il contenuto del 15% in alto */
+      flex-direction: column-reverse;
+      justify-content: flex-start;
+      transform: translateY(-15%);
       text-align: center;
-      overflow-y: auto;  /* Permette lo scorrimento verticale */
-      padding-bottom: 40px; /* Aggiungi più spazio in basso */
+      overflow-y: auto;
+      padding-bottom: 40px;
     }
 
-    /* Title */
     .title {
       font-size: 32px;
       font-weight: 900;
@@ -120,7 +119,7 @@
     .button a {
       text-decoration: none;
       color: inherit;
-      display: block;  /* Rende l'intero tasto cliccabile */
+      display: block;
     }
 
     .requirements {
@@ -155,39 +154,32 @@
 
 <!-- Wallet Page -->
 <div class="app" id="app">
-  <!-- Home Button (ora sopra il titolo) -->
   <div class="button">
     <a href="index.html">Go to Home</a>
   </div>
 
-  <!-- Title -->
   <h1 class="title">BurgerCoin Wallet</h1>
 
-  <!-- Coins and Balance -->
   <div class="balance-pill">
     <div class="pill">
       Coins: <b id="coins">0</b> | Balance: <b id="balance">0.00</b>
     </div>
   </div>
 
-  <!-- Wallet Address Input -->
   <div class="topbar">
     <div class="pill">
       <b>TON Wallet Address:</b>
       <input id="walletAddress" type="text" placeholder="Enter your TON Wallet address" />
     </div>
-    <!-- Set Wallet Button -->
     <button id="setWallet" class="button">Set Wallet</button>
   </div>
 
-  <!-- BurgerCoin Info -->
   <div class="balance-pill" style="margin-bottom: 0;">
     <p style="font-size: 16px;">
       BurgerCoin is a cryptocurrency that will be released on TON on <b>October 15, 2025</b>.
     </p>
   </div>
 
-  <!-- AirDrop Requirements -->
   <div class="requirements">
     <h2>AirDrop Requirements:</h2>
     <ul>
@@ -199,14 +191,12 @@
     </ul>
   </div>
 
-  <!-- Countdown Timer -->
   <div class="balance-pill">
     <div class="pill">
       Time left: <b id="countdown"></b>
     </div>
   </div>
 
-  <!-- Footer -->
   <div class="footer">by Burger Games</div>
 </div>
 
@@ -231,11 +221,11 @@ function updateCountdown() {
 
 // Funzione per caricare i dati salvati da `localStorage`
 function loadData() {
-  const savedData = localStorage.getItem('burgercoin_data');
+  const savedData = localStorage.getItem('burgercoin_save_v1');
   if (savedData) {
     const data = JSON.parse(savedData);
-    document.getElementById('coins').textContent = data.coins || 0;  // Mostra i coins
-    document.getElementById('balance').textContent = data.balance || 0.00;  // Mostra il balance
+    document.getElementById('coins').textContent = Math.floor(data.coins);  // Mostra i coins come intero
+    document.getElementById('balance').textContent = data.balance.toFixed(2);  // Mostra il balance con 2 decimali
     document.getElementById('walletAddress').value = data.wallet || '';  // Mostra l'indirizzo del wallet
   }
 }
