@@ -52,12 +52,12 @@
       font-weight: 900;
       color: var(--gold2);
       text-shadow: 0 0 6px var(--gold3), 0 0 14px rgba(255, 215, 0, 0.9);
-      margin-bottom: 20px;
+      margin-bottom: 10px;
     }
 
     .burger-logo {
-      width: 100px; /* Adjust logo size */
-      margin-bottom: 15px;
+      width: 100px;
+      margin-bottom: 10px;
     }
 
     .topbar {
@@ -68,7 +68,7 @@
       background: linear-gradient(180deg, var(--panel2), var(--panel));
       border-radius: 16px;
       box-shadow: var(--shadow);
-      margin-bottom: 25px;
+      margin-bottom: 5px;
     }
 
     .pill {
@@ -86,7 +86,7 @@
       display: flex;
       justify-content: center;
       gap: 12px;
-      margin: 20px 0;
+      margin: 5px 0;
     }
 
     .balance-pill .pill {
@@ -121,7 +121,7 @@
     }
 
     .requirements {
-      margin-top: 25px;
+      margin-top: 15px;
       text-align: left;
       background: rgba(0, 0, 0, 0.6);
       padding: 15px;
@@ -131,7 +131,7 @@
 
     .requirements h2 {
       font-size: 22px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       color: var(--gold2);
     }
 
@@ -209,7 +209,7 @@
 </div>
 
 <script>
-// Timer for the countdown to October 15, 2025
+// Funzione per aggiornare il countdown fino al 15 ottobre 2025
 function updateCountdown() {
   const targetDate = new Date('2025-10-15T00:00:00Z');
   const now = new Date();
@@ -227,18 +227,18 @@ function updateCountdown() {
   }
 }
 
-// Load saved data from the index.html page
+// Funzione per caricare i dati salvati da `localStorage`
 function loadData() {
   const savedData = localStorage.getItem('burgercoin_data');
   if (savedData) {
     const data = JSON.parse(savedData);
-    document.getElementById('coins').textContent = data.coins || 0;
-    document.getElementById('balance').textContent = data.balance || 0.00;
-    document.getElementById('walletAddress').value = data.wallet || '';
+    document.getElementById('coins').textContent = data.coins || 0;  // Mostra i coins
+    document.getElementById('balance').textContent = data.balance || 0.00;  // Mostra il balance
+    document.getElementById('walletAddress').value = data.wallet || '';  // Mostra l'indirizzo del wallet
   }
 }
 
-// Save wallet address
+// Funzione per salvare i dati del wallet nel `localStorage`
 document.getElementById('walletAddress').addEventListener('input', function () {
   const walletAddress = document.getElementById('walletAddress').value;
   const coins = document.getElementById('coins').textContent;
@@ -250,26 +250,25 @@ document.getElementById('walletAddress').addEventListener('input', function () {
     balance: balance
   };
 
-  localStorage.setItem('burgercoin_data', JSON.stringify(data));
+  localStorage.setItem('burgercoin_data', JSON.stringify(data));  // Salva i dati
 });
 
-// Set Wallet Action
+// Funzione per impostare l'indirizzo del wallet
 document.getElementById('setWallet').addEventListener('click', function() {
   const walletAddress = document.getElementById('walletAddress').value;
   if (walletAddress) {
     alert('Wallet Address Set!');
-    loadData();
+    loadData();  // Ricarica i dati
   } else {
     alert('Please enter a valid wallet address.');
   }
 });
 
-// Initialize and update countdown every second
+// Inizializzare il countdown ogni secondo
 setInterval(updateCountdown, 1000);
 
-// Load saved data on page load
+// Carica i dati salvati dal localStorage all'avvio
 loadData();
-
 </script>
 </body>
 </html>
