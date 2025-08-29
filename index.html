@@ -255,7 +255,8 @@ setInterval(updateProgressBar, 300);
 // VARIABILI DI GIOCO
 let coins = 0, energy = 500, xp = 0, level = 1, xpToNext = 100, combo = 1, balance = 0, gems = 0;
 let comboTimer;
-// --- RIFERIMENTI UI ---
+
+// RIFERIMENTI UI
 const coinsEl = document.getElementById('coins');
 const energyEl = document.getElementById('energy');
 const xptextEl = document.getElementById('xptext');
@@ -266,7 +267,7 @@ const balanceEl = document.getElementById('balance');
 const gemsEl = document.getElementById('gems');
 const energyTimerEl = document.getElementById('energyTimer');
 
-// --- PERSISTENZA ---
+// PERSISTENZA
 const SAVE_KEY = 'burgercoin_save_v1';
 function saveGame() {
   const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
@@ -276,25 +277,19 @@ function saveGame() {
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
   if (!raw) return;
-
   const d = JSON.parse(raw);
   coins = d.coins || 0;
-  energy = d.energy || 500; // energia iniziale deve essere 500
+  
   xp = d.xp || 0;
   level = d.level || 1;
   xpToNext = d.xpToNext || 100;
   combo = d.combo || 1;
   balance = d.balance || 0;
   gems = d.gems || 0;
-
   if (d.lastSave) {
     const minutesPassed = Math.floor((Date.now() - d.lastSave) / 60000);
-    // Recupero energia solo se non è già al massimo
-    if (energy < 500) {
-      energy = Math.min(500, energy + minutesPassed * 2); // Recupero energia di 2 per minuto
-    }
+    energy = Math.min(500, energy + minutesPassed * 2); // Recupero energia di 2 per minuto
   }
-
   updateUI();
 }
 
@@ -312,13 +307,25 @@ function updateUI() {
   gemsEl.textContent = gems;
 }
 
+// --- FUNZIONE POPUP ---
+function showPopup(x, y, text, size = 16) {
+  const popup = document.createElement("div");
+  popup.className = "popup";
+  popup.style.left = x + "px";
+  popup.style.top = y + "px";
+  popup.style.fontSize = size + "px";
+  popup.textContent = text;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 800);
+}
+
 // --- TIMER ENERGIA ---
 let energyCountdown = 60;
 setInterval(() => {
   if (energy < 500) {
     energyCountdown--;
     if (energyCountdown <= 0) {
-      energy = Math.min(500, energy + 2); // Aggiungi energia solo se non è già al massimo
+      energy = Math.min(500, energy + 2); // Aggiungi energia
       energyCountdown = 60;
       updateUI();
       saveGame();
@@ -330,7 +337,7 @@ setInterval(() => {
   }
 }, 1000);
 
-// --- CLICK MONETA ---
+// CLICK MONETA
 document.getElementById('coinBtn').addEventListener('click', (e) => {
   if (energy > 0) {
     let earnedCoins = 1 * combo;
@@ -344,17 +351,22 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
     comboEl.style.transform = "scale(1.2)";
     setTimeout(() => comboEl.style.transform = "scale(1)", 100);
 
+    clearTimeout(comboTimer);
+    comboTimer = setTimeout(() => { combo = 1; comboEl.textContent = "Combo 1.00x"; saveGame(); }, 7000);
+
     updateUI(); saveGame();
 
-    // Animazione e suono
+    // ANIMAZIONE
     const coinBtn = document.getElementById('coinBtn');
     coinBtn.classList.remove('clicked');
     void coinBtn.offsetWidth;
     coinBtn.classList.add('clicked');
-    const sound = new Audio("click.wav");
-    sound.play().catch(() => {});
 
-    // Popup +🍔
+    // SUONO (funziona anche con click rapidi)
+    const sound = new Audio("click.wav");
+    sound.play().catch(()=>{});
+
+    // POPUP +🍔
     const rect = coinBtn.getBoundingClientRect();
     const x = rect.left + rect.width / 2 + (Math.random() * 60 - 30);
     const y = rect.top + rect.height / 2 + (Math.random() * 60 - 30);
@@ -364,8 +376,6 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
 });
 
 loadGame(); updateUI();
-
-
 </script>
 </body>
 </html>
