@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
+<title>BurgerCoin — Wheel</title>
+<meta name="theme-color" content="#0a2a68"/>
+<style>
+:root {
+  --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
+  --panel:#121b36; --panel2:#1c2d5b;
+  --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
+  --text:#fff; --muted:#c7d2fe;
+  --shadow: 0 18px 32px rgba(0,0,0,.46);
+}
+*{box-sizing:border-box}
+html,body{
+  margin:0; height:100%;
+  background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
+  color:var(--text); font-family:Inter,Roboto,Arial,sans-serif;
+}
+.app{ max-width:520px; margin:0 auto; padding:20px; text-align:center; }
+.topbar{ display:flex; justify-content:center; gap:14px; padding:10px 16px;
+  background: linear-gradient(180deg, var(--panel2), var(--panel));
+  border-radius:16px; box-shadow: var(--shadow); margin-bottom:20px;}
+.pill{ display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
+  border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; }
+.icoCoin{ width:20px; height:20px; border-radius:50%; }
+.title{ font-size:28px; font-weight:900; color:var(--gold2); text-shadow:0 0 6px var(--gold3),0 0 14px rgba(255,215,0,.9); margin:20px 0; }
+.wheel-container{ position:relative; width:320px; height:320px; margin:20px auto; }
+.wheel{ width:100%; height:100%; border-radius:50%; border:8px solid var(--gold2); position:relative;
+  background: conic-gradient(
+    var(--gold1) 0deg 60deg,
+    var(--gold2) 60deg 120deg,
+    var(--gold3) 120deg 180deg,
+    #69f0ae 180deg 240deg,
+    #b2ff59 240deg 300deg,
+    #ffca28 300deg 360deg
+  );
+  transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1);
+}
+.pointer{ width:0; height:0; border-left:20px solid transparent; border-right:20px solid transparent;
+  border-bottom:30px solid red; margin:0 auto;}
+.wheel-label{ position:absolute; width:100%; height:100%; top:0; left:0; display:flex; align-items:center; justify-content:center; }
+.wheel-label span{ position:absolute; font-size:14px; font-weight:700; color:#000; text-shadow:0 0 4px #fff; transform-origin:center; }
+.button{ margin-top:20px; padding:12px 20px; border-radius:12px; border:none;
+  font-size:18px; font-weight:bold; cursor:pointer; background:linear-gradient(180deg,var(--gold2),var(--gold3)); color:#000; }
+.footer{ margin-top:30px; color:var(--muted); font-size:14px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="pill"><img src="burger_image.png" class="icoCoin"/> <b id="coins">0</b></div>
+    <div class="pill">⚡ <b id="energy">0</b></div>
+    <div class="pill">💎 <b id="gems">0</b></div>
+    <div class="pill">$ <b id="balance">0.00</b></div>
+  </div>
+
+  <h1 class="title">🎡 Lucky Wheel</h1>
+  <div class="pointer"></div>
+  <div class="wheel-container">
+    <div id="wheel" class="wheel"></div>
+    <div class="wheel-label">
+      <span style="transform:rotate(30deg) translateY(-120px);">+500 Coins</span>
+      <span style="transform:rotate(90deg) translateY(-120px);">+100 Energy</span>
+      <span style="transform:rotate(150deg) translateY(-120px);">+1 Gem</span>
+      <span style="transform:rotate(210deg) translateY(-120px);">+1000 Coins</span>
+      <span style="transform:rotate(270deg) translateY(-120px);">+250 Energy</span>
+      <span style="transform:rotate(330deg) translateY(-120px);">+3 Gems</span>
+    </div>
+  </div>
+  <button class="button" id="spinBtn">Spin (Cost: 1 Gem)</button>
+
+  <div id="result" style="margin-top:20px;font-size:18px;font-weight:700;"></div>
+  <div class="footer"><a href="index.html" style="color:var(--gold2);text-decoration:none;">⬅ Back to Game</a></div>
+</div>
+
+<script>
+const SAVE_KEY = "burgercoin_save_v1";
+let data = loadGame();
+updateUI();
+
+function loadGame(){
+  const raw = localStorage.getItem(SAVE_KEY);
+  return raw ? JSON.parse(raw) : {coins:0, energy:500, gems:0, balance:0};
+}
+function saveGame(){ localStorage.setItem(SAVE_KEY, JSON.stringify(data)); }
+function updateUI(){
+  document.getElementById("coins").textContent = Math.floor(data.coins);
+  document.getElementById("energy").textContent = data.energy;
+  document.getElementById("gems").textContent = data.gems;
+  document.getElementById("balance").textContent = data.balance.toFixed(2);
+}
+
+const wheel = document.getElementById("wheel");
+const spinBtn = document.getElementById("spinBtn");
+const resultEl = document.getElementById("result");
+
+const rewards = [
+  {type:"coins", amount:500, label:"+500 Coins"},
+  {type:"energy", amount:100, label:"+100 Energy"},
+  {type:"gems", amount:1, label:"+1 Gem"},
+  {type:"coins", amount:1000, label:"+1000 Coins"},
+  {type:"energy", amount:250, label:"+250 Energy"},
+  {type:"gems", amount:3, label:"+3 Gems"},
+];
+
+spinBtn.onclick = () => {
+  if(data.gems < 1){ alert("Not enough gems!"); return; }
+  data.gems -= 1;
+  const rand = Math.floor(Math.random()*rewards.length);
+  const reward = rewards[rand];
+
+  const angle = 360*5 + (rand * (360/rewards.length)) + Math.random()*30;
+  wheel.style.transform = `rotate(${angle}deg)`;
+
+  setTimeout(()=>{
+    if(reward.type==="coins") data.coins += reward.amount;
+    if(reward.type==="energy") data.energy += reward.amount;
+    if(reward.type==="gems") data.gems += reward.amount;
+    if(reward.type==="coins") data.balance = data.coins * 0.001;
+    saveGame();
+    updateUI();
+    resultEl.textContent = "You won " + reward.label + " 🎉";
+  }, 4200);
+};
+</script>
+</body>
+</html>
