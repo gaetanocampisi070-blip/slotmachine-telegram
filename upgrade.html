@@ -44,29 +44,29 @@
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coin per tap.</p>
-      <button class="button" onclick="buyUpgrade('multiplier2',100)">Buy 100 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Offline Earnings</h2>
       <p>Earn 5% of your coins per hour while offline.</p>
-      <button class="button" onclick="buyUpgrade('offline',250)">Buy 250 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(250)">Buy 250 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>+20% Lifetime Bonus</h2>
       <p>Gain +20% coins per tap permanently.</p>
-      <button class="button" onclick="buyUpgrade('bonus20',60)">Buy 60 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(60)">Buy 60 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Premarket Coins</h2>
       <p>Instant BurgerCoins purchase:</p>
-      <button class="button" onclick="giveCoins(1000)">1000 🍔 (30 ⭐)</button>
-      <button class="button" onclick="giveCoins(3000)">3000 🍔 (80 ⭐)</button>
-      <button class="button" onclick="giveCoins(5000)">5000 🍔 (125 ⭐)</button>
-      <button class="button" onclick="giveCoins(10000)">10000 🍔 (220 ⭐)</button>
-      <button class="button" onclick="giveCoins(50000)">50000 🍔 (1000 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(30)">1000 🍔 (30 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(80)">3000 🍔 (80 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(125)">5000 🍔 (125 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(220)">10000 🍔 (220 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(1000)">50000 🍔 (1000 ⭐)</button>
     </div>
 
     <div class="footer">
@@ -75,56 +75,52 @@
   </div>
 
 <script>
-const SAVE_KEY = "burgercoin_save_v1";
+  let chatId = null;  // Variabile per memorizzare chat_id dell'utente
 
-function loadGame(){
-  const raw = localStorage.getItem(SAVE_KEY);
-  return raw ? JSON.parse(raw) : {coins:0, energy:500, gems:0};
-}
-function saveGame(data){
-  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-}
-function updateTopbar(){
-  let d = loadGame();
-  document.getElementById("coins").textContent = Math.floor(d.coins||0);
-  document.getElementById("energy").textContent = d.energy||0;
-  document.getElementById("gems").textContent = d.gems||0;
-}
-function buyUpgrade(type, cost){
-  let d = loadGame();
-  if(d[`upgrade_${type}`]) { alert("Already purchased!"); return; }
-  // Qui in futuro mettiamo pagamento Stars. Ora simuliamo acquisto diretto.
-  d[`upgrade_${type}`] = true;
-  saveGame(d);
-  alert("✅ Upgrade unlocked: " + type);
-}
-function giveCoins(amount){
-  let d = loadGame();
-  d.coins = (d.coins||0) + amount;
-  saveGame(d);
-  updateTopbar();
-  alert("✅ You received " + amount + " coins!");
-}
-// Calcolo offline earnings
-function applyOfflineEarnings(){
-  let d = loadGame();
-  let now = Date.now();
-  if(d.upgrade_offline && d.lastSave){
-    let diffHours = (now - d.lastSave) / (1000*60*60);
-    if(diffHours > 0.05){ // almeno 3 minuti
-      let reward = Math.floor((d.coins||0) * 0.05 * diffHours);
-      if(reward > 0){
-        d.coins += reward;
-        alert("💤 Offline earnings: +" + reward + " coins");
-      }
-    }
+  // Funzione per iniziare la conversazione e ottenere il chat_id
+  function startConversation() {
+    fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/getUpdates`)
+      .then(response => response.json())
+      .then(data => {
+        const lastUpdate = data.result[data.result.length - 1];
+        chatId = lastUpdate.message.chat.id;  // Estrai chat_id
+      })
+      .catch(error => console.error('Errore nel recuperare il chat_id:', error));
   }
-  d.lastSave = now;
-  saveGame(d);
-  updateTopbar();
-}
-applyOfflineEarnings();
-updateTopbar();
+
+  // Funzione per inviare la richiesta di pagamento con le stelle
+  function sendPaymentRequest(cost) {
+    if (chatId === null) {
+      alert("Errore: chat_id non trovato!");
+      return;
+    }
+
+    fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/sendInvoice`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chat_id: chatId,
+        title: `Acquista ${cost} Stelle`,
+        description: `Paga ${cost} stelle per sbloccare l'upgrade.`,
+        payload: 'unique_invoice_payload',
+        provider_token: 'YOUR_PROVIDER_TOKEN',  // Token del provider di pagamento
+        start_parameter: 'test-payment',
+        currency: 'USD',
+        prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Prezzo in centesimi
+      })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.ok) {
+        console.log("Richiesta di pagamento inviata con successo!");
+      } else {
+        console.error("Errore nel invio della richiesta di pagamento");
+      }
+    })
+    .catch(error => console.error('Errore nella richiesta di pagamento:', error));
+  }
 </script>
 </body>
 </html>
