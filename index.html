@@ -339,15 +339,19 @@ window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000); // Salva ogni 5 secondi
 
 function updateUI() {
-  coinsEl.textContent = Math.floor(coins);
-  energyEl.textContent = energy;
-  xptextEl.textContent = `${xp}/${xpToNext} XP`;
-  levelEl.textContent = level;
-  xpbarEl.style.width = (xp / xpToNext * 100) + "%";
-  balanceEl.textContent = balance.toFixed(2);
-  comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
-  gemsEl.textContent = gems;
+  document.getElementById("coins").textContent = coins;
+
+  // Calcola il balance in base ai coins
+  balance = coins * 0.001;
+  document.getElementById("balance").textContent = balance.toFixed(2);
+
+  document.getElementById("level").textContent = level;
+  document.getElementById("xp").textContent = xp;
+  document.getElementById("combo").textContent = combo;
+  document.getElementById("gems").textContent = gems;
+  document.getElementById("energy").textContent = energy;
 }
+
 
 // --- FUNZIONE POPUP ---
 function showPopup(x, y, text, size = 16) {
