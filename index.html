@@ -390,7 +390,7 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
     coins += earnedCoins;
     energy--; xp += 5;
     if (xp >= xpToNext) { xp = 0; level++; xpToNext = Math.floor(xpToNext * 1.5); }
-    if (Math.floor(coins / 10) > Math.floor((coins - earnedCoins) / 10)) balance += 0.01;
+    
 
     combo = Math.min(3, (combo + 0.01));
     comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
