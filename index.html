@@ -339,18 +339,28 @@ window.addEventListener('beforeunload', saveGame);
 setInterval(saveGame, 5000); // Salva ogni 5 secondi
 
 function updateUI() {
-  document.getElementById("coins").textContent = coins;
+  // Coins (arrotondati interi)
+  coinsEl.textContent = Math.floor(coins);
 
-  // Calcola il balance in base ai coins
+  // Balance calcolato in base ai coins
   balance = coins * 0.001;
-  document.getElementById("balance").textContent = balance.toFixed(2);
+  balanceEl.textContent = balance.toFixed(2);
 
-  document.getElementById("level").textContent = level;
-  document.getElementById("xp").textContent = xp;
-  document.getElementById("combo").textContent = combo;
-  document.getElementById("gems").textContent = gems;
-  document.getElementById("energy").textContent = energy;
+  // Energia
+  energyEl.textContent = energy;
+
+  // XP e barra XP
+  xptextEl.textContent = `${xp}/${xpToNext} XP`;
+  levelEl.textContent = level;
+  xpbarEl.style.width = (xp / xpToNext * 100) + "%";
+
+  // Combo
+  comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
+
+  // Gems
+  gemsEl.textContent = gems;
 }
+
 
 
 // --- FUNZIONE POPUP ---
@@ -386,7 +396,9 @@ setInterval(() => {
 // CLICK MONETA
 document.getElementById('coinBtn').addEventListener('click', (e) => {
   if (energy > 1) {
-    let earnedCoins = 1 * combo;
+    let earnedCoins = Math.floor(1 * combo);
+coins += earnedCoins;
+
     coins += earnedCoins;
     energy--; xp += 5;
     if (xp >= xpToNext) { xp = 0; level++; xpToNext = Math.floor(xpToNext * 1.5); }
