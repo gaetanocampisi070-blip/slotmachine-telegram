@@ -284,9 +284,26 @@ const energyTimerEl = document.getElementById('energyTimer');
 // PERSISTENZA
 const SAVE_KEY = 'burgercoin_save_v1';
 function saveGame() {
-  const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
+  // carico eventuali dati esistenti (per non perdere lastClaim_xxx)
+  const raw = localStorage.getItem(SAVE_KEY);
+  let oldData = raw ? JSON.parse(raw) : {};
+
+  const data = {
+    ...oldData, // mantieni lastClaim_xxx se esistono
+    coins,
+    energy,
+    xp,
+    level,
+    xpToNext,
+    combo,
+    balance,
+    gems,
+    lastSave: Date.now()
+  };
+
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
+
 
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
