@@ -39,12 +39,11 @@
       margin: 30px auto;
       background: #115c1c;
       border-radius: 20px;
-      width: 95%;
-      max-width: 900px;
-      padding: 50px 20px;
-      min-height: 600px; /* tavolo più grande e fisso */
-      box-shadow: inset 0 0 30px #052b0d, 0 0 20px rgba(0,0,0,.5);
-      border: 5px solid #0b4013;
+      width: 90%;
+      max-width: 800px;
+      padding: 40px 20px;
+      min-height: 500px;
+      box-shadow: inset 0 0 20px #052b0d, 0 0 20px rgba(0,0,0,.5);
     }
     .hand {
       display: flex;
@@ -54,8 +53,8 @@
       flex-wrap: wrap;
     }
     .card {
-      width: 70px;
-      height: 100px;
+      width: 60px;
+      height: 90px;
       border-radius: 8px;
       background: white;
       color: black;
@@ -65,6 +64,10 @@
       font-weight: bold;
       font-size: 20px;
       box-shadow: 0 4px 8px rgba(0,0,0,.5);
+    }
+    .card.back {
+      background: url("burger_image.png") center/cover no-repeat;
+      color: transparent;
     }
     .title {
       font-size: 22px;
@@ -177,15 +180,20 @@ function calcScore(hand){
   }
   return score;
 }
-function renderHands(){
+function renderHands(showAllDealer=false){
   const dealerEl=document.getElementById("dealerHand");
   const playerEl=document.getElementById("playerHand");
   dealerEl.innerHTML="";
   playerEl.innerHTML="";
-  dealerHand.forEach(c=>{
+
+  dealerHand.forEach((c,i)=>{
     let div=document.createElement("div");
     div.className="card";
-    div.textContent=c.v+c.s;
+    if(i===0 && !showAllDealer){
+      div.classList.add("back");
+    } else {
+      div.textContent=c.v+c.s;
+    }
     dealerEl.appendChild(div);
   });
   playerHand.forEach(c=>{
@@ -194,7 +202,8 @@ function renderHands(){
     div.textContent=c.v+c.s;
     playerEl.appendChild(div);
   });
-  document.getElementById("dealerScore").textContent="Score: "+calcScore(dealerHand);
+
+  document.getElementById("dealerScore").textContent="Score: "+(showAllDealer?calcScore(dealerHand):"?");
   document.getElementById("playerScore").textContent="Score: "+calcScore(playerHand);
 }
 function startGame(){
@@ -207,13 +216,13 @@ function startGame(){
   createDeck(); shuffle();
   playerHand=[deck.pop(),deck.pop()];
   dealerHand=[deck.pop(),deck.pop()];
-  renderHands();
+  renderHands(false);
   document.getElementById("hitBtn").disabled=false;
   document.getElementById("standBtn").disabled=false;
 }
 function hit(){
   playerHand.push(deck.pop());
-  renderHands();
+  renderHands(false);
   if(calcScore(playerHand)>21){
     endGame(false);
   }
@@ -222,7 +231,7 @@ function stand(){
   while(calcScore(dealerHand)<17){
     dealerHand.push(deck.pop());
   }
-  renderHands();
+  renderHands(true);
   let p=calcScore(playerHand);
   let d=calcScore(dealerHand);
   if(d>21 || p>d){endGame(true);}
@@ -231,7 +240,7 @@ function stand(){
 }
 function endGame(result){
   let data=loadGame();
-  if(result===true){ // win
+  if(result===true){
     data.coins+=bet*2;
     alert("You win!");
   } else if(result===false){
