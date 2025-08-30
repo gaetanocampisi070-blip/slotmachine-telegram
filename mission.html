@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"/>
+  <title>BurgerCoin - Missions</title>
+  <meta name="theme-color" content="#0a2a68"/>
+  <style>
+    :root {
+      --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
+      --panel:#121b36; --panel2:#1c2d5b;
+      --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
+      --mint1:#b2ff59; --mint2:#69f0ae;
+      --text:#fff; --muted:#c7d2fe;
+      --shadow: 0 18px 32px rgba(0,0,0,.46);
+    }
+    *{box-sizing:border-box}
+    html,body{
+      margin:0; height:100%;
+      background: radial-gradient(120% 120% at 50% 0%, var(--sky1) 0%, var(--bg) 55%, var(--sky2) 100%);
+      color:var(--text); font-family:Inter,Roboto,Arial,sans-serif;
+    }
+    .app{ max-width:520px; margin:0 auto; padding:20px; text-align:center; }
+    .title{ font-size:30px; font-weight:900; color:var(--gold2); text-shadow:0 0 6px var(--gold3),0 0 14px rgba(255,215,0,.9); margin:20px 0; }
+    .mission{ background:linear-gradient(180deg,var(--panel2),var(--panel)); padding:16px; border-radius:14px; margin:14px 0; box-shadow:var(--shadow); }
+    .mission h2{ margin:0 0 10px; font-size:22px; color:var(--gold1); }
+    .button{ background:linear-gradient(180deg,var(--gold2),var(--gold3)); color:#000; padding:10px 20px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; border:none; }
+    .button:disabled{ background:gray; cursor:not-allowed; color:#fff; }
+    .timer{ font-size:14px; margin-top:8px; color:var(--muted); }
+    .footer{ font-size:14px; color:var(--muted); margin-top:30px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="button"><a href="index.html" style="text-decoration:none;color:inherit;">⬅ Back to Game</a></div>
+    <h1 class="title">🎯 Daily Missions</h1>
+
+    <div class="mission">
+      <h2>Daily Gift</h2>
+      <button id="dailyCoins" class="button">Claim +1000 Coins</button>
+      <div class="timer" id="timerCoins"></div>
+    </div>
+
+    <div class="mission">
+      <h2>Energy Boost</h2>
+      <button id="dailyEnergy" class="button">Claim +500 Energy</button>
+      <div class="timer" id="timerEnergy"></div>
+    </div>
+
+    <div class="mission">
+      <h2>Gem Reward</h2>
+      <button id="dailyGems" class="button">Claim +10 Gems</button>
+      <div class="timer" id="timerGems"></div>
+    </div>
+
+    <div class="footer">by Burger Games</div>
+  </div>
+
+<script>
+const SAVE_KEY = "burgercoin_save_v1";
+const REWARD_COOLDOWN = 24 * 60 * 60 * 1000; // 24h
+
+function loadGame() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  return raw ? JSON.parse(raw) : {coins:0, energy:500, gems:0};
+}
+function saveGame(data) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+}
+
+function claimReward(type, amount, timerId, buttonId) {
+  let data = loadGame();
+  const now = Date.now();
+  const lastClaimKey = `lastClaim_${type}`;
+  if (data[lastClaimKey] && now - data[lastClaimKey] < REWARD_COOLDOWN) return;
+
+  if (type === "coins") data.coins = (data.coins || 0) + amount;
+  if (type === "energy") data.energy = (data.energy || 0) + amount;
+  if (type === "gems") data.gems = (data.gems || 0) + amount;
+
+  data[lastClaimKey] = now;
+  saveGame(data);
+  updateButtons();
+}
+
+function updateButtons() {
+  const data = loadGame();
+  const now = Date.now();
+
+  updateMission("coins", "timerCoins", "dailyCoins", 1000);
+  updateMission("energy", "timerEnergy", "dailyEnergy", 500);
+  updateMission("gems", "timerGems", "dailyGems", 10);
+
+  function updateMission(type, timerId, buttonId, amount) {
+    const last = data[`lastClaim_${type}`] || 0;
+    const diff = now - last;
+    const btn = document.getElementById(buttonId);
+    const timerEl = document.getElementById(timerId);
+
+    if (diff >= REWARD_COOLDOWN) {
+      btn.disabled = false;
+      timerEl.textContent = "Available now!";
+      btn.onclick = () => claimReward(type, amount, timerId, buttonId);
+    } else {
+      btn.disabled = true;
+      const remain = REWARD_COOLDOWN - diff;
+      const h = Math.floor(remain / (1000*60*60));
+      const m = Math.floor((remain % (1000*60*60)) / (1000*60));
+      const s = Math.floor((remain % (1000*60)) / 1000);
+      timerEl.textContent = `Available in ${h}h ${m}m ${s}s`;
+    }
+  }
+}
+
+setInterval(updateButtons, 1000);
+updateButtons();
+</script>
+</body>
+</html>
