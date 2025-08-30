@@ -76,52 +76,57 @@
   </div>
 
 <script>
-  let chatId = null;  // Variabile per memorizzare chat_id dell'utente
+// Variabile per memorizzare chat_id dell'utente
+let chatId = null;
 
-  // Funzione per iniziare la conversazione e ottenere il chat_id
-  function startConversation() {
-    fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/getUpdates`)
-      .then(response => response.json())
-      .then(data => {
-        const lastUpdate = data.result[data.result.length - 1];
-        chatId = lastUpdate.message.chat.id;  // Estrai chat_id
-        alert("Chat ID ottenuto correttamente: " + chatId);
-      })
-      .catch(error => console.error('Errore nel recuperare il chat_id:', error));
-  }
-
-  // Funzione per inviare la richiesta di pagamento con le stelle
-  function sendPaymentRequest(cost) {
-    if (chatId === null) {
-      alert("Errore: chat_id non trovato! Assicurati di avviare la conversazione prima.");
-      return;
-    }
-
-    fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/sendInvoice`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        title: `Acquista ${cost} Stelle`,
-        description: `Paga ${cost} stelle per sbloccare l'upgrade.`,
-        payload: 'unique_invoice_payload',
-        provider_token: 'YOUR_PROVIDER_TOKEN',  // Token del provider di pagamento
-        start_parameter: 'test-payment',
-        currency: 'USD',
-        prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Prezzo in centesimi
-      })
-    })
+// Funzione per ottenere il chat_id dell'utente
+function startConversation() {
+  fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/getUpdates`)
     .then(response => response.json())
     .then(data => {
-      if (data.ok) {
-        console.log("Richiesta di pagamento inviata con successo!");
-      } else {
-        console.error("Errore nel invio della richiesta di pagamento");
-      }
+      const lastUpdate = data.result[data.result.length - 1];
+      chatId = lastUpdate.message.chat.id; // Estrai chat_id
+      console.log("chat_id: " + chatId); // Debug: Mostra il chat_id
     })
-    .catch(error => console.error('Errore nella richiesta di pagamento:', error));
+    .catch(error => console.error('Errore nel recuperare il chat_id:', error));
+}
+
+// Funzione per inviare la richiesta di pagamento in stelle
+function sendPaymentRequest(cost) {
+  if (chatId === null) {
+    alert("Errore: chat_id non trovato! Assicurati di avviare la conversazione prima.");
+    return;
   }
 
-  // Assicurati di avviare la conversazione per ottenere
+  fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/sendInvoice`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      title: `Acquista ${cost} Stelle`,
+      description: `Paga ${cost} stelle per sbloccare l'upgrade.`,
+      payload: 'unique_invoice_payload', // Puoi personalizzare questo campo
+      provider_token: '',  // Non necessario per il pagamento in stelle
+      start_parameter: 'test-payment',
+      currency: 'XTR',  // La valuta in stelle
+      prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Prezzo in centesimi
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      console.log("Richiesta di pagamento inviata con successo!");
+    } else {
+      console.error("Errore nel invio della richiesta di pagamento");
+    }
+  })
+  .catch(error => console.error('Errore nella richiesta di pagamento:', error));
+}
+
+// Inizializzare la conversazione per ottenere il chat_id
+startConversation();
+</script>
+</body>
+</html>
