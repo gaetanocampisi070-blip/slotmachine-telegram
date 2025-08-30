@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,6 +85,7 @@
       .then(data => {
         const lastUpdate = data.result[data.result.length - 1];
         chatId = lastUpdate.message.chat.id;  // Estrai chat_id
+        alert("Chat ID ottenuto correttamente: " + chatId);
       })
       .catch(error => console.error('Errore nel recuperare il chat_id:', error));
   }
@@ -91,7 +93,7 @@
   // Funzione per inviare la richiesta di pagamento con le stelle
   function sendPaymentRequest(cost) {
     if (chatId === null) {
-      alert("Errore: chat_id non trovato!");
+      alert("Errore: chat_id non trovato! Assicurati di avviare la conversazione prima.");
       return;
     }
 
@@ -121,6 +123,5 @@
     })
     .catch(error => console.error('Errore nella richiesta di pagamento:', error));
   }
-</script>
-</body>
-</html>
+
+  // Assicurati di avviare la conversazione per ottenere
