@@ -92,6 +92,9 @@ function sendPaymentRequest(cost) {
     return;
   }
 
+  // Correctly convert cost to cents (1 star = 100 XTR)
+  const paymentAmount = cost * 100;
+
   fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/sendInvoice`, {
     method: 'POST',
     headers: {
@@ -105,7 +108,7 @@ function sendPaymentRequest(cost) {
       provider_token: '',  // Not needed for payment in stars
       start_parameter: 'test-payment',
       currency: 'XTR',  // Currency in stars of Telegram
-      prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Price in cents (100 XTR = 100 Telegram stars)
+      prices: [{ label: `${cost} ⭐`, amount: paymentAmount }]  // Price in cents (100 XTR = 100 Telegram stars)
     })
   })
   .then(response => response.json())
