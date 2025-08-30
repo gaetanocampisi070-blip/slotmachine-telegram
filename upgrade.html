@@ -15,9 +15,6 @@
       margin:0; font-family: Inter,Arial,sans-serif; background:var(--bg); color:var(--text);
     }
     .app { max-width:520px; margin:0 auto; padding:20px; text-align:center; }
-    .topbar { display:flex; justify-content:center; gap:14px; padding:12px;
-      background:linear-gradient(180deg,var(--panel2),var(--panel));
-      border-radius:0 0 16px 16px; box-shadow:var(--shadow); }
     .pill { display:flex; align-items:center; gap:6px; background:rgba(10,15,35,.8);
       border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; }
     .title { font-size:28px; font-weight:900; color:var(--gold2);
@@ -30,21 +27,18 @@
       cursor:pointer; border:none; }
     .button:disabled { background:gray; cursor:not-allowed; color:#fff; }
     .footer { font-size:14px; color:var(--muted); margin-top:30px; }
+    .note { font-size:14px; color:var(--muted); margin-top:20px; }
   </style>
 </head>
 <body>
-  <div class="topbar">
-    <div class="pill">🍔 Coins: <b id="coins">0</b></div>
-    <div class="pill">⚡ Energy: <b id="energy">0</b></div>
-    <div class="pill">💎 Gems: <b id="gems">0</b></div>
-  </div>
-
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
+    <p class="note">Please note: The payment invoices will be sent to the bot's chat for security reasons.</p>
+
     <div class="upgrade">
       <h2>Multiplier x2</h2>
-      <p>Double your coin per tap.</p>
+      <p>Double your coins per tap.</p>
       <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
     </div>
 
@@ -76,25 +70,25 @@
   </div>
 
 <script>
-// Variabile per memorizzare chat_id dell'utente
+// Variable to store the chat_id of the user
 let chatId = null;
 
-// Funzione per ottenere il chat_id dell'utente
+// Function to start the conversation and retrieve the chat_id
 function startConversation() {
   fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/getUpdates`)
     .then(response => response.json())
     .then(data => {
       const lastUpdate = data.result[data.result.length - 1];
-      chatId = lastUpdate.message.chat.id; // Estrai chat_id
-      console.log("chat_id: " + chatId); // Debug: Mostra il chat_id
+      chatId = lastUpdate.message.chat.id; // Extract the chat_id
+      console.log("chat_id: " + chatId); // Debug: Display the chat_id
     })
-    .catch(error => console.error('Errore nel recuperare il chat_id:', error));
+    .catch(error => console.error('Error retrieving chat_id:', error));
 }
 
-// Funzione per inviare la richiesta di pagamento in stelle
+// Function to send the payment request in stars
 function sendPaymentRequest(cost) {
   if (chatId === null) {
-    alert("Errore: chat_id non trovato! Assicurati di avviare la conversazione prima.");
+    alert("Error: chat_id not found! Make sure you start the conversation first.");
     return;
   }
 
@@ -105,27 +99,27 @@ function sendPaymentRequest(cost) {
     },
     body: JSON.stringify({
       chat_id: chatId,
-      title: `Acquista ${cost} Stelle`,
-      description: `Paga ${cost} stelle per sbloccare l'upgrade.`,
-      payload: 'unique_invoice_payload', // Puoi personalizzare questo campo
-      provider_token: '',  // Non necessario per il pagamento in stelle
+      title: `Buy ${cost} Stars`,
+      description: `Pay ${cost} stars to unlock the upgrade.`,
+      payload: 'unique_invoice_payload', // You can customize this field
+      provider_token: '',  // Not needed for payment in stars
       start_parameter: 'test-payment',
-      currency: 'XTR',  // La valuta in stelle
-      prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Prezzo in centesimi
+      currency: 'XTR',  // Currency in stars of Telegram
+      prices: [{ label: `${cost} ⭐`, amount: cost * 100 }]  // Price in cents (100 XTR = 100 Telegram stars)
     })
   })
   .then(response => response.json())
   .then(data => {
     if (data.ok) {
-      console.log("Richiesta di pagamento inviata con successo!");
+      console.log("Payment request sent successfully!");
     } else {
-      console.error("Errore nel invio della richiesta di pagamento");
+      console.error("Error sending payment request");
     }
   })
-  .catch(error => console.error('Errore nella richiesta di pagamento:', error));
+  .catch(error => console.error('Error sending payment request:', error));
 }
 
-// Inizializzare la conversazione per ottenere il chat_id
+// Initialize the conversation to get the chat_id
 startConversation();
 </script>
 </body>
