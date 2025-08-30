@@ -74,7 +74,8 @@ let chatId = null;
 
 // Function to start the conversation and retrieve the chat_id
 function startConversation() {
-  fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/getUpdates`)
+  fetch(`fetch(`https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/getUpdates`)
+`)
     .then(response => response.json())
     .then(data => {
       const lastUpdate = data.result[data.result.length - 1];
@@ -94,7 +95,7 @@ function sendPaymentRequest(cost) {
   // Correctly convert cost to cents (1 star = 1 cent of XTR)
   const paymentAmount = cost;  // Now cost directly corresponds to cents (1 star = 1 cent)
 
-  fetch(`https://api.telegram.org/bot7564100271:AAHZ3I8bDRbMMwYky5ueygCquTIO9dspqbY/sendInvoice`, {
+  fetch(`fetch(`https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
