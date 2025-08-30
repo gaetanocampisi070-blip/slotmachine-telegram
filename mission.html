@@ -34,6 +34,11 @@
     <div class="button"><a href="index.html" style="text-decoration:none;color:inherit;">⬅ Back to Game</a></div>
     <h1 class="title">🎯 Daily Missions</h1>
 
+    <!-- ⚠️ Avviso -->
+    <p style="color:var(--gold1); font-weight:700; margin:16px 0; font-size:15px;">
+      ⚠️ If the missions are not completed, you will not be eligible for the BurgerCoin airdrop.
+    </p>
+
     <div class="mission">
       <h2>Daily Gift</h2>
       <button id="dailyCoins" class="button">Claim +1000 Coins</button>
@@ -66,6 +71,22 @@
         <button id="cashMission" class="button" style="flex-shrink:0;">Claim +2500 Coins</button>
       </div>
       <div class="timer" id="cashMissionStatus"></div>
+    </div>
+
+    <!-- 🔔 Telegram Mission -->
+    <div class="mission">
+      <h2>Join BurgerCoin News</h2>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <img src="telegram.png" alt="Telegram" style="width:60px; border-radius:12px;"/>
+        <p style="flex:1; font-size:16px; margin:0;">
+          Join the official <b>BurgerCoin News</b> channel on Telegram
+        </p>
+        <a href="https://t.me/burgercoinnews" target="_blank" class="button" style="flex-shrink:0; text-decoration:none; color:#000;">
+          Join
+        </a>
+        <button id="telegramMission" class="button" style="flex-shrink:0;">Claim +1500 Coins</button>
+      </div>
+      <div class="timer" id="telegramMissionStatus"></div>
     </div>
 
     <div class="footer">by Burger Games</div>
@@ -143,7 +164,7 @@ function updateCashMission() {
     btn.onclick = () => {
       let game = data || {};
       game.coins = (game.coins || 0) + 2500;
-      game.cashMissionCompleted = true; // 🔒 una sola volta
+      game.cashMissionCompleted = true;
       saveGame(game);
       updateCashMission();
       alert("✅ You received 2500 Coins!");
@@ -151,9 +172,34 @@ function updateCashMission() {
   }
 }
 
+// Telegram Mission (non ripetibile)
+function updateTelegramMission() {
+  const data = loadGame();
+  const btn = document.getElementById("telegramMission");
+  const status = document.getElementById("telegramMissionStatus");
+  if (!btn || !status) return;
+
+  if (data.telegramMissionCompleted) {
+    btn.disabled = true;
+    btn.textContent = "Completed";
+    status.textContent = "You have already claimed this reward.";
+  } else {
+    btn.disabled = false;
+    btn.onclick = () => {
+      let game = data || {};
+      game.coins = (game.coins || 0) + 1500;
+      game.telegramMissionCompleted = true;
+      saveGame(game);
+      updateTelegramMission();
+      alert("✅ You received 1500 Coins!");
+    };
+  }
+}
+
 setInterval(updateButtons, 1000);
 updateButtons();
 updateCashMission();
+updateTelegramMission();
 </script>
 </body>
 </html>
