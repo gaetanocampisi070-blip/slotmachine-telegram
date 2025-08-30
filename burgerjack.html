@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BurgerCoin - BurgerJack</title>
+  <meta name="theme-color" content="#0a2a68"/>
+  <style>
+    :root {
+      --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
+      --panel:#121b36; --panel2:#1c2d5b;
+      --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
+      --text:#fff; --muted:#c7d2fe;
+      --shadow:0 18px 32px rgba(0,0,0,.46);
+    }
+    body {
+      margin:0; font-family:Inter,Roboto,Arial,sans-serif;
+      background: radial-gradient(120% 120% at 50% 0%, var(--sky1), var(--bg) 55%, var(--sky2));
+      color:var(--text); text-align:center;
+    }
+    .app { max-width:600px; margin:0 auto; padding:20px; }
+
+    /* Topbar */
+    .topbar {
+      display:flex; justify-content:center; gap:14px;
+      padding:10px 16px; background: linear-gradient(180deg, var(--panel2), var(--panel));
+      border-radius:16px; box-shadow: var(--shadow); margin-bottom:20px;
+    }
+    .pill {
+      display:flex; align-items:center; gap:6px; background: rgba(10,15,35,.8);
+      border:1px solid rgba(255,255,255,.08); padding:6px 12px;
+      border-radius:999px; box-shadow: inset 0 -2px 0 rgba(0,0,0,.2);
+    }
+    .icoCoin { width:20px; height:20px; border-radius:50%; }
+
+    h1 { color:var(--gold2); text-shadow:0 0 6px var(--gold3); margin-bottom:10px; }
+
+    /* Tavolo verde */
+    .table {
+      background: radial-gradient(circle at center, #228B22 0%, #0b5d0b 100%);
+      border-radius:20px;
+      padding:20px;
+      box-shadow: inset 0 0 20px rgba(0,0,0,.6), 0 4px 20px rgba(0,0,0,.7);
+    }
+    .hand { display:flex; justify-content:center; gap:12px; margin:10px 0; flex-wrap:wrap; }
+    .label { font-weight:bold; font-size:18px; margin:10px 0; color:var(--gold1); }
+
+    /* Carte */
+    .card {
+      width:70px; height:100px;
+      background:white; border-radius:10px;
+      box-shadow:0 3px 8px rgba(0,0,0,.5);
+      position:relative; font-weight:bold; font-size:18px;
+      display:flex; justify-content:center; align-items:center;
+      transform: translateY(-200px);
+      opacity:0;
+      animation: deal 0.5s forwards;
+    }
+    .card.red { color:red; }
+    .card.black { color:black; }
+    .card .corner {
+      position:absolute; font-size:14px;
+    }
+    .corner.tl { top:4px; left:6px; }
+    .corner.br { bottom:4px; right:6px; transform:rotate(180deg); }
+
+    /* Retro carta stile burger */
+    .card.back {
+      background: url('burger_image.png') center/cover no-repeat;
+      color:transparent;
+    }
+
+    @keyframes deal {
+      to {
+        transform: translateY(0);
+        opacity:1;
+      }
+    }
+
+    /* Bottoni */
+    .controls { margin:20px 0; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+    .button {
+      background:linear-gradient(180deg,var(--gold2),var(--gold3));
+      border:none; border-radius:12px; padding:10px 16px;
+      font-weight:700; cursor:pointer;
+    }
+    .button:disabled { background:gray; color:#ccc; cursor:not-allowed; }
+    .betInput { width:100px; text-align:center; padding:6px; border-radius:6px; border:none; font-size:16px; }
+
+    .status { margin-top:14px; font-size:18px; font-weight:bold; color:var(--gold1); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="pill"><img src="burger_image.png" class="icoCoin"/> <b id="coins">0</b></div>
+      <div class="pill">⚡ <b id="energy">500</b></div>
+      <div class="pill">💎 <b id="gems">0</b></div>
+    </div>
+
+    <h1>🍔 BurgerJack</h1>
+
+    <div class="table">
+      <div class="label">Dealer</div>
+      <div id="dealerHand" class="hand"></div>
+
+      <div class="label">You</div>
+      <div id="playerHand" class="hand"></div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <input type="number" id="bet" class="betInput" placeholder="Bet" min="1"/>
+      <button class="button" onclick="startGame()">Start</button>
+    </div>
+
+    <div class="controls">
+      <button id="hitBtn" class="button" onclick="hit()" disabled>Hit</button>
+      <button id="standBtn" class="button" onclick="stand()" disabled>Stand</button>
+    </div>
+
+    <div class="status" id="status"></div>
+    <br>
+    <a href="index.html" class="button">⬅ Back to Home</a>
+  </div>
+
+<script>
+const SAVE_KEY = "burgercoin_save_v1";
+let coins = 0, energy = 500, gems = 0;
+
+function loadGame() {
+  const raw = localStorage.getItem(SAVE_KEY);
+  if (!raw) return {coins:0,energy:500,gems:0};
+  return JSON.parse(raw);
+}
+function saveGame(data) {
+  localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+}
+
+function updateTopbar() {
+  let data = loadGame();
+  coins = data.coins || 0;
+  energy = data.energy || 500;
+  gems = data.gems || 0;
+  document.getElementById("coins").textContent = coins;
+  document.getElementById("energy").textContent = energy;
+  document.getElementById("gems").textContent = gems;
+}
+
+let deck = [];
+let playerHand = [];
+let dealerHand = [];
+let bet = 0;
+let dealerHidden = true;
+
+function createDeck() {
+  const suits = ["♥","♦","♣","♠"];
+  const values = ["A","2","3","4","5","6","7","8","9","10","J","Q","K"];
+  let d = [];
+  for (let s of suits) {
+    for (let v of values) {
+      d.push({value:v, suit:s});
+    }
+  }
+  return d;
+}
+
+function getCardValue(card) {
+  if (["J","Q","K"].includes(card.value)) return 10;
+  if (card.value === "A") return 11;
+  return parseInt(card.value);
+}
+
+function handValue(hand) {
+  let val = 0, aces = 0;
+  for (let c of hand) {
+    val += getCardValue(c);
+    if (c.value === "A") aces++;
+  }
+  while (val > 21 && aces > 0) {
+    val -= 10;
+    aces--;
+  }
+  return val;
+}
+
+function renderHand(hand, elementId, hideFirst=false) {
+  const el = document.getElementById(elementId);
+  el.innerHTML = "";
+  hand.forEach((c, i) => {
+    const div = document.createElement("div");
+    if (hideFirst && i === 0) {
+      div.className = "card back";
+    } else {
+      div.className = "card " + ((c.suit === "♥" || c.suit === "♦") ? "red" : "black");
+      div.innerHTML = `
+        <div class="corner tl">${c.value}${c.suit}</div>
+        ${c.value}${c.suit}
+        <div class="corner br">${c.value}${c.suit}</div>
+      `;
+    }
+    el.appendChild(div);
+  });
+}
+
+function startGame() {
+  let data = loadGame();
+  bet = parseInt(document.getElementById("bet").value);
+  if (!bet || bet <= 0 || bet > data.coins) {
+    alert("Invalid bet");
+    return;
+  }
+  data.coins -= bet;
+  saveGame(data);
+  updateTopbar();
+
+  deck = createDeck().sort(() => Math.random()-0.5);
+  playerHand = [deck.pop(), deck.pop()];
+  dealerHand = [deck.pop(), deck.pop()];
+  dealerHidden = true;
+
+  renderHand(playerHand,"playerHand");
+  renderHand(dealerHand,"dealerHand", true);
+
+  document.getElementById("status").textContent = "";
+  document.getElementById("hitBtn").disabled = false;
+  document.getElementById("standBtn").disabled = false;
+}
+
+function hit() {
+  playerHand.push(deck.pop());
+  renderHand(playerHand,"playerHand");
+  if (handValue(playerHand) > 21) endGame();
+}
+
+function stand() {
+  dealerHidden = false;
+  while (handValue(dealerHand) < 17) dealerHand.push(deck.pop());
+  renderHand(dealerHand,"dealerHand");
+  endGame();
+}
+
+function endGame() {
+  let data = loadGame();
+  let playerVal = handValue(playerHand);
+  let dealerVal = handValue(dealerHand);
+  let status = "";
+  if (playerVal > 21) {
+    status = "❌ You Bust!";
+  } else if (dealerVal > 21 || playerVal > dealerVal) {
+    status = "✅ You Win!";
+    data.coins += bet * 2;
+  } else if (playerVal === dealerVal) {
+    status = "🤝 Push!";
+    data.coins += bet;
+  } else {
+    status = "❌ Dealer Wins!";
+  }
+  saveGame(data);
+  updateTopbar();
+  document.getElementById("status").textContent = status;
+  document.getElementById("hitBtn").disabled = true;
+  document.getElementById("standBtn").disabled = true;
+}
+
+updateTopbar();
+</script>
+</body>
+</html>
