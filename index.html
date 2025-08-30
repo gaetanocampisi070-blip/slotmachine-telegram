@@ -243,23 +243,28 @@ html,body{height:100%; margin:0; overflow:hidden;
 </div>
 
 <script>
-	
-// SPLASH CARICAMENTO 1 SECONDO
-window.addEventListener("load", () => {
-  const progressBar = document.getElementById("progress-bar");
-  progressBar.style.transition = "width 1s linear";
-  progressBar.style.width = "100%";
+	// Gestione variabili
+let progress = 0;
+const progressBar = document.getElementById("progress-bar");
 
-  setTimeout(() => {
-    document.getElementById("splash").style.opacity = 0;
+function updateProgressBar() {
+  // Aggiungo una progressione più lenta
+  progress += Math.random() * 10;  // Cambiato da 20 a 10 per rallentare la progressione
+  if (progress >= 100) {
+    progress = 100;
     setTimeout(() => {
-      document.getElementById("splash").style.display = "none";
-      document.getElementById("app").removeAttribute("aria-hidden");
-      saveGame();
-    }, 600);
-  }, 1000); // ⏳ 1 secondo
-});
+      document.getElementById("splash").style.opacity = 0;
+      setTimeout(() => {
+        document.getElementById("splash").style.display = "none";
+        document.getElementById("app").removeAttribute("aria-hidden");
+        saveGame();
+      }, 600);
+    }, 300);
+  }
+  progressBar.style.width = progress + "%";
+}
 
+setInterval(updateProgressBar, 300);
 
 // VARIABILI DI GIOCO
 let coins = 0, energy = 500, xp = 0, level = 1, xpToNext = 100, combo = 1, balance = 0, gems = 0;
@@ -278,11 +283,27 @@ const energyTimerEl = document.getElementById('energyTimer');
 
 // PERSISTENZA
 const SAVE_KEY = 'burgercoin_save_v1';
-
 function saveGame() {
-  const data = {coins, energy, xp, level, xpToNext, combo, balance, gems, lastSave: Date.now()};
+  // carico eventuali dati esistenti (per non perdere lastClaim_xxx)
+  const raw = localStorage.getItem(SAVE_KEY);
+  let oldData = raw ? JSON.parse(raw) : {};
+
+  const data = {
+    ...oldData, // mantieni lastClaim_xxx se esistono
+    coins,
+    energy,
+    xp,
+    level,
+    xpToNext,
+    combo,
+    balance,
+    gems,
+    lastSave: Date.now()
+  };
+
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
+
 
 function loadGame() {
   const raw = localStorage.getItem(SAVE_KEY);
@@ -290,12 +311,13 @@ function loadGame() {
   let d;
   try {
     d = JSON.parse(raw);
+    // Verifica se i dati sono validi
     if (typeof d.coins !== 'number' || typeof d.balance !== 'number') {
       throw new Error("Dati corrotti");
     }
   } catch (e) {
     console.error("Errore nel caricamento dei dati:", e);
-    resetGame();
+    resetGame();  // Funzione per resettare i dati
     return;
   }
 
@@ -308,42 +330,79 @@ function loadGame() {
   balance = d.balance || 0;
   gems = d.gems || 0;
 
-  updateUI();
+  updateUI(); // Aggiorna l'interfaccia utente
   updateProgressBar();
 }
 
+
 window.addEventListener('beforeunload', saveGame);
-setInterval(saveGame, 5000);
+setInterval(saveGame, 5000); // Salva ogni 5 secondi
 
 function updateUI() {
+  // Coins (arrotondati interi)
   coinsEl.textContent = Math.floor(coins);
+
+  // Balance calcolato in base ai coins
+  balance = coins * 0.001;
+  balanceEl.textContent = balance.toFixed(2);
+
+  // Energia
   energyEl.textContent = energy;
+
+  // XP e barra XP
   xptextEl.textContent = `${xp}/${xpToNext} XP`;
   levelEl.textContent = level;
   xpbarEl.style.width = (xp / xpToNext * 100) + "%";
-  balanceEl.textContent = balance.toFixed(2);
+
+  // Combo
   comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
+
+  // Gems
   gemsEl.textContent = gems;
 }
 
-function resetGame() {
-  coins = 0;
-  balance = 0;
-  level = 1;
-  xp = 0;
-  combo = 1;
-  gems = 0;
-  updateUI();
-  saveGame();
+
+
+// --- FUNZIONE POPUP ---
+function showPopup(x, y, text, size = 16) {
+  const popup = document.createElement("div");
+  popup.className = "popup";
+  popup.style.left = x + "px";
+  popup.style.top = y + "px";
+  popup.style.fontSize = size + "px";
+  popup.textContent = text;
+  document.body.appendChild(popup);
+  setTimeout(() => popup.remove(), 800);
 }
 
+// --- TIMER ENERGIA ---
+let energyCountdown = 60;
+setInterval(() => {
+  if (energy < 500) {
+    energyCountdown--;
+    if (energyCountdown <= 0) {
+      energy = Math.min(500, energy + 2); // Aggiungi energia
+      energyCountdown = 60;
+      updateUI();
+      saveGame();
+    }
+    energyTimerEl.textContent = energyCountdown + "s";
+  } else {
+    energyTimerEl.textContent = "MAX";
+    energyCountdown = 60;
+  }
+}, 1000);
+
+// CLICK MONETA
 document.getElementById('coinBtn').addEventListener('click', (e) => {
   if (energy > 1) {
-    let earnedCoins = 1 * combo;
+    let earnedCoins = Math.floor(1 * combo);
+coins += earnedCoins;
+
     coins += earnedCoins;
     energy--; xp += 5;
     if (xp >= xpToNext) { xp = 0; level++; xpToNext = Math.floor(xpToNext * 1.5); }
-    if (Math.floor(coins / 10) > Math.floor((coins - earnedCoins) / 10)) balance += 0.01;
+    
 
     combo = Math.min(3, (combo + 0.01));
     comboEl.textContent = `Combo ${combo.toFixed(2)}x`;
@@ -355,14 +414,17 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
 
     updateUI(); saveGame();
 
+    // ANIMAZIONE
     const coinBtn = document.getElementById('coinBtn');
     coinBtn.classList.remove('clicked');
     void coinBtn.offsetWidth;
     coinBtn.classList.add('clicked');
 
+    // SUONO (funziona anche con click rapidi)
     const sound = new Audio("click.wav");
     sound.play().catch(()=>{});
 
+    // POPUP +🍔
     const rect = coinBtn.getBoundingClientRect();
     const x = rect.left + rect.width / 2 + (Math.random() * 60 - 30);
     const y = rect.top + rect.height / 2 + (Math.random() * 60 - 30);
@@ -372,6 +434,7 @@ document.getElementById('coinBtn').addEventListener('click', (e) => {
 });
 
 loadGame(); updateUI();
+
 </script>
 </body>
 </html>
