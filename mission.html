@@ -10,7 +10,6 @@
       --bg:#0a2a68; --sky1:#224aa2; --sky2:#081b43;
       --panel:#121b36; --panel2:#1c2d5b;
       --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
-      --mint1:#b2ff59; --mint2:#69f0ae;
       --text:#fff; --muted:#c7d2fe;
       --shadow: 0 18px 32px rgba(0,0,0,.46);
     }
@@ -53,6 +52,22 @@
       <div class="timer" id="timerGems"></div>
     </div>
 
+    <!-- 🔥 Cash App Mission -->
+    <div class="mission">
+      <h2>Cash App Mission</h2>
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; justify-content:center;">
+        <img src="cash.png" alt="Cash App" style="width:60px; border-radius:12px;"/>
+        <p style="flex:1; font-size:16px; margin:0;">
+          Sign up and install your first app on <b>Cash App</b>
+        </p>
+        <a href="https://freecash.com/r/a07d1bcf8c2095f4a8b7" target="_blank" class="button" style="flex-shrink:0; text-decoration:none; color:#000;">
+          Go
+        </a>
+        <button id="cashMission" class="button" style="flex-shrink:0;">Claim +2500 Coins</button>
+      </div>
+      <div class="timer" id="cashMissionStatus"></div>
+    </div>
+
     <div class="footer">by Burger Games</div>
   </div>
 
@@ -68,7 +83,7 @@ function saveGame(data) {
   localStorage.setItem(SAVE_KEY, JSON.stringify(data));
 }
 
-function claimReward(type, amount, timerId, buttonId) {
+function claimReward(type, amount) {
   let data = loadGame();
   const now = Date.now();
   const lastClaimKey = `lastClaim_${type}`;
@@ -100,7 +115,7 @@ function updateButtons() {
     if (diff >= REWARD_COOLDOWN) {
       btn.disabled = false;
       timerEl.textContent = "Available now!";
-      btn.onclick = () => claimReward(type, amount, timerId, buttonId);
+      btn.onclick = () => claimReward(type, amount);
     } else {
       btn.disabled = true;
       const remain = REWARD_COOLDOWN - diff;
@@ -112,8 +127,33 @@ function updateButtons() {
   }
 }
 
+// Cash App Mission (non ripetibile)
+function updateCashMission() {
+  const data = loadGame();
+  const btn = document.getElementById("cashMission");
+  const status = document.getElementById("cashMissionStatus");
+  if (!btn || !status) return;
+
+  if (data.cashMissionCompleted) {
+    btn.disabled = true;
+    btn.textContent = "Completed";
+    status.textContent = "You have already claimed this reward.";
+  } else {
+    btn.disabled = false;
+    btn.onclick = () => {
+      let game = data || {};
+      game.coins = (game.coins || 0) + 2500;
+      game.cashMissionCompleted = true; // 🔒 una sola volta
+      saveGame(game);
+      updateCashMission();
+      alert("✅ You received 2500 Coins!");
+    };
+  }
+}
+
 setInterval(updateButtons, 1000);
 updateButtons();
+updateCashMission();
 </script>
 </body>
 </html>
