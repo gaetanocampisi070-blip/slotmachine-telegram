@@ -33,34 +33,36 @@
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
-    <p class="note">Please note: Open the bot on Telegram to complete payments securely.</p>
+    <p class="note">Please note: The payment invoices will be sent to the bot's chat for security reasons.</p>
+
+    <p><a href="https://t.me/BurgerrCoinBot?startapp=burgercoin" target="_blank" class="button">Start Bot on Telegram</a></p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coins per tap.</p>
-      <button class="button">Buy 100 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Offline Earnings</h2>
       <p>Earn 5% of your coins per hour while offline.</p>
-      <button class="button">Buy 250 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(250)">Buy 250 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>+20% Lifetime Bonus</h2>
       <p>Gain +20% coins per tap permanently.</p>
-      <button class="button">Buy 60 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(60)">Buy 60 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Premarket Coins</h2>
       <p>Instant BurgerCoins purchase:</p>
-      <button class="button">1000 🍔 (30 ⭐)</button>
-      <button class="button">3000 🍔 (80 ⭐)</button>
-      <button class="button">5000 🍔 (125 ⭐)</button>
-      <button class="button">10000 🍔 (220 ⭐)</button>
-      <button class="button">50000 🍔 (1000 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(30)">1000 🍔 (30 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(80)">3000 🍔 (80 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(125)">5000 🍔 (125 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(220)">10000 🍔 (220 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(1000)">50000 🍔 (1000 ⭐)</button>
     </div>
 
     <div class="footer">
@@ -69,29 +71,95 @@
   </div>
 
 <script>
-// Nuova funzione di pagamento sicura
-function sendPaymentRequest(cost) {
-  // Mostra alert per informare l'utente
-  alert(`Per favore apri il bot su Telegram per completare il pagamento di ${cost} ⭐`);
+// Variable to store the chat_id of the user
+let chatId = null;
 
-  // Apri il bot Telegram in una nuova finestra
-  const botLink = "https://t.me/BurgerrCoinBot?start=burgercoin";
-  window.open(botLink, "_blank");
+// Function to start the conversation and retrieve the chat_id
+function startConversation() {
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/getUpdates')
+    .then(response => response.json())
+    .then(data => {
+      if (!data.result || data.result.length === 0) {
+        alert("Non hai ancora iniziato la chat con il bot. Apri Telegram e scrivi /start al bot prima di acquistare.");
+        return;
+      }
 
-  console.log(`Pagamento richiesto: ${cost} ⭐`);
+      const lastUpdate = data.result[data.result.length - 1];
+      if (!lastUpdate.message || !lastUpdate.message.chat) {
+        alert("Nessun chat_id disponibile. Assicurati di aver scritto al bot.");
+        return;
+      }
+
+      chatId = lastUpdate.message.chat.id;
+      console.log("chat_id: " + chatId);
+
+      // Send initial message
+      sendMessage(`Welcome to BurgerCoin! Click here to start: https://t.me/BurgerrCoinBot?startapp=burgercoin&utm_source=chatgpt.com`);
+    })
+    .catch(error => console.error('Error retrieving chat_id:', error));
 }
 
-// Collego tutti i pulsanti alla funzione di pagamento
-document.querySelectorAll(".upgrade .button").forEach(btn => {
-  btn.addEventListener("click", (e) => {
-    // Estrae il numero dal testo del pulsante
-    const costText = e.target.innerText.match(/\d+/);
-    if (costText) {
-      const cost = parseInt(costText[0]);
-      sendPaymentRequest(cost);
+// Function to send a simple message
+function sendMessage(message) {
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendMessage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      console.log("Message sent successfully!");
+    } else {
+      console.error("Error sending message:", data);
     }
-  });
-});
+  })
+  .catch(error => console.error('Error sending message:', error));
+}
+
+// Function to send the payment request in stars
+function sendPaymentRequest(cost) {
+  if (chatId === null) {
+    alert("Error: chat_id not found! Make sure you start the conversation first.");
+    return;
+  }
+
+  const paymentAmount = cost;
+
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      title: `Buy ${cost} Stars`,
+      description: `Pay ${cost} stars to unlock the upgrade.`,
+      payload: 'unique_invoice_payload',
+      provider_token: '',  // Se usi provider reale qui va il token
+      start_parameter: 'test-payment',
+      currency: 'XTR',
+      prices: [{ label: `${cost} ⭐`, amount: paymentAmount }]
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      console.log("Payment request sent successfully!");
+    } else {
+      console.error("Error sending payment request:", data);
+    }
+  })
+  .catch(error => console.error('Error sending payment request:', error));
+}
+
+// Initialize the conversation to get the chat_id
+startConversation();
 </script>
 </body>
 </html>
