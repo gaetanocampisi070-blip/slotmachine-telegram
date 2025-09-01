@@ -35,8 +35,6 @@
 
     <p class="note">Please note: The payment invoices will be sent to the bot's chat for security reasons.</p>
 
-    <p><a href="https://t.me/BurgerrCoinBot?startapp=burgercoin" target="_blank" class="button">Start Bot on Telegram</a></p>
-
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coins per tap.</p>
@@ -71,11 +69,16 @@
   </div>
 
 <script>
-// Variable to store the chat_id of the user
-let chatId = null;
+// Recupera chatId da localStorage, se esiste
+let chatId = localStorage.getItem('chatId') || null;
 
-// Function to start the conversation and retrieve the chat_id
+// Funzione per ottenere il chat_id
 function startConversation() {
+  if (chatId) {
+    console.log("chatId già presente in localStorage:", chatId);
+    return;
+  }
+
   fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/getUpdates')
     .then(response => response.json())
     .then(data => {
@@ -91,40 +94,33 @@ function startConversation() {
       }
 
       chatId = lastUpdate.message.chat.id;
-      console.log("chat_id: " + chatId);
+      localStorage.setItem('chatId', chatId); // salva il chatId
+      console.log("chat_id ottenuto e salvato:", chatId);
 
-      // Send initial message
+      // Invia messaggio di benvenuto
       sendMessage(`Welcome to BurgerCoin! Click here to start: https://t.me/BurgerrCoinBot?startapp=burgercoin&utm_source=chatgpt.com`);
     })
     .catch(error => console.error('Error retrieving chat_id:', error));
 }
 
-// Function to send a simple message
+// Funzione per inviare un messaggio
 function sendMessage(message) {
   fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendMessage', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: message
-    })
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: chatId, text: message })
   })
   .then(response => response.json())
   .then(data => {
-    if (data.ok) {
-      console.log("Message sent successfully!");
-    } else {
-      console.error("Error sending message:", data);
-    }
+    if (data.ok) console.log("Message sent successfully!");
+    else console.error("Error sending message:", data);
   })
   .catch(error => console.error('Error sending message:', error));
 }
 
-// Function to send the payment request in stars
+// Funzione per inviare la richiesta di pagamento
 function sendPaymentRequest(cost) {
-  if (chatId === null) {
+  if (!chatId) {
     alert("Error: chat_id not found! Make sure you start the conversation first.");
     return;
   }
@@ -133,15 +129,13 @@ function sendPaymentRequest(cost) {
 
   fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       chat_id: chatId,
       title: `Buy ${cost} Stars`,
       description: `Pay ${cost} stars to unlock the upgrade.`,
       payload: 'unique_invoice_payload',
-      provider_token: '',  // Se usi provider reale qui va il token
+      provider_token: '',
       start_parameter: 'test-payment',
       currency: 'XTR',
       prices: [{ label: `${cost} ⭐`, amount: paymentAmount }]
@@ -149,16 +143,13 @@ function sendPaymentRequest(cost) {
   })
   .then(response => response.json())
   .then(data => {
-    if (data.ok) {
-      console.log("Payment request sent successfully!");
-    } else {
-      console.error("Error sending payment request:", data);
-    }
+    if (data.ok) console.log("Payment request sent successfully!");
+    else console.error("Error sending payment request:", data);
   })
   .catch(error => console.error('Error sending payment request:', error));
 }
 
-// Initialize the conversation to get the chat_id
+// Avvia la conversazione per ottenere chatId se non esiste
 startConversation();
 </script>
 </body>
