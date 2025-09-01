@@ -10,8 +10,12 @@
       --gold1:#ffe082; --gold2:#ffca28; --gold3:#ffb300;
       --text:#fff; --muted:#c7d2fe; --shadow:0 18px 32px rgba(0,0,0,.46);
     }
-    body { margin:0; font-family: Inter,Arial,sans-serif; background:var(--bg); color:var(--text); }
+    body {
+      margin:0; font-family: Inter,Arial,sans-serif; background:var(--bg); color:var(--text);
+    }
     .app { max-width:520px; margin:0 auto; padding:20px; text-align:center; }
+    .pill { display:flex; align-items:center; gap:6px; background:rgba(10,15,35,.8);
+      border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; }
     .title { font-size:28px; font-weight:900; color:var(--gold2);
       text-shadow:0 0 6px var(--gold3),0 0 14px rgba(255,215,0,.9); margin:20px 0; }
     .upgrade { background:linear-gradient(180deg,var(--panel2),var(--panel));
@@ -28,32 +32,35 @@
 <body>
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
-    <p class="note">Payments in ⭐ Stars are processed securely via Telegram.</p>
+
+    <p class="note">Please note: Open the bot on Telegram to complete payments securely.</p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coins per tap.</p>
-      <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
+      <button class="button">Buy 100 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Offline Earnings</h2>
       <p>Earn 5% of your coins per hour while offline.</p>
-      <button class="button" onclick="sendPaymentRequest(250)">Buy 250 ⭐</button>
+      <button class="button">Buy 250 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>+20% Lifetime Bonus</h2>
       <p>Gain +20% coins per tap permanently.</p>
-      <button class="button" onclick="sendPaymentRequest(60)">Buy 60 ⭐</button>
+      <button class="button">Buy 60 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Premarket Coins</h2>
       <p>Instant BurgerCoins purchase:</p>
-      <button class="button" onclick="sendPaymentRequest(30)">1000 🍔 (30 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(80)">3000 🍔 (80 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(125)">5000 🍔 (125 ⭐)</button>
+      <button class="button">1000 🍔 (30 ⭐)</button>
+      <button class="button">3000 🍔 (80 ⭐)</button>
+      <button class="button">5000 🍔 (125 ⭐)</button>
+      <button class="button">10000 🍔 (220 ⭐)</button>
+      <button class="button">50000 🍔 (1000 ⭐)</button>
     </div>
 
     <div class="footer">
@@ -61,53 +68,30 @@
     </div>
   </div>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script>
-  const tg = window.Telegram.WebApp;
-  tg.expand();
+// Nuova funzione di pagamento sicura
+function sendPaymentRequest(cost) {
+  // Mostra alert per informare l'utente
+  alert(`Per favore apri il bot su Telegram per completare il pagamento di ${cost} ⭐`);
 
-  // Recupera chatId da LocalStorage se esiste
-  let chatId = localStorage.getItem("chatId");
+  // Apri il bot Telegram in una nuova finestra
+  const botLink = "https://t.me/BurgerrCoinBot?start=burgercoin";
+  window.open(botLink, "_blank");
 
-  // Se non c'è, lo salva la prima volta che l’utente apre la miniapp
-  if (!chatId && tg.initDataUnsafe?.user?.id) {
-    chatId = tg.initDataUnsafe.user.id;
-    localStorage.setItem("chatId", chatId);
-    console.log("chatId salvato:", chatId);
-  } else {
-    console.log("chatId già in memoria:", chatId);
-  }
+  console.log(`Pagamento richiesto: ${cost} ⭐`);
+}
 
-  function sendPaymentRequest(cost) {
-    if (!chatId) {
-      alert("Errore: chat_id non disponibile!");
-      return;
+// Collego tutti i pulsanti alla funzione di pagamento
+document.querySelectorAll(".upgrade .button").forEach(btn => {
+  btn.addEventListener("click", (e) => {
+    // Estrae il numero dal testo del pulsante
+    const costText = e.target.innerText.match(/\d+/);
+    if (costText) {
+      const cost = parseInt(costText[0]);
+      sendPaymentRequest(cost);
     }
-
-    fetch(`https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendInvoice`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: chatId,
-        title: `Buy ${cost} Stars`,
-        description: `Pay ${cost} ⭐ to unlock this upgrade.`,
-        payload: `invoice_${cost}_${Date.now()}`,
-        provider_token: "", // Vuoto per pagamenti in Stars
-        currency: "XTR",
-        prices: [{ label: `${cost} ⭐`, amount: cost }]
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.ok) {
-        console.log("Invoice inviato ✅", data);
-      } else {
-        console.error("Errore invoice:", data);
-        alert("Errore invio pagamento");
-      }
-    })
-    .catch(err => console.error("Errore fetch:", err));
-  }
+  });
+});
 </script>
 </body>
 </html>
