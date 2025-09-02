@@ -14,8 +14,6 @@
       margin:0; font-family: Inter,Arial,sans-serif; background:var(--bg); color:var(--text);
     }
     .app { max-width:520px; margin:0 auto; padding:20px; text-align:center; }
-    .pill { display:flex; align-items:center; gap:6px; background:rgba(10,15,35,.8);
-      border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; }
     .title { font-size:28px; font-weight:900; color:var(--gold2);
       text-shadow:0 0 6px var(--gold3),0 0 14px rgba(255,215,0,.9); margin:20px 0; }
     .upgrade { background:linear-gradient(180deg,var(--panel2),var(--panel));
@@ -23,7 +21,7 @@
     .upgrade h2 { margin:0 0 10px; font-size:20px; color:var(--gold1); }
     .button { background:linear-gradient(180deg,var(--gold2),var(--gold3)); color:#000;
       padding:8px 14px; border-radius:10px; font-size:15px; font-weight:700;
-      cursor:pointer; border:none; }
+      cursor:pointer; border:none; margin:4px 0; }
     .button:disabled { background:gray; cursor:not-allowed; color:#fff; }
     .footer { font-size:14px; color:var(--muted); margin-top:30px; }
     .note { font-size:14px; color:var(--muted); margin-top:20px; }
@@ -33,7 +31,7 @@
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
-    <p class="note">Please note: The payment invoices will be sent to the bot's chat for security reasons.</p>
+    <p class="note">The payment invoices will appear in your bot chat for security reasons.</p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
@@ -69,88 +67,53 @@
   </div>
 
 <script>
-// Recupera chatId da localStorage, se esiste
-let chatId = localStorage.getItem('chatId') || null;
+  const tg = window.Telegram.WebApp;
 
-// Funzione per ottenere il chat_id
-function startConversation() {
-  if (chatId) {
-    console.log("chatId già presente in localStorage:", chatId);
-    return;
+  // Recupera chat_id da LocalStorage se presente
+  let chatId = localStorage.getItem('burgercoin_chat_id');
+
+  // Se non esiste, prendilo dalla WebApp e salvalo
+  if (!chatId && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+    chatId = tg.initDataUnsafe.user.id;
+    localStorage.setItem('burgercoin_chat_id', chatId);
   }
 
-  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/getUpdates')
-    .then(response => response.json())
+  console.log("chat_id:", chatId);
+
+  function sendPaymentRequest(cost) {
+    if (!chatId) {
+      alert("Error: chat_id not found! Make sure you opened this mini-app from the bot.");
+      return;
+    }
+
+    fetch(`https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        title: `Buy ${cost} Stars`,
+        description: `Pay ${cost} stars to unlock this upgrade.`,
+        payload: `burgercoin_${cost}_${Date.now()}`,
+        start_parameter: 'burgercoin_upgrade',
+        currency: 'XTR',
+        prices: [{ label: `${cost} ⭐`, amount: cost }]
+      })
+    })
+    .then(res => res.json())
     .then(data => {
-      if (!data.result || data.result.length === 0) {
-        alert("Non hai ancora iniziato la chat con il bot. Apri Telegram e scrivi /start al bot prima di acquistare.");
-        return;
+      if (data.ok) {
+        console.log("Invoice sent successfully!", data);
+        alert("Payment invoice sent! Check your bot chat to complete the purchase.");
+      } else {
+        console.error("Error sending invoice:", data);
+        alert("Error sending invoice! Make sure you opened the mini-app from the bot.");
       }
-
-      const lastUpdate = data.result[data.result.length - 1];
-      if (!lastUpdate.message || !lastUpdate.message.chat) {
-        alert("Nessun chat_id disponibile. Assicurati di aver scritto al bot.");
-        return;
-      }
-
-      chatId = lastUpdate.message.chat.id;
-      localStorage.setItem('chatId', chatId); // salva il chatId
-      console.log("chat_id ottenuto e salvato:", chatId);
-
-      // Invia messaggio di benvenuto
-      sendMessage(`Welcome to BurgerCoin! Click here to start: https://t.me/BurgerrCoinBot?startapp=burgercoin&utm_source=chatgpt.com`);
     })
-    .catch(error => console.error('Error retrieving chat_id:', error));
-}
-
-// Funzione per inviare un messaggio
-function sendMessage(message) {
-  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendMessage', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: chatId, text: message })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.ok) console.log("Message sent successfully!");
-    else console.error("Error sending message:", data);
-  })
-  .catch(error => console.error('Error sending message:', error));
-}
-
-// Funzione per inviare la richiesta di pagamento
-function sendPaymentRequest(cost) {
-  if (!chatId) {
-    alert("Error: chat_id not found! Make sure you start the conversation first.");
-    return;
+    .catch(err => {
+      console.error(err);
+      alert("Network error while sending invoice!");
+    });
   }
-
-  const paymentAmount = cost;
-
-  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chatId,
-      title: `Buy ${cost} Stars`,
-      description: `Pay ${cost} stars to unlock the upgrade.`,
-      payload: 'unique_invoice_payload',
-      provider_token: '',
-      start_parameter: 'test-payment',
-      currency: 'XTR',
-      prices: [{ label: `${cost} ⭐`, amount: paymentAmount }]
-    })
-  })
-  .then(response => response.json())
-  .then(data => {
-    if (data.ok) console.log("Payment request sent successfully!");
-    else console.error("Error sending payment request:", data);
-  })
-  .catch(error => console.error('Error sending payment request:', error));
-}
-
-// Avvia la conversazione per ottenere chatId se non esiste
-startConversation();
 </script>
 </body>
 </html>
