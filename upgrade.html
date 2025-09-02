@@ -69,56 +69,85 @@
   </div>
 
 <script>
-  // Inizializza Telegram WebApp
-  window.Telegram.WebApp.ready();
+// Variable to store the chat_id of the user
+let chatId = null;
 
-  // Ottieni il chat_id in modo sicuro dal contesto Telegram
-  const chatId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
-
-  if (!chatId) {
-    alert("Errore: chat_id non trovato. Assicurati di aver aperto il bot da Telegram (/play)");
-  } else {
-    console.log("✅ chat_id trovato:", chatId);
-  }
-
-  function sendPaymentRequest(cost) {
-    if (!chatId) {
-      alert("Errore: chat_id non disponibile.");
-      return;
-    }
-
-    const botToken = "7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY";
-    const url = `https://api.telegram.org/bot${botToken}/sendInvoice`;
-
-    fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        chat_id: chatId,
-        title: `Buy ${cost} Stars`,
-        description: `Pay ${cost} stars to unlock the upgrade.`,
-        payload: `burgercoin-upgrade-${cost}-${Date.now()}`, // meglio un payload unico
-        provider_token: "", // vuoto per pagamento in Stars
-        currency: "XTR",
-        prices: [{ label: `${cost} ⭐`, amount: cost }]
-      })
-    })
-    .then(res => res.json())
+// Function to start the conversation and retrieve the chat_id
+function startConversation() {
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/getUpdates')
+    .then(response => response.json())
     .then(data => {
-      if (data.ok) {
-        console.log("✅ Invoice inviata con successo");
-      } else {
-        console.error("❌ Errore pagamento:", data);
-        alert("Errore durante il pagamento. Controlla il log.");
-      }
+      const lastUpdate = data.result[data.result.length - 1];
+      chatId = lastUpdate.message.chat.id; // Extract the chat_id
+      console.log("chat_id: " + chatId); // Debug: Display the chat_id
+
+      // Send an initial message with the link in English
+      sendMessage(`Welcome to BurgerCoin! Click here to start: https://t.me/BurgerrCoinBot?startapp=burgercoin&utm_source=chatgpt.com`);
     })
-    .catch(err => {
-      console.error("❌ Errore di rete:", err);
-      alert("Errore di rete. Riprova.");
-    });
+    .catch(error => console.error('Error retrieving chat_id:', error));
+}
+
+// Function to send a simple message
+function sendMessage(message) {
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendMessage', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: message
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      console.log("Message sent successfully!");
+    } else {
+      console.error("Error sending message:", data);
+    }
+  })
+  .catch(error => console.error('Error sending message:', error));
+}
+
+// Function to send the payment request in stars
+function sendPaymentRequest(cost) {
+  if (chatId === null) {
+    alert("Error: chat_id not found! Make sure you start the conversation first.");
+    return;
   }
+
+  const paymentAmount = cost;  // Now cost directly corresponds to cents (1 star = 1 cent)
+
+  fetch('https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      chat_id: chatId,
+      title: `Buy ${cost} Stars`,
+      description: `Pay ${cost} stars to unlock the upgrade.`,
+      payload: 'unique_invoice_payload', // Customize the payload
+      provider_token: '',  // No provider_token needed for star payments
+      start_parameter: 'test-payment',
+      currency: 'XTR',  // Currency in stars
+      prices: [{ label: `${cost} ⭐`, amount: paymentAmount }]  // Price in cents (1 star = 1 cent)
+    })
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.ok) {
+      console.log("Payment request sent successfully!");
+    } else {
+      console.error("Error sending payment request:", data);
+    }
+  })
+  .catch(error => console.error('Error sending payment request:', error));
+}
+
+// Initialize the conversation to get the chat_id
+startConversation();
 </script>
 </body>
 </html>
