@@ -67,12 +67,11 @@
   </div>
 
 <script>
+  // Telegram WebApp integration
   const tg = window.Telegram.WebApp;
 
-  // Recupera chat_id da LocalStorage se presente
+  // Get chat_id from LocalStorage or WebApp initData
   let chatId = localStorage.getItem('burgercoin_chat_id');
-
-  // Se non esiste, prendilo dalla WebApp e salvalo
   if (!chatId && tg.initDataUnsafe && tg.initDataUnsafe.user) {
     chatId = tg.initDataUnsafe.user.id;
     localStorage.setItem('burgercoin_chat_id', chatId);
@@ -91,12 +90,12 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        title: `Buy ${cost} ⭐`,
-        description: `Pay ${cost} stars to unlock this upgrade.`,
+        title: `Buy ${cost} Stars`,
+        description: `Pay ${cost} ⭐ to unlock this upgrade.`,
         payload: `burgercoin_${cost}_${Date.now()}`,
         start_parameter: 'burgercoin_upgrade',
         currency: 'XTR',
-        prices: [{ label: `${cost} ⭐`, amount: cost }] // 1 XTR = 1 unità
+        prices: [{ label: `${cost} ⭐`, amount: cost }]
       })
     })
     .then(res => res.json())
