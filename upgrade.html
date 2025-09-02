@@ -31,7 +31,7 @@
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
-    <p class="note">The payment invoices will appear in your bot chat for security reasons.</p>
+    <p class="note">Payment invoices will appear in your bot chat for security reasons.</p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
@@ -91,12 +91,12 @@
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        title: `Buy ${cost} Stars`,
+        title: `Buy ${cost} ⭐`,
         description: `Pay ${cost} stars to unlock this upgrade.`,
         payload: `burgercoin_${cost}_${Date.now()}`,
         start_parameter: 'burgercoin_upgrade',
         currency: 'XTR',
-        prices: [{ label: `${cost} ⭐`, amount: cost }]
+        prices: [{ label: `${cost} ⭐`, amount: cost }] // 1 XTR = 1 unità
       })
     })
     .then(res => res.json())
