@@ -21,7 +21,7 @@
     .upgrade h2 { margin:0 0 10px; font-size:20px; color:var(--gold1); }
     .button { background:linear-gradient(180deg,var(--gold2),var(--gold3)); color:#000;
       padding:8px 14px; border-radius:10px; font-size:15px; font-weight:700;
-      cursor:pointer; border:none; margin:4px 0; }
+      cursor:pointer; border:none; margin:4px 0; width:100%; }
     .button:disabled { background:gray; cursor:not-allowed; color:#fff; }
     .footer { font-size:14px; color:var(--muted); margin-top:30px; }
     .note { font-size:14px; color:var(--muted); margin-top:20px; }
@@ -31,34 +31,34 @@
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
-    <p class="note">Payment invoices will appear in your bot chat for security reasons.</p>
+    <p class="note">The payment invoices will appear in your bot chat for security reasons.</p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coins per tap.</p>
-      <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(100, 'Multiplier x2')">Buy 100 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Offline Earnings</h2>
       <p>Earn 5% of your coins per hour while offline.</p>
-      <button class="button" onclick="sendPaymentRequest(250)">Buy 250 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(250, 'Offline Earnings')">Buy 250 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>+20% Lifetime Bonus</h2>
       <p>Gain +20% coins per tap permanently.</p>
-      <button class="button" onclick="sendPaymentRequest(60)">Buy 60 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(60, '+20% Lifetime Bonus')">Buy 60 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Premarket Coins</h2>
       <p>Instant BurgerCoins purchase:</p>
-      <button class="button" onclick="sendPaymentRequest(30)">1000 🍔 (30 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(80)">3000 🍔 (80 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(125)">5000 🍔 (125 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(220)">10000 🍔 (220 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(1000)">50000 🍔 (1000 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(30, '1000 🍔')">1000 🍔 (30 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(80, '3000 🍔')">3000 🍔 (80 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(125, '5000 🍔')">5000 🍔 (125 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(220, '10000 🍔')">10000 🍔 (220 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(1000, '50000 🍔')">50000 🍔 (1000 ⭐)</button>
     </div>
 
     <div class="footer">
@@ -67,32 +67,30 @@
   </div>
 
 <script>
-  // Telegram WebApp integration
+  const botToken = '7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY';
   const tg = window.Telegram.WebApp;
 
-  // Get chat_id from LocalStorage or WebApp initData
-  let chatId = localStorage.getItem('burgercoin_chat_id');
-  if (!chatId && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+  // Prendi chat_id dall'utente che apre la mini-app
+  let chatId = null;
+  if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
     chatId = tg.initDataUnsafe.user.id;
-    localStorage.setItem('burgercoin_chat_id', chatId);
+    console.log("Detected chat_id:", chatId);
+  } else {
+    alert("Open this mini-app from your bot to make purchases!");
   }
 
-  console.log("chat_id:", chatId);
+  function sendPaymentRequest(cost, title) {
+    if (!chatId) return;
 
-  function sendPaymentRequest(cost) {
-    if (!chatId) {
-      alert("Error: chat_id not found! Make sure you opened this mini-app from the bot.");
-      return;
-    }
-
-    fetch(`https://api.telegram.org/bot7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY/sendInvoice`, {
+    fetch(`https://api.telegram.org/bot${botToken}/sendInvoice`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         chat_id: chatId,
-        title: `Buy ${cost} Stars`,
-        description: `Pay ${cost} ⭐ to unlock this upgrade.`,
-        payload: `burgercoin_${cost}_${Date.now()}`,
+        title: `Buy ${title}`,
+        description: `Pay ${cost} ⭐ to unlock ${title}.`,
+        payload: `burgercoin_${title}_${Date.now()}`,
+        provider_token: '', // XTR non richiede provider_token
         start_parameter: 'burgercoin_upgrade',
         currency: 'XTR',
         prices: [{ label: `${cost} ⭐`, amount: cost }]
@@ -101,11 +99,10 @@
     .then(res => res.json())
     .then(data => {
       if (data.ok) {
-        console.log("Invoice sent successfully!", data);
-        alert("Payment invoice sent! Check your bot chat to complete the purchase.");
+        alert("Invoice sent! Check your bot chat to complete the purchase.");
       } else {
-        console.error("Error sending invoice:", data);
-        alert("Error sending invoice! Make sure you opened the mini-app from the bot.");
+        console.error(data);
+        alert("Failed to send invoice! Make sure you opened this mini-app from the bot.");
       }
     })
     .catch(err => {
