@@ -14,6 +14,8 @@
       margin:0; font-family: Inter,Arial,sans-serif; background:var(--bg); color:var(--text);
     }
     .app { max-width:520px; margin:0 auto; padding:20px; text-align:center; }
+    .pill { display:flex; align-items:center; gap:6px; background:rgba(10,15,35,.8);
+      border:1px solid rgba(255,255,255,.08); padding:6px 12px; border-radius:999px; }
     .title { font-size:28px; font-weight:900; color:var(--gold2);
       text-shadow:0 0 6px var(--gold3),0 0 14px rgba(255,215,0,.9); margin:20px 0; }
     .upgrade { background:linear-gradient(180deg,var(--panel2),var(--panel));
@@ -21,7 +23,7 @@
     .upgrade h2 { margin:0 0 10px; font-size:20px; color:var(--gold1); }
     .button { background:linear-gradient(180deg,var(--gold2),var(--gold3)); color:#000;
       padding:8px 14px; border-radius:10px; font-size:15px; font-weight:700;
-      cursor:pointer; border:none; margin:4px 0; width:100%; }
+      cursor:pointer; border:none; }
     .button:disabled { background:gray; cursor:not-allowed; color:#fff; }
     .footer { font-size:14px; color:var(--muted); margin-top:30px; }
     .note { font-size:14px; color:var(--muted); margin-top:20px; }
@@ -31,34 +33,34 @@
   <div class="app">
     <h1 class="title">⚡ Upgrades</h1>
 
-    <p class="note">The payment invoices will appear in your bot chat for security reasons.</p>
+    <p class="note">Please note: The payment invoices will be sent to the bot's chat for security reasons.</p>
 
     <div class="upgrade">
       <h2>Multiplier x2</h2>
       <p>Double your coins per tap.</p>
-      <button class="button" onclick="sendPaymentRequest(100, 'Multiplier x2')">Buy 100 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(100)">Buy 100 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Offline Earnings</h2>
       <p>Earn 5% of your coins per hour while offline.</p>
-      <button class="button" onclick="sendPaymentRequest(250, 'Offline Earnings')">Buy 250 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(250)">Buy 250 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>+20% Lifetime Bonus</h2>
       <p>Gain +20% coins per tap permanently.</p>
-      <button class="button" onclick="sendPaymentRequest(60, '+20% Lifetime Bonus')">Buy 60 ⭐</button>
+      <button class="button" onclick="sendPaymentRequest(60)">Buy 60 ⭐</button>
     </div>
 
     <div class="upgrade">
       <h2>Premarket Coins</h2>
       <p>Instant BurgerCoins purchase:</p>
-      <button class="button" onclick="sendPaymentRequest(30, '1000 🍔')">1000 🍔 (30 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(80, '3000 🍔')">3000 🍔 (80 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(125, '5000 🍔')">5000 🍔 (125 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(220, '10000 🍔')">10000 🍔 (220 ⭐)</button>
-      <button class="button" onclick="sendPaymentRequest(1000, '50000 🍔')">50000 🍔 (1000 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(30)">1000 🍔 (30 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(80)">3000 🍔 (80 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(125)">5000 🍔 (125 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(220)">10000 🍔 (220 ⭐)</button>
+      <button class="button" onclick="sendPaymentRequest(1000)">50000 🍔 (1000 ⭐)</button>
     </div>
 
     <div class="footer">
@@ -67,47 +69,54 @@
   </div>
 
 <script>
-  const botToken = '7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY';
-  const tg = window.Telegram.WebApp;
+  // Inizializza Telegram WebApp
+  window.Telegram.WebApp.ready();
 
-  // Prendi chat_id dall'utente che apre la mini-app
-  let chatId = null;
-  if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-    chatId = tg.initDataUnsafe.user.id;
-    console.log("Detected chat_id:", chatId);
+  // Ottieni il chat_id in modo sicuro dal contesto Telegram
+  const chatId = window.Telegram.WebApp.initDataUnsafe?.user?.id;
+
+  if (!chatId) {
+    alert("Errore: chat_id non trovato. Assicurati di aver aperto il bot da Telegram (/play)");
   } else {
-    alert("Open this mini-app from your bot to make purchases!");
+    console.log("✅ chat_id trovato:", chatId);
   }
 
-  function sendPaymentRequest(cost, title) {
-    if (!chatId) return;
+  function sendPaymentRequest(cost) {
+    if (!chatId) {
+      alert("Errore: chat_id non disponibile.");
+      return;
+    }
 
-    fetch(`https://api.telegram.org/bot${botToken}/sendInvoice`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const botToken = "7564100271:AAEQojBa2USivOFHMLqnWr7BkmE5Iq0o1mY";
+    const url = `https://api.telegram.org/bot${botToken}/sendInvoice`;
+
+    fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
       body: JSON.stringify({
         chat_id: chatId,
-        title: `Buy ${title}`,
-        description: `Pay ${cost} ⭐ to unlock ${title}.`,
-        payload: `burgercoin_${title}_${Date.now()}`,
-        provider_token: '', // XTR non richiede provider_token
-        start_parameter: 'burgercoin_upgrade',
-        currency: 'XTR',
+        title: `Buy ${cost} Stars`,
+        description: `Pay ${cost} stars to unlock the upgrade.`,
+        payload: `burgercoin-upgrade-${cost}-${Date.now()}`, // meglio un payload unico
+        provider_token: "", // vuoto per pagamento in Stars
+        currency: "XTR",
         prices: [{ label: `${cost} ⭐`, amount: cost }]
       })
     })
     .then(res => res.json())
     .then(data => {
       if (data.ok) {
-        alert("Invoice sent! Check your bot chat to complete the purchase.");
+        console.log("✅ Invoice inviata con successo");
       } else {
-        console.error(data);
-        alert("Failed to send invoice! Make sure you opened this mini-app from the bot.");
+        console.error("❌ Errore pagamento:", data);
+        alert("Errore durante il pagamento. Controlla il log.");
       }
     })
     .catch(err => {
-      console.error(err);
-      alert("Network error while sending invoice!");
+      console.error("❌ Errore di rete:", err);
+      alert("Errore di rete. Riprova.");
     });
   }
 </script>
