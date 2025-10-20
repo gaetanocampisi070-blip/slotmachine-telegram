@@ -166,14 +166,14 @@
   <div class="topbar">
     <div class="pill" style="flex:1;">
       <b>TON Wallet Address:</b>
-      <input id="walletAddress" type="text" placeholder="Enter your TON Wallet address" style="flex:1;"/>
+      <input id="walletAddress" type="text" placeholder="Enter your solana Wallet address" style="flex:1;"/>
     </div>
     <button id="setWallet" class="button">Set Wallet</button>
   </div>
 
   <div class="balance-pill" style="margin-bottom: 0;">
     <p style="font-size: 16px;">
-      BurgerCoin is a cryptocurrency that will be released on TON on <b>October 15, 2025</b>.
+      BurgerCoin is a cryptocurrency that will be released on Pumpfun 
     </p>
   </div>
 
@@ -202,7 +202,7 @@ const SAVE_KEY = 'burgercoin_save_v1';
 
 // Countdown fino al 15 ottobre 2025
 function updateCountdown() {
-  const targetDate = new Date('2025-10-15T00:00:00Z');
+  const targetDate = new Date('2025-10-20T00:00:00Z');
   const now = new Date();
   const diff = targetDate - now;
   if (diff <= 0) {
